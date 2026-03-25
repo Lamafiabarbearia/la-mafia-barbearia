@@ -19,6 +19,7 @@
             --text-sec: #A0A0A0;
             --error: #FF4444;
             --success: #44FF44;
+            --warning: #FFAA00;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; 
@@ -64,6 +65,8 @@
         .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
         .btn-small { padding: 8px 12px; font-size: 12px; }
         .btn-icon { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
+        .btn-danger { background: var(--error); color: var(--text); }
+        .btn-warning { background: var(--warning); color: var(--bg); }
 
         /* Cards */
         .card {
@@ -89,12 +92,12 @@
         
         .appointment {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
             padding: 16px 0;
             border-bottom: 1px solid var(--border);
         }
         .appointment:last-child { border-bottom: none; }
+        .apt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         
         .apt-time { 
             background: var(--border); padding: 6px 10px; 
@@ -104,8 +107,12 @@
         .apt-info { margin-top: 8px; }
         .apt-client { font-weight: 600; font-size: 15px; }
         .apt-service { color: var(--text-sec); font-size: 13px; margin-left: 22px; margin-top: 4px; }
+        .apt-date { color: var(--text-sec); font-size: 12px; margin-top: 4px; margin-left: 22px; }
         .apt-price { font-weight: 700; font-size: 16px; }
-        .apt-actions { display: flex; gap: 10px; }
+        .apt-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+        .apt-btn { padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+        .apt-btn-cancel { background: var(--border); color: var(--text); }
+        .apt-btn-late { background: var(--warning); color: var(--bg); }
 
         /* Formulários */
         .form-group { margin-bottom: 16px; }
@@ -121,6 +128,7 @@
             outline: none;
         }
         .form-input:focus { border-color: var(--text); }
+        .form-input::placeholder { color: var(--text-sec); }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
         /* Modal */
@@ -144,6 +152,8 @@
             border-top: 1px solid var(--border);
             transform: translateY(100%);
             transition: transform 0.3s;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .modal-overlay.active .modal-content { transform: translateY(0); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -175,9 +185,21 @@
             font-weight: 600;
             cursor: pointer;
             padding: 8px 16px;
+            position: relative;
         }
         .nav-item.active { color: var(--text); }
         .nav-icon { font-size: 20px; }
+        .nav-badge {
+            position: absolute;
+            top: 4px;
+            right: 10px;
+            background: var(--error);
+            color: var(--text);
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
 
         /* Utilitários */
         .hidden { display: none !important; }
@@ -233,6 +255,54 @@
             transition: transform 0.3s;
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* Date Filter */
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        .date-filter input {
+            flex: 1;
+            padding: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+        }
+        .date-filter button {
+            padding: 10px 16px;
+            background: var(--text);
+            color: var(--bg);
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Vacilão Tab Styles */
+        .vacilao-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .vacilao-item:last-child { border-bottom: none; }
+        .vacilao-info { flex: 1; }
+        .vacilao-name { font-weight: 600; font-size: 15px; }
+        .vacilao-date { color: var(--text-sec); font-size: 12px; margin-top: 4px; }
+        .vacilao-badge {
+            background: var(--warning);
+            color: var(--bg);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
@@ -298,6 +368,10 @@
                 <button class="btn btn-secondary mb-20" onclick="app.navigate('clients')">
                     👥 <span data-i18n="clients">Clientes</span>
                 </button>
+                <button class="btn btn-secondary mb-20" onclick="app.navigate('vacilao')">
+                    ⚠️ <span data-i18n="vacilao">Vacilão</span>
+                    <span id="vacilaoBadge" class="nav-badge hidden">0</span>
+                </button>
                 <button class="btn btn-secondary mb-20" onclick="app.exportReport()">
                     📊 <span data-i18n="export_report">Exportar Caixa</span>
                 </button>
@@ -307,10 +381,16 @@
             <div id="viewAgenda" class="hidden">
                 <div class="section-header">
                     <div class="section-title" data-i18n="agenda">Agenda</div>
-                    <div style="font-size: 12px; color: var(--text-sec);" id="currentDate"></div>
                 </div>
+                
+                <!-- Filtro de Data -->
+                <div class="date-filter">
+                    <input type="date" id="agendaDate" class="form-input">
+                    <button onclick="app.filterAgenda()" data-i18n="filter">Filtrar</button>
+                </div>
+                
                 <div class="card" id="appointmentsList">
-                    <div class="empty-state" data-i18n="no_appointments">Nenhum agendamento hoje</div>
+                    <div class="empty-state" data-i18n="no_appointments">Nenhum agendamento</div>
                 </div>
             </div>
 
@@ -321,6 +401,17 @@
                 </div>
                 <div class="card" id="clientsList">
                     <div class="empty-state" data-i18n="no_clients">Nenhum cliente cadastrado</div>
+                </div>
+            </div>
+
+            <!-- VACILÃO -->
+            <div id="viewVacilao" class="hidden">
+                <div class="section-header">
+                    <div class="section-title">⚠️ <span data-i18n="vacilao">Vacilão</span></div>
+                    <div style="font-size: 12px; color: var(--warning);" id="vacilaoCount">0 clientes</div>
+                </div>
+                <div class="card" id="vacilaoList">
+                    <div class="empty-state" data-i18n="no_vacilao">Nenhum cliente vacilou ainda</div>
                 </div>
             </div>
         </div>
@@ -342,6 +433,11 @@
                 <div class="nav-icon">👥</div>
                 <div data-i18n="clients">Clientes</div>
             </div>
+            <div class="nav-item" onclick="app.navigate('vacilao')" id="navVacilao">
+                <div class="nav-icon">⚠️</div>
+                <div data-i18n="vacilao">Vacilão</div>
+                <span id="navVacilaoBadge" class="nav-badge hidden">0</span>
+            </div>
         </div>
     </div>
 
@@ -358,22 +454,30 @@
             </div>
             <div class="form-row">
                 <div class="form-group">
+                    <label class="form-label" data-i18n="date">Data</label>
+                    <input type="date" id="aptDate" class="form-input">
+                </div>
+                <div class="form-group">
                     <label class="form-label" data-i18n="time">Horário</label>
                     <input type="time" id="aptTime" class="form-input">
                 </div>
-                <div class="form-group">
-                    <label class="form-label" data-i18n="price">Preço (€)</label>
-                    <input type="number" id="aptPrice" class="form-input" placeholder="25" step="0.50">
-                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="price">Preço (€)</label>
+                <input type="number" id="aptPrice" class="form-input" placeholder="25" step="0.50">
             </div>
             <div class="form-group">
                 <label class="form-label" data-i18n="service">Serviço</label>
                 <select id="aptService" class="form-input">
-                    <option value="Corte">Corte</option>
-                    <option value="Barba">Barba</option>
-                    <option value="Corte & Barba">Corte & Barba</option>
-                    <option value="Degradê">Degradê</option>
-                    <option value="Barba Terapia">Barba Terapia</option>
+                    <option value="Corte Clássico">Corte Clássico</option>
+                    <option value="Corte Niño">Corte Niño</option>
+                    <option value="Corte & Tinte">Corte & Tinte</option>
+                    <option value="Corte & Dibujo">Corte & Dibujo</option>
+                    <option value="Mechas">Mechas</option>
+                    <option value="Combo Mensual">Combo Mensual</option>
+                    <option value="Platino">Platino</option>
+                    <option value="Alisado">Alisado</option>
+                    <option value="Corte Moderno">Corte Moderno</option>
                 </select>
             </div>
             <button class="btn btn-primary" onclick="app.saveAppointment()" data-i18n="save">Salvar</button>
@@ -392,8 +496,10 @@
             data: {
                 appointments: [],
                 clients: [],
+                vacilao: [],
                 lang: 'pt',
-                isLoggedIn: false
+                isLoggedIn: false,
+                selectedDate: new Date().toISOString().split('T')[0]
             },
 
             translations: {
@@ -404,20 +510,28 @@
                     appointments: "Atendimentos",
                     agenda: "Agenda",
                     clients: "Clientes",
+                    vacilao: "Vacilão",
                     dashboard: "Início",
                     quick_actions: "Ações Rápidas",
                     export_report: "Exportar Caixa",
                     new_appointment: "Novo Agendamento",
                     client_name: "Nome do Cliente",
+                    date: "Data",
                     time: "Horário",
                     price: "Preço (€)",
                     service: "Serviço",
                     save: "Salvar",
-                    no_appointments: "Nenhum agendamento hoje",
+                    filter: "Filtrar",
+                    no_appointments: "Nenhum agendamento",
                     no_clients: "Nenhum cliente cadastrado",
+                    no_vacilao: "Nenhum cliente vacilou ainda",
                     saved: "Salvo com sucesso!",
                     deleted: "Removido!",
-                    error_password: "Senha incorreta"
+                    cancelled: "Cancelado!",
+                    late_cancelled: "Cancelamento em cima da hora!",
+                    error_password: "Senha incorreta",
+                    confirm_cancel: "Cancelar agendamento?",
+                    confirm_late: "Marcar como cancelamento em cima da hora?"
                 },
                 es: {
                     welcome: "Bienvenido, Jefe",
@@ -426,20 +540,28 @@
                     appointments: "Atenciones",
                     agenda: "Agenda",
                     clients: "Clientes",
+                    vacilao: "Vacilón",
                     dashboard: "Inicio",
                     quick_actions: "Acciones Rápidas",
                     export_report: "Exportar Caja",
                     new_appointment: "Nueva Cita",
                     client_name: "Nombre del Cliente",
+                    date: "Fecha",
                     time: "Hora",
                     price: "Precio (€)",
                     service: "Servicio",
                     save: "Guardar",
-                    no_appointments: "Sin citas hoy",
+                    filter: "Filtrar",
+                    no_appointments: "Sin citas",
                     no_clients: "Sin clientes registrados",
+                    no_vacilao: "Nadie ha fallado aún",
                     saved: "¡Guardado con éxito!",
                     deleted: "¡Eliminado!",
-                    error_password: "Contraseña incorrecta"
+                    cancelled: "¡Cancelado!",
+                    late_cancelled: "¡Cancelación de última hora!",
+                    error_password: "Contraseña incorrecta",
+                    confirm_cancel: "¿Cancelar cita?",
+                    confirm_late: "¿Marcar como cancelación de última hora?"
                 }
             },
 
@@ -447,6 +569,7 @@
                 this.loadData();
                 this.checkAuth();
                 this.updateDate();
+                document.getElementById('agendaDate').value = this.data.selectedDate;
             },
 
             // Autenticação
@@ -461,7 +584,6 @@
 
             login() {
                 const password = document.getElementById('loginPassword').value;
-                // Senha simples para demonstração (em produção use algo mais seguro)
                 if (password === 'admin' || password === '1234') {
                     localStorage.setItem('laMafiaAuth', 'true');
                     this.data.isLoggedIn = true;
@@ -499,12 +621,18 @@
 
             // Navegação
             navigate(view) {
-                ['Dashboard', 'Agenda', 'Clients'].forEach(v => {
+                ['Dashboard', 'Agenda', 'Clients', 'Vacilao'].forEach(v => {
                     document.getElementById(`view${v}`).classList.add('hidden');
                     document.getElementById(`nav${v}`).classList.remove('active');
                 });
                 document.getElementById(`view${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.remove('hidden');
                 document.getElementById(`nav${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.add('active');
+                
+                if (view === 'agenda') {
+                    this.renderAppointments();
+                } else if (view === 'vacilao') {
+                    this.renderVacilao();
+                }
             },
 
             // Internacionalização
@@ -537,44 +665,69 @@
                 this.renderStats();
                 this.renderAppointments();
                 this.renderClients();
+                this.renderVacilao();
             },
 
             renderStats() {
                 const today = new Date().toISOString().split('T')[0];
-                const todayAppts = this.data.appointments.filter(a => a.date === today);
+                const todayAppts = this.data.appointments.filter(a => a.date === today && a.status === 'active');
                 
                 const dayRevenue = todayAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
-                const monthRevenue = this.data.appointments.reduce((sum, a) => sum + parseFloat(a.price), 0);
+                const monthRevenue = this.data.appointments
+                    .filter(a => a.date.startsWith(today.substring(0, 7)) && a.status === 'active')
+                    .reduce((sum, a) => sum + parseFloat(a.price), 0);
 
                 document.getElementById('statDay').textContent = this.formatCurrency(dayRevenue);
                 document.getElementById('statMonth').textContent = this.formatCurrency(monthRevenue);
                 document.getElementById('statCount').textContent = todayAppts.length;
+                
+                // Atualiza badge do Vacilão
+                const vacilaoCount = this.data.vacilao.length;
+                const badges = document.getElementById('vacilaoBadge') && document.getElementById('navVacilaoBadge');
+                if (vacilaoCount > 0) {
+                    document.getElementById('vacilaoBadge').textContent = vacilaoCount;
+                    document.getElementById('vacilaoBadge').classList.remove('hidden');
+                    document.getElementById('navVacilaoBadge').textContent = vacilaoCount;
+                    document.getElementById('navVacilaoBadge').classList.remove('hidden');
+                } else {
+                    document.getElementById('vacilaoBadge').classList.add('hidden');
+                    document.getElementById('navVacilaoBadge').classList.add('hidden');
+                }
+                document.getElementById('vacilaoCount').textContent = `${vacilaoCount} clientes`;
             },
 
             renderAppointments() {
                 const list = document.getElementById('appointmentsList');
-                const today = new Date().toISOString().split('T')[0];
-                const todayAppts = this.data.appointments
-                    .filter(a => a.date === today)
+                const selectedDate = document.getElementById('agendaDate').value || this.data.selectedDate;
+                this.data.selectedDate = selectedDate;
+                
+                const filteredAppts = this.data.appointments
+                    .filter(a => a.date === selectedDate && a.status === 'active')
                     .sort((a, b) => a.time.localeCompare(b.time));
 
-                if (todayAppts.length === 0) {
+                if (filteredAppts.length === 0) {
                     list.innerHTML = `<div class="empty-state">${this.t('no_appointments')}</div>`;
                     return;
                 }
 
-                list.innerHTML = todayAppts.map((apt, index) => `
+                list.innerHTML = filteredAppts.map((apt) => `
                     <div class="appointment">
-                        <div>
+                        <div class="apt-header">
                             <div class="apt-time">🕒 ${apt.time}</div>
-                            <div class="apt-info">
-                                <div class="apt-client">${apt.client}</div>
-                                <div class="apt-service">${apt.service}</div>
-                            </div>
+                            <div class="apt-price">${this.formatCurrency(apt.price)}</div>
+                        </div>
+                        <div class="apt-info">
+                            <div class="apt-client">${apt.client}</div>
+                            <div class="apt-service">${apt.service}</div>
+                            <div class="apt-date">📅 ${this.formatDate(apt.date)}</div>
                         </div>
                         <div class="apt-actions">
-                            <div class="apt-price">${this.formatCurrency(apt.price)}</div>
-                            <button onclick="app.deleteAppointment(${index})" style="background:none;border:none;color:var(--error);cursor:pointer;">🗑</button>
+                            <button class="apt-btn apt-btn-cancel" onclick="app.cancelAppointment('${apt.id}', false)">
+                                ❌ ${this.data.lang === 'pt' ? 'Cancelar' : 'Cancelar'}
+                            </button>
+                            <button class="apt-btn apt-btn-late" onclick="app.cancelAppointment('${apt.id}', true)">
+                                ⚠️ ${this.data.lang === 'pt' ? 'Em Cima da Hora' : 'Última Hora'}
+                            </button>
                         </div>
                     </div>
                 `).join('');
@@ -587,19 +740,47 @@
                     return;
                 }
                 list.innerHTML = this.data.clients.map((c, i) => `
-                    <div class="appointment">
-                        <div>
-                            <div class="apt-client">${c.name}</div>
-                            <div class="apt-service">${c.phone || ''}</div>
+                    <div class="vacilao-item">
+                        <div class="vacilao-info">
+                            <div class="vacilao-name">${c.name}</div>
+                            <div class="vacilao-date">${c.phone || ''} ${c.lastVisit ? '• Última: ' + this.formatDate(c.lastVisit) : ''}</div>
                         </div>
                         <button onclick="app.deleteClient(${i})" style="background:none;border:none;color:var(--error);cursor:pointer;">🗑</button>
                     </div>
                 `).join('');
             },
 
+            renderVacilao() {
+                const list = document.getElementById('vacilaoList');
+                if (this.data.vacilao.length === 0) {
+                    list.innerHTML = `<div class="empty-state">${this.t('no_vacilao')}</div>`;
+                    return;
+                }
+                list.innerHTML = this.data.vacilao.map((v, i) => `
+                    <div class="vacilao-item">
+                        <div class="vacilao-info">
+                            <div class="vacilao-name">${v.client}</div>
+                            <div class="vacilao-date">📅 ${this.formatDate(v.date)} • 🕒 ${v.time}</div>
+                            <div class="vacilao-date">${v.service} • ${this.formatCurrency(v.price)}</div>
+                        </div>
+                        <span class="vacilao-badge">${this.data.lang === 'pt' ? 'VACILOU' : 'FALLÓ'}</span>
+                    </div>
+                `).join('');
+            },
+
+            // Filtro de Data
+            filterAgenda() {
+                this.data.selectedDate = document.getElementById('agendaDate').value;
+                this.renderAppointments();
+            },
+
             // Ações
             openModal(type) {
                 document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.add('active');
+                // Define data mínima como hoje
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('aptDate').min = today;
+                document.getElementById('aptDate').value = today;
             },
 
             closeModal(type) {
@@ -608,23 +789,35 @@
 
             saveAppointment() {
                 const client = document.getElementById('aptClient').value;
+                const date = document.getElementById('aptDate').value;
                 const time = document.getElementById('aptTime').value;
                 const price = document.getElementById('aptPrice').value;
                 const service = document.getElementById('aptService').value;
 
-                if (!client || !time || !price) {
+                if (!client || !date || !time || !price) {
                     this.showToast('Preencha todos os campos');
                     return;
                 }
 
-                this.data.appointments.push({
-                    date: new Date().toISOString().split('T')[0],
-                    client, time, price, service
-                });
+                const newApt = {
+                    id: Date.now().toString(),
+                    date,
+                    time,
+                    price,
+                    service,
+                    client,
+                    status: 'active',
+                    createdAt: new Date().toISOString()
+                };
+
+                this.data.appointments.push(newApt);
 
                 // Adicionar cliente se não existir
                 if (!this.data.clients.find(c => c.name === client)) {
-                    this.data.clients.push({ name: client, phone: '', lastVisit: new Date().toISOString() });
+                    this.data.clients.push({ name: client, phone: '', lastVisit: date });
+                } else {
+                    const clientIndex = this.data.clients.findIndex(c => c.name === client);
+                    this.data.clients[clientIndex].lastVisit = date;
                 }
 
                 this.saveData();
@@ -637,13 +830,26 @@
                 document.getElementById('aptPrice').value = '';
             },
 
-            deleteAppointment(index) {
-                const today = new Date().toISOString().split('T')[0];
-                const todayAppts = this.data.appointments.filter(a => a.date === today);
-                const realIndex = this.data.appointments.indexOf(todayAppts[index]);
-                this.data.appointments.splice(realIndex, 1);
+            cancelAppointment(aptId, isLate) {
+                const aptIndex = this.data.appointments.findIndex(a => a.id === aptId);
+                if (aptIndex === -1) return;
+
+                const apt = this.data.appointments[aptIndex];
+
+                if (isLate) {
+                    // Move para lista de vacilão
+                    this.data.vacilao.push({
+                        ...apt,
+                        cancelledAt: new Date().toISOString()
+                    });
+                    this.showToast(this.t('late_cancelled'));
+                } else {
+                    this.showToast(this.t('cancelled'));
+                }
+
+                // Remove da agenda ativa
+                this.data.appointments.splice(aptIndex, 1);
                 this.saveData();
-                this.showToast(this.t('deleted'));
             },
 
             deleteClient(index) {
@@ -654,10 +860,10 @@
 
             exportReport() {
                 const today = new Date().toISOString().split('T')[0];
-                const todayAppts = this.data.appointments.filter(a => a.date === today);
+                const todayAppts = this.data.appointments.filter(a => a.date === today && a.status === 'active');
                 const total = todayAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
                 
-                let report = `LA MAFIA BARBEARIA - Fechamento ${today}\n\n`;
+                let report = `LA MAFIA BARBEARIA - Fechamento ${this.formatDate(today)}\n\n`;
                 todayAppts.forEach(a => {
                     report += `${a.time} - ${a.client} - ${a.service} - €${a.price}\n`;
                 });
@@ -681,9 +887,16 @@
                 }).format(value);
             },
 
+            formatDate(dateString) {
+                const date = new Date(dateString + 'T00:00:00');
+                const options = { day: 'numeric', month: 'short', year: 'numeric' };
+                return date.toLocaleDateString(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', options);
+            },
+
             updateDate() {
                 const options = { day: 'numeric', month: 'short', year: 'numeric' };
-                document.getElementById('currentDate').textContent = new Date().toLocaleDateString(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', options);
+                const today = new Date();
+                document.getElementById('currentDate').textContent = today.toLocaleDateString(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', options);
             },
 
             showToast(message) {
