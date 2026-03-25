@@ -86,13 +86,6 @@
         .stat-label { font-size: 11px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
         .stat-value { font-size: 22px; font-weight: 700; margin-top: 6px; }
 
-        /* Payment Stats */
-        .payment-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 16px; }
-        .payment-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; }
-        .payment-stat-icon { font-size: 18px; margin-bottom: 6px; }
-        .payment-stat-label { font-size: 9px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; }
-        .payment-stat-value { font-size: 14px; font-weight: 700; margin-top: 4px; }
-
         /* Lista de Agenda */
         .section-header { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -120,7 +113,6 @@
         .apt-client { font-weight: 600; font-size: 15px; }
         .apt-service { color: var(--text-sec); font-size: 13px; margin-left: 22px; margin-top: 4px; }
         .apt-date { color: var(--text-sec); font-size: 12px; margin-top: 4px; margin-left: 22px; }
-        .apt-payment { color: var(--text-sec); font-size: 11px; margin-top: 4px; margin-left: 22px; }
         .apt-notes { color: var(--info); font-size: 11px; margin-top: 4px; margin-left: 22px; font-style: italic; }
         .apt-price { font-weight: 700; font-size: 16px; }
         .apt-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
@@ -334,20 +326,6 @@
             text-transform: uppercase;
         }
 
-        /* Payment Method Badge */
-        .payment-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-left: 8px;
-        }
-        .payment-dinheiro { background: #44AA44; color: #fff; }
-        .payment-cartao { background: #4444AA; color: #fff; }
-        .payment-bizum { background: #AA44AA; color: #fff; }
-
         /* Search Box */
         .search-box {
             width: 100%;
@@ -427,25 +405,6 @@
                     <div class="stat-label" data-i18n="revenue_month">Receita Mês</div>
                     <div class="stat-value" id="statMonth">€0,00</div>
                     
-                    <!-- Payment Methods Stats -->
-                    <div class="payment-stats">
-                        <div class="payment-stat">
-                            <div class="payment-stat-icon">💵</div>
-                            <div class="payment-stat-label" data-i18n="cash">Dinheiro</div>
-                            <div class="payment-stat-value" id="statCash">€0</div>
-                        </div>
-                        <div class="payment-stat">
-                            <div class="payment-stat-icon">💳</div>
-                            <div class="payment-stat-label" data-i18n="card">Cartão</div>
-                            <div class="payment-stat-value" id="statCard">€0</div>
-                        </div>
-                        <div class="payment-stat">
-                            <div class="payment-stat-icon">📱</div>
-                            <div class="payment-stat-label" data-i18n="bizum">Bizum</div>
-                            <div class="payment-stat-value" id="statBizum">€0</div>
-                        </div>
-                    </div>
-
                     <!-- Completed Stats -->
                     <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
                         <div class="stat-label" data-i18n="completed">Concluídos Hoje</div>
@@ -575,19 +534,9 @@
                     <option value="Alisado">Alisado</option>
                 </select>
             </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label" data-i18n="price">Preço (€)</label>
-                    <input type="number" id="aptPrice" class="form-input" placeholder="25" step="0.50">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" data-i18n="payment_method">Pagamento</label>
-                    <select id="aptPayment" class="form-input">
-                        <option value="Dinheiro">💵 Dinheiro</option>
-                        <option value="Cartao">💳 Cartão</option>
-                        <option value="Bizum">📱 Bizum</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="price">Preço (€)</label>
+                <input type="number" id="aptPrice" class="form-input" placeholder="25" step="0.50">
             </div>
             <div class="form-group">
                 <label class="form-label" data-i18n="notes">Observações</label>
@@ -646,11 +595,7 @@
                     time: "Horário",
                     price: "Preço (€)",
                     service: "Serviço",
-                    payment_method: "Pagamento",
                     notes: "Observações",
-                    cash: "Dinheiro",
-                    card: "Cartão",
-                    bizum: "Bizum",
                     save: "Salvar",
                     filter: "Filtrar",
                     no_appointments: "Nenhum agendamento",
@@ -683,11 +628,7 @@
                     time: "Hora",
                     price: "Precio (€)",
                     service: "Servicio",
-                    payment_method: "Pago",
                     notes: "Notas",
-                    cash: "Efectivo",
-                    card: "Tarjeta",
-                    bizum: "Bizum",
                     save: "Guardar",
                     filter: "Filtrar",
                     no_appointments: "Sin citas",
@@ -820,19 +761,10 @@
                     .filter(a => a.date.startsWith(today.substring(0, 7)) && a.status === 'active')
                     .reduce((sum, a) => sum + parseFloat(a.price), 0);
 
-                // Payment methods stats for today
-                const cashTotal = todayAppts.filter(a => a.payment === 'Dinheiro').reduce((sum, a) => sum + parseFloat(a.price), 0);
-                const cardTotal = todayAppts.filter(a => a.payment === 'Cartao').reduce((sum, a) => sum + parseFloat(a.price), 0);
-                const bizumTotal = todayAppts.filter(a => a.payment === 'Bizum').reduce((sum, a) => sum + parseFloat(a.price), 0);
-
                 document.getElementById('statDay').textContent = this.formatCurrency(dayRevenue);
                 document.getElementById('statMonth').textContent = this.formatCurrency(monthRevenue);
                 document.getElementById('statCount').textContent = todayAppts.length;
                 document.getElementById('statCompleted').textContent = completedAppts.length;
-                
-                document.getElementById('statCash').textContent = this.formatCurrency(cashTotal);
-                document.getElementById('statCard').textContent = this.formatCurrency(cardTotal);
-                document.getElementById('statBizum').textContent = this.formatCurrency(bizumTotal);
                 
                 // Atualiza badge do Vacilão
                 const vacilaoCount = this.data.vacilao.length;
@@ -846,13 +778,6 @@
                     document.getElementById('navVacilaoBadge').classList.add('hidden');
                 }
                 document.getElementById('vacilaoCount').textContent = `${vacilaoCount} clientes`;
-            },
-
-            getPaymentIcon(payment) {
-                if (payment === 'Dinheiro') return '💵';
-                if (payment === 'Cartao') return '💳';
-                if (payment === 'Bizum') return '📱';
-                return '';
             },
 
             renderAppointments() {
@@ -870,7 +795,6 @@
                 }
 
                 list.innerHTML = filteredAppts.map((apt) => {
-                    const paymentIcon = this.getPaymentIcon(apt.payment);
                     const isCompleted = apt.status === 'completed';
                     return `
                     <div class="appointment ${isCompleted ? 'completed' : ''}">
@@ -885,7 +809,6 @@
                             <div class="apt-client">${apt.client}</div>
                             <div class="apt-service">${apt.service}</div>
                             <div class="apt-date">📅 ${this.formatDate(apt.date)}</div>
-                            <div class="apt-payment">${paymentIcon} ${apt.payment}</div>
                             ${apt.notes ? `<div class="apt-notes">📝 ${apt.notes}</div>` : ''}
                         </div>
                         <div class="apt-actions">
@@ -947,7 +870,7 @@
                         <div class="vacilao-info">
                             <div class="vacilao-name">${v.client}</div>
                             <div class="vacilao-date">📅 ${this.formatDate(v.date)} • 🕒 ${v.time}</div>
-                            <div class="vacilao-date">${v.service} • ${this.formatCurrency(v.price)} • ${this.getPaymentIcon(v.payment)} ${v.payment}</div>
+                            <div class="vacilao-date">${v.service} • ${this.formatCurrency(v.price)}</div>
                         </div>
                         <span class="vacilao-badge">${this.data.lang === 'pt' ? 'VACILOU' : 'FALLÓ'}</span>
                     </div>
@@ -964,7 +887,7 @@
                 const history = this.data.appointments
                     .filter(a => a.client === clientName)
                     .sort((a, b) => new Date(b.date) - new Date(a.date))
-                    .slice(0, 10); // Últimos 10 agendamentos
+                    .slice(0, 10);
 
                 document.getElementById('clientHistoryName').textContent = clientName;
                 
@@ -1007,7 +930,6 @@
                             document.getElementById('aptTime').value = apt.time;
                             document.getElementById('aptService').value = apt.service;
                             document.getElementById('aptPrice').value = apt.price;
-                            document.getElementById('aptPayment').value = apt.payment;
                             document.getElementById('aptNotes').value = apt.notes || '';
                         }
                     } else {
@@ -1034,7 +956,6 @@
                 const time = document.getElementById('aptTime').value;
                 const price = document.getElementById('aptPrice').value;
                 const service = document.getElementById('aptService').value;
-                const payment = document.getElementById('aptPayment').value;
                 const notes = document.getElementById('aptNotes').value;
 
                 if (!client || !date || !time || !price) {
@@ -1048,7 +969,7 @@
                     if (aptIndex !== -1) {
                         this.data.appointments[aptIndex] = {
                             ...this.data.appointments[aptIndex],
-                            client, date, time, price, service, payment, notes,
+                            client, date, time, price, service, notes,
                             updatedAt: new Date().toISOString()
                         };
                     }
@@ -1056,7 +977,8 @@
                     // Novo agendamento
                     const newApt = {
                         id: Date.now().toString(),
-                        date, time, price, service, client, payment, notes,
+                        date, time, price, service, client, notes,
+                        payment: 'Dinheiro',
                         status: 'active',
                         createdAt: new Date().toISOString()
                     };
@@ -1097,7 +1019,6 @@
                 const apt = this.data.appointments[aptIndex];
 
                 if (isLate) {
-                    // Move para lista de vacilão
                     this.data.vacilao.push({
                         ...apt,
                         cancelledAt: new Date().toISOString()
@@ -1107,7 +1028,6 @@
                     this.showToast(this.t('cancelled'));
                 }
 
-                // Remove da agenda ativa
                 this.data.appointments.splice(aptIndex, 1);
                 this.saveData();
             },
@@ -1125,21 +1045,14 @@
                 const allToday = [...todayAppts, ...completedAppts];
                 const total = allToday.reduce((sum, a) => sum + parseFloat(a.price), 0);
                 
-                // Totais por método de pagamento
-                const cashTotal = allToday.filter(a => a.payment === 'Dinheiro').reduce((sum, a) => sum + parseFloat(a.price), 0);
-                const cardTotal = allToday.filter(a => a.payment === 'Cartao').reduce((sum, a) => sum + parseFloat(a.price), 0);
-                const bizumTotal = allToday.filter(a => a.payment === 'Bizum').reduce((sum, a) => sum + parseFloat(a.price), 0);
-                
                 let report = `LA MAFIA BARBEARIA - Fechamento ${this.formatDate(today)}\n\n`;
                 report += `=== RESUMO ===\n`;
-                report += `Dinheiro: ${this.formatCurrency(cashTotal)}\n`;
-                report += `Cartão: ${this.formatCurrency(cardTotal)}\n`;
-                report += `Bizum: ${this.formatCurrency(bizumTotal)}\n`;
+                report += `Total em Dinheiro: ${this.formatCurrency(total)}\n`;
                 report += `Concluídos: ${completedAppts.length}\n`;
                 report += `\n=== ATENDIMENTOS ===\n`;
                 allToday.forEach(a => {
                     const status = a.status === 'completed' ? '[OK]' : '[PEND]';
-                    report += `${status} ${a.time} - ${a.client} - ${a.service} - ${a.payment} - €${a.price}\n`;
+                    report += `${status} ${a.time} - ${a.client} - ${a.service} - €${a.price}\n`;
                     if (a.notes) report += `   Notas: ${a.notes}\n`;
                 });
                 report += `\nTOTAL GERAL: ${this.formatCurrency(total)}`;
