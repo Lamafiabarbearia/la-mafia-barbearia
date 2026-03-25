@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>La Mafia Barbearia</title>
+    <style>
+        /* ============================================
+           LA MAFIA BARBEARIA - ESTILO MINIMALISTA B&W
+           ============================================ */
+        :root {
+            --bg: #000000;
+            --surface: #121212;
+            --border: #333333;
+            --text: #FFFFFF;
+            --text-sec: #A0A0A0;
+            --error: #FF4444;
+            --success: #44FF44;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Container Principal */
+        .app { max-width: 480px; margin: 0 auto; padding: 20px; }
+
+        /* Header */
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 20px 0 30px 0; border-bottom: 1px solid var(--border); 
+            margin-bottom: 25px;
+        }
+        .brand { font-size: 11px; text-transform: uppercase; color: var(--text-sec); letter-spacing: 2px; font-weight: 700; }
+        .title { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-top: 5px; }
+        .header-actions { display: flex; gap: 10px; }
+
+        /* Botões */
+        .btn {
+            padding: 14px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn:active { opacity: 0.7; }
+        .btn-primary { background: var(--text); color: var(--bg); width: 100%; }
+        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-small { padding: 8px 12px; font-size: 12px; }
+        .btn-icon { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        /* Grid de Stats */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .stat-icon { font-size: 24px; margin-bottom: 10px; }
+        .stat-label { font-size: 11px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+        .stat-value { font-size: 22px; font-weight: 700; margin-top: 6px; }
+
+        /* Lista de Agenda */
+        .section-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin: 30px 0 15px 0; 
+        }
+        .section-title { font-size: 20px; font-weight: 700; }
+        
+        .appointment {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .appointment:last-child { border-bottom: none; }
+        
+        .apt-time { 
+            background: var(--border); padding: 6px 10px; 
+            border-radius: 6px; font-size: 12px; font-weight: 700; 
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .apt-info { margin-top: 8px; }
+        .apt-client { font-weight: 600; font-size: 15px; }
+        .apt-service { color: var(--text-sec); font-size: 13px; margin-left: 22px; margin-top: 4px; }
+        .apt-price { font-weight: 700; font-size: 16px; }
+        .apt-actions { display: flex; gap: 10px; }
+
+        /* Formulários */
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 12px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+        .form-input {
+            width: 100%;
+            padding: 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 15px;
+            outline: none;
+        }
+        .form-input:focus { border-color: var(--text); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: flex; align-items: flex-end;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-content {
+            background: var(--bg);
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            border-radius: 20px 20px 0 0;
+            padding: 25px;
+            border-top: 1px solid var(--border);
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-size: 20px; font-weight: 700; }
+        .modal-close { background: none; border: none; color: var(--text-sec); font-size: 24px; cursor: pointer; }
+
+        /* Navegação Inferior */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-sec);
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 16px;
+        }
+        .nav-item.active { color: var(--text); }
+        .nav-icon { font-size: 20px; }
+
+        /* Utilitários */
+        .hidden { display: none !important; }
+        .text-right { text-align: right; }
+        .mb-20 { margin-bottom: 20px; }
+        .empty-state { text-align: center; color: var(--text-sec); padding: 40px 0; }
+
+        /* Login Screen */
+        .login-screen {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 30px;
+            z-index: 2000;
+        }
+        .login-logo { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; }
+        .login-subtitle { color: var(--text-sec); margin-bottom: 40px; }
+        .login-form { width: 100%; max-width: 320px; }
+        .error-msg { color: var(--error); font-size: 13px; margin-top: 10px; text-align: center; }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: var(--text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--bg);
+            box-shadow: 0 4px 15px rgba(255,255,255,0.3);
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 3000;
+            transition: transform 0.3s;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+    <!-- TELA DE LOGIN -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-logo">LA MAFIA</div>
+        <div class="login-subtitle">Área Restrita</div>
+        <div class="login-form">
+            <div class="form-group">
+                <label class="form-label">Senha</label>
+                <input type="password" id="loginPassword" class="form-input" placeholder="••••••">
+            </div>
+            <button class="btn btn-primary" onclick="app.login()">ENTRAR</button>
+            <div id="loginError" class="error-msg hidden"></div>
+        </div>
+    </div>
+
+    <!-- APP PRINCIPAL -->
+    <div id="mainApp" class="hidden">
+        <div class="app">
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <div class="brand">LA MAFIA</div>
+                    <div class="title" id="welcomeText">Bem-vindo, Boss</div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary btn-small" onclick="app.toggleLanguage()">
+                        <span id="langLabel">PT</span>
+                    </button>
+                    <button class="btn btn-icon btn-secondary" onclick="app.logout()">✕</button>
+                </div>
+            </div>
+
+            <!-- DASHBOARD -->
+            <div id="viewDashboard">
+                <div class="stats-grid">
+                    <div class="card">
+                        <div class="stat-icon">💶</div>
+                        <div class="stat-label" data-i18n="revenue_day">Receita Hoje</div>
+                        <div class="stat-value" id="statDay">€0,00</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-label" data-i18n="appointments">Atendimentos</div>
+                        <div class="stat-value" id="statCount">0</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="stat-label" data-i18n="revenue_month">Receita Mês</div>
+                    <div class="stat-value" id="statMonth">€0,00</div>
+                </div>
+
+                <div class="section-header">
+                    <div class="section-title" data-i18n="quick_actions">Ações Rápidas</div>
+                </div>
+
+                <button class="btn btn-primary mb-20" onclick="app.navigate('agenda')">
+                    📅 <span data-i18n="agenda">Agenda</span>
+                </button>
+                <button class="btn btn-secondary mb-20" onclick="app.navigate('clients')">
+                    👥 <span data-i18n="clients">Clientes</span>
+                </button>
+                <button class="btn btn-secondary mb-20" onclick="app.exportReport()">
+                    📊 <span data-i18n="export_report">Exportar Caixa</span>
+                </button>
+            </div>
+
+            <!-- AGENDA -->
+            <div id="viewAgenda" class="hidden">
+                <div class="section-header">
+                    <div class="section-title" data-i18n="agenda">Agenda</div>
+                    <div style="font-size: 12px; color: var(--text-sec);" id="currentDate"></div>
+                </div>
+                <div class="card" id="appointmentsList">
+                    <div class="empty-state" data-i18n="no_appointments">Nenhum agendamento hoje</div>
+                </div>
+            </div>
+
+            <!-- CLIENTES -->
+            <div id="viewClients" class="hidden">
+                <div class="section-header">
+                    <div class="section-title" data-i18n="clients">Clientes</div>
+                </div>
+                <div class="card" id="clientsList">
+                    <div class="empty-state" data-i18n="no_clients">Nenhum cliente cadastrado</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Action Button -->
+        <div class="fab" onclick="app.openModal('appointment')">+</div>
+
+        <!-- Navegação Inferior -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="app.navigate('dashboard')" id="navDashboard">
+                <div class="nav-icon">🏠</div>
+                <div data-i18n="dashboard">Início</div>
+            </div>
+            <div class="nav-item" onclick="app.navigate('agenda')" id="navAgenda">
+                <div class="nav-icon">📅</div>
+                <div data-i18n="agenda">Agenda</div>
+            </div>
+            <div class="nav-item" onclick="app.navigate('clients')" id="navClients">
+                <div class="nav-icon">👥</div>
+                <div data-i18n="clients">Clientes</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE AGENDAMENTO -->
+    <div class="modal-overlay" id="modalAppointment">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" data-i18n="new_appointment">Novo Agendamento</div>
+                <button class="modal-close" onclick="app.closeModal('appointment')">×</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="client_name">Nome do Cliente</label>
+                <input type="text" id="aptClient" class="form-input" placeholder="Ex: Carlos Ruiz">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" data-i18n="time">Horário</label>
+                    <input type="time" id="aptTime" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="price">Preço (€)</label>
+                    <input type="number" id="aptPrice" class="form-input" placeholder="25" step="0.50">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="service">Serviço</label>
+                <select id="aptService" class="form-input">
+                    <option value="Corte">Corte</option>
+                    <option value="Barba">Barba</option>
+                    <option value="Corte & Barba">Corte & Barba</option>
+                    <option value="Degradê">Degradê</option>
+                    <option value="Barba Terapia">Barba Terapia</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="app.saveAppointment()" data-i18n="save">Salvar</button>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        /* ============================================
+           LA MAFIA BARBEARIA - LÓGICA DO APP
+           ============================================ */
+        
+        const app = {
+            data: {
+                appointments: [],
+                clients: [],
+                lang: 'pt',
+                isLoggedIn: false
+            },
+
+            translations: {
+                pt: {
+                    welcome: "Bem-vindo, Boss",
+                    revenue_day: "Receita Hoje",
+                    revenue_month: "Receita Mês",
+                    appointments: "Atendimentos",
+                    agenda: "Agenda",
+                    clients: "Clientes",
+                    dashboard: "Início",
+                    quick_actions: "Ações Rápidas",
+                    export_report: "Exportar Caixa",
+                    new_appointment: "Novo Agendamento",
+                    client_name: "Nome do Cliente",
+                    time: "Horário",
+                    price: "Preço (€)",
+                    service: "Serviço",
+                    save: "Salvar",
+                    no_appointments: "Nenhum agendamento hoje",
+                    no_clients: "Nenhum cliente cadastrado",
+                    saved: "Salvo com sucesso!",
+                    deleted: "Removido!",
+                    error_password: "Senha incorreta"
+                },
+                es: {
+                    welcome: "Bienvenido, Jefe",
+                    revenue_day: "Ingresos Hoy",
+                    revenue_month: "Ingresos Mes",
+                    appointments: "Atenciones",
+                    agenda: "Agenda",
+                    clients: "Clientes",
+                    dashboard: "Inicio",
+                    quick_actions: "Acciones Rápidas",
+                    export_report: "Exportar Caja",
+                    new_appointment: "Nueva Cita",
+                    client_name: "Nombre del Cliente",
+                    time: "Hora",
+                    price: "Precio (€)",
+                    service: "Servicio",
+                    save: "Guardar",
+                    no_appointments: "Sin citas hoy",
+                    no_clients: "Sin clientes registrados",
+                    saved: "¡Guardado con éxito!",
+                    deleted: "¡Eliminado!",
+                    error_password: "Contraseña incorrecta"
+                }
+            },
+
+            init() {
+                this.loadData();
+                this.checkAuth();
+                this.updateDate();
+            },
+
+            // Autenticação
+            checkAuth() {
+                if (localStorage.getItem('laMafiaAuth') === 'true') {
+                    this.data.isLoggedIn = true;
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('mainApp').classList.remove('hidden');
+                    this.renderAll();
+                }
+            },
+
+            login() {
+                const password = document.getElementById('loginPassword').value;
+                // Senha simples para demonstração (em produção use algo mais seguro)
+                if (password === 'admin' || password === '1234') {
+                    localStorage.setItem('laMafiaAuth', 'true');
+                    this.data.isLoggedIn = true;
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('mainApp').classList.remove('hidden');
+                    this.renderAll();
+                } else {
+                    const errorEl = document.getElementById('loginError');
+                    errorEl.textContent = this.t('error_password');
+                    errorEl.classList.remove('hidden');
+                }
+            },
+
+            logout() {
+                localStorage.removeItem('laMafiaAuth');
+                this.data.isLoggedIn = false;
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('loginError').classList.add('hidden');
+            },
+
+            // Dados
+            loadData() {
+                const saved = localStorage.getItem('laMafiaData');
+                if (saved) {
+                    this.data = { ...this.data, ...JSON.parse(saved) };
+                }
+            },
+
+            saveData() {
+                localStorage.setItem('laMafiaData', JSON.stringify(this.data));
+                this.renderAll();
+            },
+
+            // Navegação
+            navigate(view) {
+                ['Dashboard', 'Agenda', 'Clients'].forEach(v => {
+                    document.getElementById(`view${v}`).classList.add('hidden');
+                    document.getElementById(`nav${v}`).classList.remove('active');
+                });
+                document.getElementById(`view${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.remove('hidden');
+                document.getElementById(`nav${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.add('active');
+            },
+
+            // Internacionalização
+            toggleLanguage() {
+                this.data.lang = this.data.lang === 'pt' ? 'es' : 'pt';
+                document.getElementById('langLabel').textContent = this.data.lang.toUpperCase();
+                this.updateTexts();
+                this.saveData();
+            },
+
+            t(key) {
+                return this.translations[this.data.lang][key] || key;
+            },
+
+            updateTexts() {
+                document.getElementById('welcomeText').textContent = this.t('welcome');
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+                        el.placeholder = this.t(key);
+                    } else {
+                        el.textContent = this.t(key);
+                    }
+                });
+            },
+
+            // Renderização
+            renderAll() {
+                this.updateTexts();
+                this.renderStats();
+                this.renderAppointments();
+                this.renderClients();
+            },
+
+            renderStats() {
+                const today = new Date().toISOString().split('T')[0];
+                const todayAppts = this.data.appointments.filter(a => a.date === today);
+                
+                const dayRevenue = todayAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
+                const monthRevenue = this.data.appointments.reduce((sum, a) => sum + parseFloat(a.price), 0);
+
+                document.getElementById('statDay').textContent = this.formatCurrency(dayRevenue);
+                document.getElementById('statMonth').textContent = this.formatCurrency(monthRevenue);
+                document.getElementById('statCount').textContent = todayAppts.length;
+            },
+
+            renderAppointments() {
+                const list = document.getElementById('appointmentsList');
+                const today = new Date().toISOString().split('T')[0];
+                const todayAppts = this.data.appointments
+                    .filter(a => a.date === today)
+                    .sort((a, b) => a.time.localeCompare(b.time));
+
+                if (todayAppts.length === 0) {
+                    list.innerHTML = `<div class="empty-state">${this.t('no_appointments')}</div>`;
+                    return;
+                }
+
+                list.innerHTML = todayAppts.map((apt, index) => `
+                    <div class="appointment">
+                        <div>
+                            <div class="apt-time">🕒 ${apt.time}</div>
+                            <div class="apt-info">
+                                <div class="apt-client">${apt.client}</div>
+                                <div class="apt-service">${apt.service}</div>
+                            </div>
+                        </div>
+                        <div class="apt-actions">
+                            <div class="apt-price">${this.formatCurrency(apt.price)}</div>
+                            <button onclick="app.deleteAppointment(${index})" style="background:none;border:none;color:var(--error);cursor:pointer;">🗑</button>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            renderClients() {
+                const list = document.getElementById('clientsList');
+                if (this.data.clients.length === 0) {
+                    list.innerHTML = `<div class="empty-state">${this.t('no_clients')}</div>`;
+                    return;
+                }
+                list.innerHTML = this.data.clients.map((c, i) => `
+                    <div class="appointment">
+                        <div>
+                            <div class="apt-client">${c.name}</div>
+                            <div class="apt-service">${c.phone || ''}</div>
+                        </div>
+                        <button onclick="app.deleteClient(${i})" style="background:none;border:none;color:var(--error);cursor:pointer;">🗑</button>
+                    </div>
+                `).join('');
+            },
+
+            // Ações
+            openModal(type) {
+                document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.add('active');
+            },
+
+            closeModal(type) {
+                document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.remove('active');
+            },
+
+            saveAppointment() {
+                const client = document.getElementById('aptClient').value;
+                const time = document.getElementById('aptTime').value;
+                const price = document.getElementById('aptPrice').value;
+                const service = document.getElementById('aptService').value;
+
+                if (!client || !time || !price) {
+                    this.showToast('Preencha todos os campos');
+                    return;
+                }
+
+                this.data.appointments.push({
+                    date: new Date().toISOString().split('T')[0],
+                    client, time, price, service
+                });
+
+                // Adicionar cliente se não existir
+                if (!this.data.clients.find(c => c.name === client)) {
+                    this.data.clients.push({ name: client, phone: '', lastVisit: new Date().toISOString() });
+                }
+
+                this.saveData();
+                this.closeModal('appointment');
+                this.showToast(this.t('saved'));
+                
+                // Limpar formulário
+                document.getElementById('aptClient').value = '';
+                document.getElementById('aptTime').value = '';
+                document.getElementById('aptPrice').value = '';
+            },
+
+            deleteAppointment(index) {
+                const today = new Date().toISOString().split('T')[0];
+                const todayAppts = this.data.appointments.filter(a => a.date === today);
+                const realIndex = this.data.appointments.indexOf(todayAppts[index]);
+                this.data.appointments.splice(realIndex, 1);
+                this.saveData();
+                this.showToast(this.t('deleted'));
+            },
+
+            deleteClient(index) {
+                this.data.clients.splice(index, 1);
+                this.saveData();
+                this.showToast(this.t('deleted'));
+            },
+
+            exportReport() {
+                const today = new Date().toISOString().split('T')[0];
+                const todayAppts = this.data.appointments.filter(a => a.date === today);
+                const total = todayAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
+                
+                let report = `LA MAFIA BARBEARIA - Fechamento ${today}\n\n`;
+                todayAppts.forEach(a => {
+                    report += `${a.time} - ${a.client} - ${a.service} - €${a.price}\n`;
+                });
+                report += `\nTOTAL: €${total.toFixed(2)}`;
+
+                const blob = new Blob([report], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `fechamento-${today}.txt`;
+                a.click();
+                
+                this.showToast('Relatório exportado!');
+            },
+
+            // Utilitários
+            formatCurrency(value) {
+                return new Intl.NumberFormat(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', {
+                    style: 'currency',
+                    currency: 'EUR'
+                }).format(value);
+            },
+
+            updateDate() {
+                const options = { day: 'numeric', month: 'short', year: 'numeric' };
+                document.getElementById('currentDate').textContent = new Date().toLocaleDateString(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', options);
+            },
+
+            showToast(message) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            }
+        };
+
+        // Inicializar app
+        app.init();
+    </script>
+</body>
+</html>
