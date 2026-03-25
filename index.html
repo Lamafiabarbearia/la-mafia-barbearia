@@ -4,8 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#000000">
+    
+    <!-- PWA / iOS Home Screen -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="La Mafia">
+    <link rel="apple-touch-icon" href="icon-180.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Ícone do Navegador -->
+    <link rel="icon" type="image/png" sizes="180x180" href="icon-180.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    
     <title>La Mafia Barbearia</title>
     <style>
         /* ============================================
@@ -366,9 +376,45 @@
             font-size: 12px;
             color: var(--text-sec);
         }
+
+        /* Install Banner */
+        .install-banner {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            right: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 900;
+        }
+        .install-banner.show { display: flex; }
+        .install-banner-icon { font-size: 24px; }
+        .install-banner-text { flex: 1; font-size: 13px; }
+        .install-banner-btn { 
+            background: var(--text); 
+            color: var(--bg); 
+            border: none; 
+            padding: 8px 16px; 
+            border-radius: 6px; 
+            font-weight: 700; 
+            font-size: 12px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Install Banner (iOS) -->
+    <div class="install-banner" id="installBanner">
+        <div class="install-banner-icon">📲</div>
+        <div class="install-banner-text">Adicione La Mafia à sua tela inicial para acesso rápido!</div>
+        <button class="install-banner-btn" onclick="document.getElementById('installBanner').classList.remove('show')">OK</button>
+    </div>
 
     <!-- TELA DE LOGIN -->
     <div id="loginScreen" class="login-screen">
@@ -587,10 +633,6 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        /* ============================================
-           LA MAFIA BARBEARIA - LÓGICA DO APP
-           ============================================ */
-        
         const app = {
             data: {
                 appointments: [],
@@ -680,6 +722,7 @@
                 this.updateDate();
                 document.getElementById('agendaDate').value = this.data.selectedDate;
                 document.getElementById('clientSearch').placeholder = this.t('search_placeholder');
+                this.checkInstallBanner();
             },
 
             checkAuth() {
@@ -779,12 +822,10 @@
             renderStats() {
                 const today = new Date().toISOString().split('T')[0];
                 
-                // Atendimentos do dia
                 const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
                 const pendingAppts = todayAppts.filter(a => a.status === 'active');
                 const completedAppts = todayAppts.filter(a => a.status === 'completed');
                 
-                // Receitas
                 const pendingRevenue = pendingAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
                 const completedRevenue = completedAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
                 const totalDayRevenue = pendingRevenue + completedRevenue;
@@ -801,7 +842,6 @@
                 document.getElementById('statCompletedRevenue').textContent = this.formatCurrency(completedRevenue);
                 document.getElementById('statMonth').textContent = this.formatCurrency(monthRevenue);
                 
-                // Badge do Vacilão
                 const vacilaoCount = this.data.vacilao.length;
                 if (vacilaoCount > 0) {
                     document.getElementById('vacilaoBadge').textContent = vacilaoCount;
@@ -1114,6 +1154,18 @@
                 const currentDateEl = document.getElementById('currentDate');
                 if (currentDateEl) {
                     currentDateEl.textContent = today.toLocaleDateString(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', options);
+                }
+            },
+
+            checkInstallBanner() {
+                // Mostra banner se não estiver instalado como PWA
+                const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                
+                if (!isStandalone && isIOS && !localStorage.getItem('laMafiaInstallDismissed')) {
+                    setTimeout(() => {
+                        document.getElementById('installBanner').classList.add('show');
+                    }, 3000);
                 }
             },
 
