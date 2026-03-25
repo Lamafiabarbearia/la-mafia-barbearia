@@ -86,6 +86,21 @@
         .stat-label { font-size: 11px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
         .stat-value { font-size: 22px; font-weight: 700; margin-top: 6px; }
 
+        /* Revenue Split Card */
+        .revenue-split { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            margin-top: 16px; 
+            padding-top: 16px; 
+            border-top: 1px solid var(--border);
+        }
+        .revenue-item { text-align: center; }
+        .revenue-item-label { font-size: 10px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+        .revenue-item-value { font-size: 18px; font-weight: 700; }
+        .revenue-pending { color: var(--text); }
+        .revenue-completed { color: var(--success); }
+
         /* Lista de Agenda */
         .section-header { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -390,26 +405,37 @@
             <div id="viewDashboard">
                 <div class="stats-grid">
                     <div class="card">
-                        <div class="stat-icon">💶</div>
-                        <div class="stat-label" data-i18n="revenue_day">Receita Hoje</div>
-                        <div class="stat-value" id="statDay">€0,00</div>
-                    </div>
-                    <div class="card">
                         <div class="stat-icon">📅</div>
                         <div class="stat-label" data-i18n="appointments">Atendimentos</div>
                         <div class="stat-value" id="statCount">0</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-icon">✓</div>
+                        <div class="stat-label" data-i18n="completed">Concluídos</div>
+                        <div class="stat-value" id="statCompleted" style="color: var(--success);">0</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="stat-label" data-i18n="revenue_today">Receita de Hoje</div>
+                    <div class="stat-value" id="statDayTotal" style="font-size: 28px;">€0,00</div>
+                    
+                    <!-- Revenue Split -->
+                    <div class="revenue-split">
+                        <div class="revenue-item">
+                            <div class="revenue-item-label" data-i18n="revenue_pending">Prevista</div>
+                            <div class="revenue-item-value revenue-pending" id="statPending">€0,00</div>
+                        </div>
+                        <div class="revenue-item">
+                            <div class="revenue-item-label" data-i18n="revenue_completed">Concluída</div>
+                            <div class="revenue-item-value revenue-completed" id="statCompletedRevenue">€0,00</div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="stat-label" data-i18n="revenue_month">Receita Mês</div>
                     <div class="stat-value" id="statMonth">€0,00</div>
-                    
-                    <!-- Completed Stats -->
-                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
-                        <div class="stat-label" data-i18n="completed">Concluídos Hoje</div>
-                        <div class="stat-value" id="statCompleted" style="color: var(--success);">0</div>
-                    </div>
                 </div>
 
                 <div class="section-header">
@@ -578,10 +604,12 @@
             translations: {
                 pt: {
                     welcome: "Bem-vindo, Boss",
-                    revenue_day: "Receita Hoje",
+                    revenue_today: "Receita de Hoje",
+                    revenue_pending: "Prevista",
+                    revenue_completed: "Concluída",
                     revenue_month: "Receita Mês",
                     appointments: "Atendimentos",
-                    completed: "Concluídos Hoje",
+                    completed: "Concluídos",
                     agenda: "Agenda",
                     clients: "Clientes",
                     vacilao: "Vacilão",
@@ -611,10 +639,12 @@
                 },
                 es: {
                     welcome: "Bienvenido, Jefe",
-                    revenue_day: "Ingresos Hoy",
+                    revenue_today: "Ingresos de Hoy",
+                    revenue_pending: "Previsto",
+                    revenue_completed: "Completado",
                     revenue_month: "Ingresos Mes",
                     appointments: "Atenciones",
-                    completed: "Completados Hoy",
+                    completed: "Completados",
                     agenda: "Agenda",
                     clients: "Clientes",
                     vacilao: "Vacilón",
@@ -652,7 +682,6 @@
                 document.getElementById('clientSearch').placeholder = this.t('search_placeholder');
             },
 
-            // Autenticação
             checkAuth() {
                 if (localStorage.getItem('laMafiaAuth') === 'true') {
                     this.data.isLoggedIn = true;
@@ -686,7 +715,6 @@
                 document.getElementById('loginError').classList.add('hidden');
             },
 
-            // Dados
             loadData() {
                 const saved = localStorage.getItem('laMafiaData');
                 if (saved) {
@@ -699,7 +727,6 @@
                 this.renderAll();
             },
 
-            // Navegação
             navigate(view) {
                 ['Dashboard', 'Agenda', 'Clients', 'Vacilao'].forEach(v => {
                     document.getElementById(`view${v}`).classList.add('hidden');
@@ -717,7 +744,6 @@
                 }
             },
 
-            // Internacionalização
             toggleLanguage() {
                 this.data.lang = this.data.lang === 'pt' ? 'es' : 'pt';
                 document.getElementById('langLabel').textContent = this.data.lang.toUpperCase();
@@ -742,7 +768,6 @@
                 document.getElementById('clientSearch').placeholder = this.t('search_placeholder');
             },
 
-            // Renderização
             renderAll() {
                 this.updateTexts();
                 this.renderStats();
@@ -753,20 +778,30 @@
 
             renderStats() {
                 const today = new Date().toISOString().split('T')[0];
-                const todayAppts = this.data.appointments.filter(a => a.date === today && a.status === 'active');
-                const completedAppts = this.data.appointments.filter(a => a.date === today && a.status === 'completed');
                 
-                const dayRevenue = todayAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
+                // Atendimentos do dia
+                const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
+                const pendingAppts = todayAppts.filter(a => a.status === 'active');
+                const completedAppts = todayAppts.filter(a => a.status === 'completed');
+                
+                // Receitas
+                const pendingRevenue = pendingAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
+                const completedRevenue = completedAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
+                const totalDayRevenue = pendingRevenue + completedRevenue;
+                
                 const monthRevenue = this.data.appointments
-                    .filter(a => a.date.startsWith(today.substring(0, 7)) && a.status === 'active')
+                    .filter(a => a.date.startsWith(today.substring(0, 7)) && a.status !== 'cancelled')
                     .reduce((sum, a) => sum + parseFloat(a.price), 0);
 
-                document.getElementById('statDay').textContent = this.formatCurrency(dayRevenue);
-                document.getElementById('statMonth').textContent = this.formatCurrency(monthRevenue);
                 document.getElementById('statCount').textContent = todayAppts.length;
                 document.getElementById('statCompleted').textContent = completedAppts.length;
                 
-                // Atualiza badge do Vacilão
+                document.getElementById('statDayTotal').textContent = this.formatCurrency(totalDayRevenue);
+                document.getElementById('statPending').textContent = this.formatCurrency(pendingRevenue);
+                document.getElementById('statCompletedRevenue').textContent = this.formatCurrency(completedRevenue);
+                document.getElementById('statMonth').textContent = this.formatCurrency(monthRevenue);
+                
+                // Badge do Vacilão
                 const vacilaoCount = this.data.vacilao.length;
                 if (vacilaoCount > 0) {
                     document.getElementById('vacilaoBadge').textContent = vacilaoCount;
@@ -877,12 +912,10 @@
                 `).join('');
             },
 
-            // Busca de Clientes
             searchClients() {
                 this.renderClients();
             },
 
-            // Mostrar Histórico do Cliente
             showClientHistory(clientName) {
                 const history = this.data.appointments
                     .filter(a => a.client === clientName)
@@ -905,13 +938,11 @@
                 document.getElementById('modalClientHistory').classList.add('active');
             },
 
-            // Filtro de Data
             filterAgenda() {
                 this.data.selectedDate = document.getElementById('agendaDate').value;
                 this.renderAppointments();
             },
 
-            // Ações
             openModal(type, aptId = null) {
                 document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.add('active');
                 
@@ -920,7 +951,6 @@
                     document.getElementById('aptDate').min = today;
                     
                     if (aptId) {
-                        // Modo edição
                         const apt = this.data.appointments.find(a => a.id === aptId);
                         if (apt) {
                             document.getElementById('modalTitle').textContent = this.t('edit_appointment');
@@ -933,7 +963,6 @@
                             document.getElementById('aptNotes').value = apt.notes || '';
                         }
                     } else {
-                        // Modo novo
                         document.getElementById('modalTitle').textContent = this.t('new_appointment');
                         document.getElementById('aptId').value = '';
                         document.getElementById('aptClient').value = '';
@@ -964,7 +993,6 @@
                 }
 
                 if (aptId) {
-                    // Editar existente
                     const aptIndex = this.data.appointments.findIndex(a => a.id === aptId);
                     if (aptIndex !== -1) {
                         this.data.appointments[aptIndex] = {
@@ -974,7 +1002,6 @@
                         };
                     }
                 } else {
-                    // Novo agendamento
                     const newApt = {
                         id: Date.now().toString(),
                         date, time, price, service, client, notes,
@@ -985,7 +1012,6 @@
                     this.data.appointments.push(newApt);
                 }
 
-                // Adicionar/atualizar cliente
                 const clientIndex = this.data.clients.findIndex(c => c.name === client);
                 if (clientIndex === -1) {
                     this.data.clients.push({ name: client, phone: '', lastVisit: date });
@@ -1040,17 +1066,19 @@
 
             exportReport() {
                 const today = new Date().toISOString().split('T')[0];
-                const todayAppts = this.data.appointments.filter(a => a.date === today && a.status === 'active');
-                const completedAppts = this.data.appointments.filter(a => a.date === today && a.status === 'completed');
-                const allToday = [...todayAppts, ...completedAppts];
-                const total = allToday.reduce((sum, a) => sum + parseFloat(a.price), 0);
+                const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
+                const pendingAppts = todayAppts.filter(a => a.status === 'active');
+                const completedAppts = todayAppts.filter(a => a.status === 'completed');
+                const total = todayAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
                 
                 let report = `LA MAFIA BARBEARIA - Fechamento ${this.formatDate(today)}\n\n`;
                 report += `=== RESUMO ===\n`;
-                report += `Total em Dinheiro: ${this.formatCurrency(total)}\n`;
-                report += `Concluídos: ${completedAppts.length}\n`;
+                report += `Receita Prevista: ${this.formatCurrency(pendingAppts.reduce((s, a) => s + parseFloat(a.price), 0))}\n`;
+                report += `Receita Concluída: ${this.formatCurrency(completedAppts.reduce((s, a) => s + parseFloat(a.price), 0))}\n`;
+                report += `Total: ${this.formatCurrency(total)}\n`;
+                report += `Concluídos: ${completedAppts.length}/${todayAppts.length}\n`;
                 report += `\n=== ATENDIMENTOS ===\n`;
-                allToday.forEach(a => {
+                todayAppts.forEach(a => {
                     const status = a.status === 'completed' ? '[OK]' : '[PEND]';
                     report += `${status} ${a.time} - ${a.client} - ${a.service} - €${a.price}\n`;
                     if (a.notes) report += `   Notas: ${a.notes}\n`;
@@ -1067,7 +1095,6 @@
                 this.showToast('Relatório exportado!');
             },
 
-            // Utilitários
             formatCurrency(value) {
                 return new Intl.NumberFormat(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', {
                     style: 'currency',
@@ -1098,7 +1125,6 @@
             }
         };
 
-        // Inicializar app
         app.init();
     </script>
 </body>
