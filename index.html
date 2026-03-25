@@ -20,6 +20,7 @@
             --error: #FF4444;
             --success: #44FF44;
             --warning: #FFAA00;
+            --info: #44AAFF;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; 
@@ -67,6 +68,8 @@
         .btn-icon { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
         .btn-danger { background: var(--error); color: var(--text); }
         .btn-warning { background: var(--warning); color: var(--bg); }
+        .btn-success { background: var(--success); color: var(--bg); }
+        .btn-info { background: var(--info); color: var(--bg); }
 
         /* Cards */
         .card {
@@ -102,9 +105,11 @@
             flex-direction: column;
             padding: 16px 0;
             border-bottom: 1px solid var(--border);
+            position: relative;
         }
         .appointment:last-child { border-bottom: none; }
-        .apt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .appointment.completed { border-left: 3px solid var(--success); padding-left: 12px; }
+        .appointment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         
         .apt-time { 
             background: var(--border); padding: 6px 10px; 
@@ -116,11 +121,28 @@
         .apt-service { color: var(--text-sec); font-size: 13px; margin-left: 22px; margin-top: 4px; }
         .apt-date { color: var(--text-sec); font-size: 12px; margin-top: 4px; margin-left: 22px; }
         .apt-payment { color: var(--text-sec); font-size: 11px; margin-top: 4px; margin-left: 22px; }
+        .apt-notes { color: var(--info); font-size: 11px; margin-top: 4px; margin-left: 22px; font-style: italic; }
         .apt-price { font-weight: 700; font-size: 16px; }
         .apt-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
         .apt-btn { padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
         .apt-btn-cancel { background: var(--border); color: var(--text); }
         .apt-btn-late { background: var(--warning); color: var(--bg); }
+        .apt-btn-edit { background: var(--info); color: var(--bg); }
+        .apt-btn-complete { background: var(--success); color: var(--bg); }
+
+        /* Status Badge */
+        .status-badge {
+            position: absolute;
+            top: 16px;
+            right: 0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .status-completed { background: var(--success); color: var(--bg); }
+        .status-pending { background: var(--border); color: var(--text); }
 
         /* Formulários */
         .form-group { margin-bottom: 16px; }
@@ -325,6 +347,32 @@
         .payment-dinheiro { background: #44AA44; color: #fff; }
         .payment-cartao { background: #4444AA; color: #fff; }
         .payment-bizum { background: #AA44AA; color: #fff; }
+
+        /* Search Box */
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        /* Client History */
+        .client-history {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 12px;
+            color: var(--text-sec);
+        }
     </style>
 </head>
 <body>
@@ -397,6 +445,12 @@
                             <div class="payment-stat-value" id="statBizum">€0</div>
                         </div>
                     </div>
+
+                    <!-- Completed Stats -->
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                        <div class="stat-label" data-i18n="completed">Concluídos Hoje</div>
+                        <div class="stat-value" id="statCompleted" style="color: var(--success);">0</div>
+                    </div>
                 </div>
 
                 <div class="section-header">
@@ -440,6 +494,7 @@
                 <div class="section-header">
                     <div class="section-title" data-i18n="clients">Clientes</div>
                 </div>
+                <input type="text" id="clientSearch" class="search-box" placeholder="🔍 Buscar cliente..." oninput="app.searchClients()">
                 <div class="card" id="clientsList">
                     <div class="empty-state" data-i18n="no_clients">Nenhum cliente cadastrado</div>
                 </div>
@@ -482,13 +537,14 @@
         </div>
     </div>
 
-    <!-- MODAL DE AGENDAMENTO -->
+    <!-- MODAL DE AGENDAMENTO (NOVO/EDITAR) -->
     <div class="modal-overlay" id="modalAppointment">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title" data-i18n="new_appointment">Novo Agendamento</div>
+                <div class="modal-title" id="modalTitle" data-i18n="new_appointment">Novo Agendamento</div>
                 <button class="modal-close" onclick="app.closeModal('appointment')">×</button>
             </div>
+            <input type="hidden" id="aptId">
             <div class="form-group">
                 <label class="form-label" data-i18n="client_name">Nome do Cliente</label>
                 <input type="text" id="aptClient" class="form-input" placeholder="Ex: Carlos Ruiz">
@@ -533,7 +589,22 @@
                     </select>
                 </div>
             </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="notes">Observações</label>
+                <textarea id="aptNotes" class="form-input" rows="3" placeholder="Ex: Cliente prefere corte mais curto nas laterais"></textarea>
+            </div>
             <button class="btn btn-primary" onclick="app.saveAppointment()" data-i18n="save">Salvar</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE HISTÓRICO DO CLIENTE -->
+    <div class="modal-overlay" id="modalClientHistory">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="clientHistoryName">Histórico</div>
+                <button class="modal-close" onclick="app.closeModal('clientHistory')">×</button>
+            </div>
+            <div id="clientHistoryList"></div>
         </div>
     </div>
 
@@ -561,6 +632,7 @@
                     revenue_day: "Receita Hoje",
                     revenue_month: "Receita Mês",
                     appointments: "Atendimentos",
+                    completed: "Concluídos Hoje",
                     agenda: "Agenda",
                     clients: "Clientes",
                     vacilao: "Vacilão",
@@ -568,12 +640,14 @@
                     quick_actions: "Ações Rápidas",
                     export_report: "Exportar Caixa",
                     new_appointment: "Novo Agendamento",
+                    edit_appointment: "Editar Agendamento",
                     client_name: "Nome do Cliente",
                     date: "Data",
                     time: "Horário",
                     price: "Preço (€)",
                     service: "Serviço",
                     payment_method: "Pagamento",
+                    notes: "Observações",
                     cash: "Dinheiro",
                     card: "Cartão",
                     bizum: "Bizum",
@@ -586,15 +660,16 @@
                     deleted: "Removido!",
                     cancelled: "Cancelado!",
                     late_cancelled: "Cancelamento em cima da hora!",
+                    completed_msg: "Atendimento concluído!",
                     error_password: "Senha incorreta",
-                    confirm_cancel: "Cancelar agendamento?",
-                    confirm_late: "Marcar como cancelamento em cima da hora?"
+                    search_placeholder: "🔍 Buscar cliente..."
                 },
                 es: {
                     welcome: "Bienvenido, Jefe",
                     revenue_day: "Ingresos Hoy",
                     revenue_month: "Ingresos Mes",
                     appointments: "Atenciones",
+                    completed: "Completados Hoy",
                     agenda: "Agenda",
                     clients: "Clientes",
                     vacilao: "Vacilón",
@@ -602,12 +677,14 @@
                     quick_actions: "Acciones Rápidas",
                     export_report: "Exportar Caja",
                     new_appointment: "Nueva Cita",
+                    edit_appointment: "Editar Cita",
                     client_name: "Nombre del Cliente",
                     date: "Fecha",
                     time: "Hora",
                     price: "Precio (€)",
                     service: "Servicio",
                     payment_method: "Pago",
+                    notes: "Notas",
                     cash: "Efectivo",
                     card: "Tarjeta",
                     bizum: "Bizum",
@@ -620,9 +697,9 @@
                     deleted: "¡Eliminado!",
                     cancelled: "¡Cancelado!",
                     late_cancelled: "¡Cancelación de última hora!",
+                    completed_msg: "¡Atención completada!",
                     error_password: "Contraseña incorrecta",
-                    confirm_cancel: "¿Cancelar cita?",
-                    confirm_late: "¿Marcar como cancelación de última hora?"
+                    search_placeholder: "🔍 Buscar cliente..."
                 }
             },
 
@@ -631,6 +708,7 @@
                 this.checkAuth();
                 this.updateDate();
                 document.getElementById('agendaDate').value = this.data.selectedDate;
+                document.getElementById('clientSearch').placeholder = this.t('search_placeholder');
             },
 
             // Autenticação
@@ -693,6 +771,8 @@
                     this.renderAppointments();
                 } else if (view === 'vacilao') {
                     this.renderVacilao();
+                } else if (view === 'clients') {
+                    this.renderClients();
                 }
             },
 
@@ -712,12 +792,13 @@
                 document.getElementById('welcomeText').textContent = this.t('welcome');
                 document.querySelectorAll('[data-i18n]').forEach(el => {
                     const key = el.getAttribute('data-i18n');
-                    if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+                    if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {
                         el.placeholder = this.t(key);
                     } else {
                         el.textContent = this.t(key);
                     }
                 });
+                document.getElementById('clientSearch').placeholder = this.t('search_placeholder');
             },
 
             // Renderização
@@ -732,6 +813,7 @@
             renderStats() {
                 const today = new Date().toISOString().split('T')[0];
                 const todayAppts = this.data.appointments.filter(a => a.date === today && a.status === 'active');
+                const completedAppts = this.data.appointments.filter(a => a.date === today && a.status === 'completed');
                 
                 const dayRevenue = todayAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
                 const monthRevenue = this.data.appointments
@@ -746,6 +828,7 @@
                 document.getElementById('statDay').textContent = this.formatCurrency(dayRevenue);
                 document.getElementById('statMonth').textContent = this.formatCurrency(monthRevenue);
                 document.getElementById('statCount').textContent = todayAppts.length;
+                document.getElementById('statCompleted').textContent = completedAppts.length;
                 
                 document.getElementById('statCash').textContent = this.formatCurrency(cashTotal);
                 document.getElementById('statCard').textContent = this.formatCurrency(cardTotal);
@@ -765,13 +848,6 @@
                 document.getElementById('vacilaoCount').textContent = `${vacilaoCount} clientes`;
             },
 
-            getPaymentBadgeClass(payment) {
-                if (payment === 'Dinheiro') return 'payment-dinheiro';
-                if (payment === 'Cartao') return 'payment-cartao';
-                if (payment === 'Bizum') return 'payment-bizum';
-                return '';
-            },
-
             getPaymentIcon(payment) {
                 if (payment === 'Dinheiro') return '💵';
                 if (payment === 'Cartao') return '💳';
@@ -785,7 +861,7 @@
                 this.data.selectedDate = selectedDate;
                 
                 const filteredAppts = this.data.appointments
-                    .filter(a => a.date === selectedDate && a.status === 'active')
+                    .filter(a => a.date === selectedDate && a.status !== 'cancelled')
                     .sort((a, b) => a.time.localeCompare(b.time));
 
                 if (filteredAppts.length === 0) {
@@ -795,9 +871,13 @@
 
                 list.innerHTML = filteredAppts.map((apt) => {
                     const paymentIcon = this.getPaymentIcon(apt.payment);
+                    const isCompleted = apt.status === 'completed';
                     return `
-                    <div class="appointment">
-                        <div class="apt-header">
+                    <div class="appointment ${isCompleted ? 'completed' : ''}">
+                        <span class="status-badge ${isCompleted ? 'status-completed' : 'status-pending'}">
+                            ${isCompleted ? (this.data.lang === 'pt' ? 'CONCLUÍDO' : 'COMPLETADO') : (this.data.lang === 'pt' ? 'PENDENTE' : 'PENDIENTE')}
+                        </span>
+                        <div class="appointment-header">
                             <div class="apt-time">🕒 ${apt.time}</div>
                             <div class="apt-price">${this.formatCurrency(apt.price)}</div>
                         </div>
@@ -806,8 +886,17 @@
                             <div class="apt-service">${apt.service}</div>
                             <div class="apt-date">📅 ${this.formatDate(apt.date)}</div>
                             <div class="apt-payment">${paymentIcon} ${apt.payment}</div>
+                            ${apt.notes ? `<div class="apt-notes">📝 ${apt.notes}</div>` : ''}
                         </div>
                         <div class="apt-actions">
+                            ${!isCompleted ? `
+                                <button class="apt-btn apt-btn-edit" onclick="app.editAppointment('${apt.id}')">
+                                    ✏️ ${this.data.lang === 'pt' ? 'Editar' : 'Editar'}
+                                </button>
+                                <button class="apt-btn apt-btn-complete" onclick="app.completeAppointment('${apt.id}')">
+                                    ✓ ${this.data.lang === 'pt' ? 'Concluir' : 'Completar'}
+                                </button>
+                            ` : ''}
                             <button class="apt-btn apt-btn-cancel" onclick="app.cancelAppointment('${apt.id}', false)">
                                 ❌ ${this.data.lang === 'pt' ? 'Cancelar' : 'Cancelar'}
                             </button>
@@ -821,19 +910,30 @@
 
             renderClients() {
                 const list = document.getElementById('clientsList');
-                if (this.data.clients.length === 0) {
+                const searchTerm = document.getElementById('clientSearch').value.toLowerCase();
+                
+                const filteredClients = this.data.clients.filter(c => 
+                    c.name.toLowerCase().includes(searchTerm)
+                );
+
+                if (filteredClients.length === 0) {
                     list.innerHTML = `<div class="empty-state">${this.t('no_clients')}</div>`;
                     return;
                 }
-                list.innerHTML = this.data.clients.map((c, i) => `
+
+                list.innerHTML = filteredClients.map((c, i) => {
+                    const originalIndex = this.data.clients.indexOf(c);
+                    const history = this.data.appointments.filter(a => a.client === c.name);
+                    return `
                     <div class="vacilao-item">
-                        <div class="vacilao-info">
-                            <div class="vacilao-name">${c.name}</div>
+                        <div class="vacilao-info" onclick="app.showClientHistory('${c.name}')" style="cursor: pointer;">
+                            <div class="vacilao-name">${c.name} 👆</div>
                             <div class="vacilao-date">${c.phone || ''} ${c.lastVisit ? '• Última: ' + this.formatDate(c.lastVisit) : ''}</div>
+                            <div class="vacilao-date">${history.length} agendamentos</div>
                         </div>
-                        <button onclick="app.deleteClient(${i})" style="background:none;border:none;color:var(--error);cursor:pointer;">🗑</button>
+                        <button onclick="app.deleteClient(${originalIndex})" style="background:none;border:none;color:var(--error);cursor:pointer;">🗑</button>
                     </div>
-                `).join('');
+                `}).join('');
             },
 
             renderVacilao() {
@@ -854,6 +954,34 @@
                 `).join('');
             },
 
+            // Busca de Clientes
+            searchClients() {
+                this.renderClients();
+            },
+
+            // Mostrar Histórico do Cliente
+            showClientHistory(clientName) {
+                const history = this.data.appointments
+                    .filter(a => a.client === clientName)
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))
+                    .slice(0, 10); // Últimos 10 agendamentos
+
+                document.getElementById('clientHistoryName').textContent = clientName;
+                
+                if (history.length === 0) {
+                    document.getElementById('clientHistoryList').innerHTML = `<div class="empty-state">Sem histórico</div>`;
+                } else {
+                    document.getElementById('clientHistoryList').innerHTML = history.map(h => `
+                        <div class="history-item">
+                            <span>${this.formatDate(h.date)} - ${h.time}</span>
+                            <span>${h.service} - ${this.formatCurrency(h.price)}</span>
+                        </div>
+                    `).join('');
+                }
+                
+                document.getElementById('modalClientHistory').classList.add('active');
+            },
+
             // Filtro de Data
             filterAgenda() {
                 this.data.selectedDate = document.getElementById('agendaDate').value;
@@ -861,12 +989,38 @@
             },
 
             // Ações
-            openModal(type) {
+            openModal(type, aptId = null) {
                 document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.add('active');
-                // Define data mínima como hoje
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('aptDate').min = today;
-                document.getElementById('aptDate').value = today;
+                
+                if (type === 'appointment') {
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('aptDate').min = today;
+                    
+                    if (aptId) {
+                        // Modo edição
+                        const apt = this.data.appointments.find(a => a.id === aptId);
+                        if (apt) {
+                            document.getElementById('modalTitle').textContent = this.t('edit_appointment');
+                            document.getElementById('aptId').value = apt.id;
+                            document.getElementById('aptClient').value = apt.client;
+                            document.getElementById('aptDate').value = apt.date;
+                            document.getElementById('aptTime').value = apt.time;
+                            document.getElementById('aptService').value = apt.service;
+                            document.getElementById('aptPrice').value = apt.price;
+                            document.getElementById('aptPayment').value = apt.payment;
+                            document.getElementById('aptNotes').value = apt.notes || '';
+                        }
+                    } else {
+                        // Modo novo
+                        document.getElementById('modalTitle').textContent = this.t('new_appointment');
+                        document.getElementById('aptId').value = '';
+                        document.getElementById('aptClient').value = '';
+                        document.getElementById('aptDate').value = today;
+                        document.getElementById('aptTime').value = '';
+                        document.getElementById('aptPrice').value = '';
+                        document.getElementById('aptNotes').value = '';
+                    }
+                }
             },
 
             closeModal(type) {
@@ -874,48 +1028,66 @@
             },
 
             saveAppointment() {
+                const aptId = document.getElementById('aptId').value;
                 const client = document.getElementById('aptClient').value;
                 const date = document.getElementById('aptDate').value;
                 const time = document.getElementById('aptTime').value;
                 const price = document.getElementById('aptPrice').value;
                 const service = document.getElementById('aptService').value;
                 const payment = document.getElementById('aptPayment').value;
+                const notes = document.getElementById('aptNotes').value;
 
                 if (!client || !date || !time || !price) {
                     this.showToast('Preencha todos os campos');
                     return;
                 }
 
-                const newApt = {
-                    id: Date.now().toString(),
-                    date,
-                    time,
-                    price,
-                    service,
-                    client,
-                    payment,
-                    status: 'active',
-                    createdAt: new Date().toISOString()
-                };
+                if (aptId) {
+                    // Editar existente
+                    const aptIndex = this.data.appointments.findIndex(a => a.id === aptId);
+                    if (aptIndex !== -1) {
+                        this.data.appointments[aptIndex] = {
+                            ...this.data.appointments[aptIndex],
+                            client, date, time, price, service, payment, notes,
+                            updatedAt: new Date().toISOString()
+                        };
+                    }
+                } else {
+                    // Novo agendamento
+                    const newApt = {
+                        id: Date.now().toString(),
+                        date, time, price, service, client, payment, notes,
+                        status: 'active',
+                        createdAt: new Date().toISOString()
+                    };
+                    this.data.appointments.push(newApt);
+                }
 
-                this.data.appointments.push(newApt);
-
-                // Adicionar cliente se não existir
-                if (!this.data.clients.find(c => c.name === client)) {
+                // Adicionar/atualizar cliente
+                const clientIndex = this.data.clients.findIndex(c => c.name === client);
+                if (clientIndex === -1) {
                     this.data.clients.push({ name: client, phone: '', lastVisit: date });
                 } else {
-                    const clientIndex = this.data.clients.findIndex(c => c.name === client);
                     this.data.clients[clientIndex].lastVisit = date;
                 }
 
                 this.saveData();
                 this.closeModal('appointment');
                 this.showToast(this.t('saved'));
-                
-                // Limpar formulário
-                document.getElementById('aptClient').value = '';
-                document.getElementById('aptTime').value = '';
-                document.getElementById('aptPrice').value = '';
+            },
+
+            editAppointment(aptId) {
+                this.openModal('appointment', aptId);
+            },
+
+            completeAppointment(aptId) {
+                const aptIndex = this.data.appointments.findIndex(a => a.id === aptId);
+                if (aptIndex !== -1) {
+                    this.data.appointments[aptIndex].status = 'completed';
+                    this.data.appointments[aptIndex].completedAt = new Date().toISOString();
+                    this.saveData();
+                    this.showToast(this.t('completed_msg'));
+                }
             },
 
             cancelAppointment(aptId, isLate) {
@@ -949,21 +1121,26 @@
             exportReport() {
                 const today = new Date().toISOString().split('T')[0];
                 const todayAppts = this.data.appointments.filter(a => a.date === today && a.status === 'active');
-                const total = todayAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
+                const completedAppts = this.data.appointments.filter(a => a.date === today && a.status === 'completed');
+                const allToday = [...todayAppts, ...completedAppts];
+                const total = allToday.reduce((sum, a) => sum + parseFloat(a.price), 0);
                 
                 // Totais por método de pagamento
-                const cashTotal = todayAppts.filter(a => a.payment === 'Dinheiro').reduce((sum, a) => sum + parseFloat(a.price), 0);
-                const cardTotal = todayAppts.filter(a => a.payment === 'Cartao').reduce((sum, a) => sum + parseFloat(a.price), 0);
-                const bizumTotal = todayAppts.filter(a => a.payment === 'Bizum').reduce((sum, a) => sum + parseFloat(a.price), 0);
+                const cashTotal = allToday.filter(a => a.payment === 'Dinheiro').reduce((sum, a) => sum + parseFloat(a.price), 0);
+                const cardTotal = allToday.filter(a => a.payment === 'Cartao').reduce((sum, a) => sum + parseFloat(a.price), 0);
+                const bizumTotal = allToday.filter(a => a.payment === 'Bizum').reduce((sum, a) => sum + parseFloat(a.price), 0);
                 
                 let report = `LA MAFIA BARBEARIA - Fechamento ${this.formatDate(today)}\n\n`;
                 report += `=== RESUMO ===\n`;
                 report += `Dinheiro: ${this.formatCurrency(cashTotal)}\n`;
                 report += `Cartão: ${this.formatCurrency(cardTotal)}\n`;
                 report += `Bizum: ${this.formatCurrency(bizumTotal)}\n`;
+                report += `Concluídos: ${completedAppts.length}\n`;
                 report += `\n=== ATENDIMENTOS ===\n`;
-                todayAppts.forEach(a => {
-                    report += `${a.time} - ${a.client} - ${a.service} - ${a.payment} - €${a.price}\n`;
+                allToday.forEach(a => {
+                    const status = a.status === 'completed' ? '[OK]' : '[PEND]';
+                    report += `${status} ${a.time} - ${a.client} - ${a.service} - ${a.payment} - €${a.price}\n`;
+                    if (a.notes) report += `   Notas: ${a.notes}\n`;
                 });
                 report += `\nTOTAL GERAL: ${this.formatCurrency(total)}`;
 
@@ -994,7 +1171,10 @@
             updateDate() {
                 const options = { day: 'numeric', month: 'short', year: 'numeric' };
                 const today = new Date();
-                document.getElementById('currentDate').textContent = today.toLocaleDateString(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', options);
+                const currentDateEl = document.getElementById('currentDate');
+                if (currentDateEl) {
+                    currentDateEl.textContent = today.toLocaleDateString(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', options);
+                }
             },
 
             showToast(message) {
