@@ -83,6 +83,13 @@
         .stat-label { font-size: 11px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
         .stat-value { font-size: 22px; font-weight: 700; margin-top: 6px; }
 
+        /* Payment Stats */
+        .payment-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 16px; }
+        .payment-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; }
+        .payment-stat-icon { font-size: 18px; margin-bottom: 6px; }
+        .payment-stat-label { font-size: 9px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; }
+        .payment-stat-value { font-size: 14px; font-weight: 700; margin-top: 4px; }
+
         /* Lista de Agenda */
         .section-header { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -108,6 +115,7 @@
         .apt-client { font-weight: 600; font-size: 15px; }
         .apt-service { color: var(--text-sec); font-size: 13px; margin-left: 22px; margin-top: 4px; }
         .apt-date { color: var(--text-sec); font-size: 12px; margin-top: 4px; margin-left: 22px; }
+        .apt-payment { color: var(--text-sec); font-size: 11px; margin-top: 4px; margin-left: 22px; }
         .apt-price { font-weight: 700; font-size: 16px; }
         .apt-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
         .apt-btn { padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
@@ -303,6 +311,20 @@
             font-weight: 700;
             text-transform: uppercase;
         }
+
+        /* Payment Method Badge */
+        .payment-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: 8px;
+        }
+        .payment-dinheiro { background: #44AA44; color: #fff; }
+        .payment-cartao { background: #4444AA; color: #fff; }
+        .payment-bizum { background: #AA44AA; color: #fff; }
     </style>
 </head>
 <body>
@@ -356,6 +378,25 @@
                 <div class="card">
                     <div class="stat-label" data-i18n="revenue_month">Receita Mês</div>
                     <div class="stat-value" id="statMonth">€0,00</div>
+                    
+                    <!-- Payment Methods Stats -->
+                    <div class="payment-stats">
+                        <div class="payment-stat">
+                            <div class="payment-stat-icon">💵</div>
+                            <div class="payment-stat-label" data-i18n="cash">Dinheiro</div>
+                            <div class="payment-stat-value" id="statCash">€0</div>
+                        </div>
+                        <div class="payment-stat">
+                            <div class="payment-stat-icon">💳</div>
+                            <div class="payment-stat-label" data-i18n="card">Cartão</div>
+                            <div class="payment-stat-value" id="statCard">€0</div>
+                        </div>
+                        <div class="payment-stat">
+                            <div class="payment-stat-icon">📱</div>
+                            <div class="payment-stat-label" data-i18n="bizum">Bizum</div>
+                            <div class="payment-stat-value" id="statBizum">€0</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="section-header">
@@ -463,22 +504,34 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label" data-i18n="price">Preço (€)</label>
-                <input type="number" id="aptPrice" class="form-input" placeholder="25" step="0.50">
-            </div>
-            <div class="form-group">
                 <label class="form-label" data-i18n="service">Serviço</label>
                 <select id="aptService" class="form-input">
                     <option value="Corte Clássico">Corte Clássico</option>
                     <option value="Corte Niño">Corte Niño</option>
+                    <option value="Corte Moderno">Corte Moderno</option>
+                    <option value="Corte & Barba">Corte & Barba</option>
                     <option value="Corte & Tinte">Corte & Tinte</option>
                     <option value="Corte & Dibujo">Corte & Dibujo</option>
+                    <option value="Combo Corte">Combo Corte</option>
+                    <option value="Combo Corte & Barba">Combo Corte & Barba</option>
                     <option value="Mechas">Mechas</option>
-                    <option value="Combo Mensual">Combo Mensual</option>
                     <option value="Platino">Platino</option>
                     <option value="Alisado">Alisado</option>
-                    <option value="Corte Moderno">Corte Moderno</option>
                 </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" data-i18n="price">Preço (€)</label>
+                    <input type="number" id="aptPrice" class="form-input" placeholder="25" step="0.50">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="payment_method">Pagamento</label>
+                    <select id="aptPayment" class="form-input">
+                        <option value="Dinheiro">💵 Dinheiro</option>
+                        <option value="Cartao">💳 Cartão</option>
+                        <option value="Bizum">📱 Bizum</option>
+                    </select>
+                </div>
             </div>
             <button class="btn btn-primary" onclick="app.saveAppointment()" data-i18n="save">Salvar</button>
         </div>
@@ -520,6 +573,10 @@
                     time: "Horário",
                     price: "Preço (€)",
                     service: "Serviço",
+                    payment_method: "Pagamento",
+                    cash: "Dinheiro",
+                    card: "Cartão",
+                    bizum: "Bizum",
                     save: "Salvar",
                     filter: "Filtrar",
                     no_appointments: "Nenhum agendamento",
@@ -550,6 +607,10 @@
                     time: "Hora",
                     price: "Precio (€)",
                     service: "Servicio",
+                    payment_method: "Pago",
+                    cash: "Efectivo",
+                    card: "Tarjeta",
+                    bizum: "Bizum",
                     save: "Guardar",
                     filter: "Filtrar",
                     no_appointments: "Sin citas",
@@ -677,13 +738,21 @@
                     .filter(a => a.date.startsWith(today.substring(0, 7)) && a.status === 'active')
                     .reduce((sum, a) => sum + parseFloat(a.price), 0);
 
+                // Payment methods stats for today
+                const cashTotal = todayAppts.filter(a => a.payment === 'Dinheiro').reduce((sum, a) => sum + parseFloat(a.price), 0);
+                const cardTotal = todayAppts.filter(a => a.payment === 'Cartao').reduce((sum, a) => sum + parseFloat(a.price), 0);
+                const bizumTotal = todayAppts.filter(a => a.payment === 'Bizum').reduce((sum, a) => sum + parseFloat(a.price), 0);
+
                 document.getElementById('statDay').textContent = this.formatCurrency(dayRevenue);
                 document.getElementById('statMonth').textContent = this.formatCurrency(monthRevenue);
                 document.getElementById('statCount').textContent = todayAppts.length;
                 
+                document.getElementById('statCash').textContent = this.formatCurrency(cashTotal);
+                document.getElementById('statCard').textContent = this.formatCurrency(cardTotal);
+                document.getElementById('statBizum').textContent = this.formatCurrency(bizumTotal);
+                
                 // Atualiza badge do Vacilão
                 const vacilaoCount = this.data.vacilao.length;
-                const badges = document.getElementById('vacilaoBadge') && document.getElementById('navVacilaoBadge');
                 if (vacilaoCount > 0) {
                     document.getElementById('vacilaoBadge').textContent = vacilaoCount;
                     document.getElementById('vacilaoBadge').classList.remove('hidden');
@@ -694,6 +763,20 @@
                     document.getElementById('navVacilaoBadge').classList.add('hidden');
                 }
                 document.getElementById('vacilaoCount').textContent = `${vacilaoCount} clientes`;
+            },
+
+            getPaymentBadgeClass(payment) {
+                if (payment === 'Dinheiro') return 'payment-dinheiro';
+                if (payment === 'Cartao') return 'payment-cartao';
+                if (payment === 'Bizum') return 'payment-bizum';
+                return '';
+            },
+
+            getPaymentIcon(payment) {
+                if (payment === 'Dinheiro') return '💵';
+                if (payment === 'Cartao') return '💳';
+                if (payment === 'Bizum') return '📱';
+                return '';
             },
 
             renderAppointments() {
@@ -710,7 +793,9 @@
                     return;
                 }
 
-                list.innerHTML = filteredAppts.map((apt) => `
+                list.innerHTML = filteredAppts.map((apt) => {
+                    const paymentIcon = this.getPaymentIcon(apt.payment);
+                    return `
                     <div class="appointment">
                         <div class="apt-header">
                             <div class="apt-time">🕒 ${apt.time}</div>
@@ -720,6 +805,7 @@
                             <div class="apt-client">${apt.client}</div>
                             <div class="apt-service">${apt.service}</div>
                             <div class="apt-date">📅 ${this.formatDate(apt.date)}</div>
+                            <div class="apt-payment">${paymentIcon} ${apt.payment}</div>
                         </div>
                         <div class="apt-actions">
                             <button class="apt-btn apt-btn-cancel" onclick="app.cancelAppointment('${apt.id}', false)">
@@ -730,7 +816,7 @@
                             </button>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
             },
 
             renderClients() {
@@ -761,7 +847,7 @@
                         <div class="vacilao-info">
                             <div class="vacilao-name">${v.client}</div>
                             <div class="vacilao-date">📅 ${this.formatDate(v.date)} • 🕒 ${v.time}</div>
-                            <div class="vacilao-date">${v.service} • ${this.formatCurrency(v.price)}</div>
+                            <div class="vacilao-date">${v.service} • ${this.formatCurrency(v.price)} • ${this.getPaymentIcon(v.payment)} ${v.payment}</div>
                         </div>
                         <span class="vacilao-badge">${this.data.lang === 'pt' ? 'VACILOU' : 'FALLÓ'}</span>
                     </div>
@@ -793,6 +879,7 @@
                 const time = document.getElementById('aptTime').value;
                 const price = document.getElementById('aptPrice').value;
                 const service = document.getElementById('aptService').value;
+                const payment = document.getElementById('aptPayment').value;
 
                 if (!client || !date || !time || !price) {
                     this.showToast('Preencha todos os campos');
@@ -806,6 +893,7 @@
                     price,
                     service,
                     client,
+                    payment,
                     status: 'active',
                     createdAt: new Date().toISOString()
                 };
@@ -863,11 +951,21 @@
                 const todayAppts = this.data.appointments.filter(a => a.date === today && a.status === 'active');
                 const total = todayAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
                 
+                // Totais por método de pagamento
+                const cashTotal = todayAppts.filter(a => a.payment === 'Dinheiro').reduce((sum, a) => sum + parseFloat(a.price), 0);
+                const cardTotal = todayAppts.filter(a => a.payment === 'Cartao').reduce((sum, a) => sum + parseFloat(a.price), 0);
+                const bizumTotal = todayAppts.filter(a => a.payment === 'Bizum').reduce((sum, a) => sum + parseFloat(a.price), 0);
+                
                 let report = `LA MAFIA BARBEARIA - Fechamento ${this.formatDate(today)}\n\n`;
+                report += `=== RESUMO ===\n`;
+                report += `Dinheiro: ${this.formatCurrency(cashTotal)}\n`;
+                report += `Cartão: ${this.formatCurrency(cardTotal)}\n`;
+                report += `Bizum: ${this.formatCurrency(bizumTotal)}\n`;
+                report += `\n=== ATENDIMENTOS ===\n`;
                 todayAppts.forEach(a => {
-                    report += `${a.time} - ${a.client} - ${a.service} - €${a.price}\n`;
+                    report += `${a.time} - ${a.client} - ${a.service} - ${a.payment} - €${a.price}\n`;
                 });
-                report += `\nTOTAL: €${total.toFixed(2)}`;
+                report += `\nTOTAL GERAL: ${this.formatCurrency(total)}`;
 
                 const blob = new Blob([report], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
