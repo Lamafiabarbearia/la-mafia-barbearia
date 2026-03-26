@@ -9,11 +9,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="La Mafia">
-    <link rel="apple-touch-icon" href="icon-180.png">
-    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="./icon-180.png">
+    <link rel="manifest" href="./manifest.json">
     
     <!-- Ícone do Navegador -->
-    <link rel="icon" type="image/png" sizes="180x180" href="icon-180.png">
+    <link rel="icon" type="image/png" sizes="180x180" href="./icon-180.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
     
     <title>La Mafia Barbearia</title>
     <style>
@@ -301,6 +302,8 @@
             transition: transform 0.3s;
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.error { border-color: var(--error); }
+        .toast.success { border-color: var(--success); }
 
         /* Date Filter */
         .date-filter {
@@ -404,6 +407,30 @@
             font-size: 12px;
             cursor: pointer;
         }
+
+        /* Backup Section */
+        .backup-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .backup-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .backup-info {
+            font-size: 11px;
+            color: var(--text-sec);
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* Hidden file input */
+        #importFileInput {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -481,6 +508,21 @@
                 <div class="card">
                     <div class="stat-label" data-i18n="revenue_month">Receita Mês</div>
                     <div class="stat-value" id="statMonth">€0,00</div>
+                    
+                    <!-- Backup Section -->
+                    <div class="backup-section">
+                        <div class="stat-label" data-i18n="backup">Backup</div>
+                        <div class="backup-grid">
+                            <button class="btn btn-secondary btn-small" onclick="app.exportBackup()">
+                                📤 <span data-i18n="export">Exportar</span>
+                            </button>
+                            <button class="btn btn-secondary btn-small" onclick="document.getElementById('importFileInput').click()">
+                                📥 <span data-i18n="import">Importar</span>
+                            </button>
+                        </div>
+                        <div class="backup-info" data-i18n="backup_info">Salve seus dados na nuvem (Google Drive, iCloud, etc)</div>
+                        <input type="file" id="importFileInput" accept=".json" onchange="app.importBackup(event)">
+                    </div>
                 </div>
 
                 <div class="section-header">
@@ -628,12 +670,29 @@
         </div>
     </div>
 
+    <!-- MODAL DE CONFIRMAÇÃO DE IMPORTAÇÃO -->
+    <div class="modal-overlay" id="modalConfirmImport">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" data-i18n="confirm_import">Confirmar Importação</div>
+                <button class="modal-close" onclick="app.closeModal('confirmImport')">×</button>
+            </div>
+            <p style="color: var(--text-sec); margin-bottom: 20px; font-size: 14px;" data-i18n="import_warning">
+                ⚠️ Atenção: Isso irá substituir TODOS os dados atuais. Certifique-se de ter um backup antes de continuar.
+            </p>
+            <div class="backup-grid">
+                <button class="btn btn-secondary" onclick="app.closeModal('confirmImport')" data-i18n="cancel">Cancelar</button>
+                <button class="btn btn-danger" onclick="app.confirmImport()" data-i18n="confirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- TOAST -->
     <div class="toast" id="toast"></div>
 
     <script>
         const app = {
-            data: {
+             {
                 appointments: [],
                 clients: [],
                 vacilao: [],
@@ -641,6 +700,8 @@
                 isLoggedIn: false,
                 selectedDate: new Date().toISOString().split('T')[0]
             },
+            
+            importData: null, // Dados temporários para importação
 
             translations: {
                 pt: {
@@ -657,6 +718,14 @@
                     dashboard: "Início",
                     quick_actions: "Ações Rápidas",
                     export_report: "Exportar Caixa",
+                    backup: "Backup",
+                    export: "Exportar",
+                    import: "Importar",
+                    backup_info: "Salve seus dados na nuvem (Google Drive, iCloud, etc)",
+                    confirm_import: "Confirmar Importação",
+                    import_warning: "⚠️ Atenção: Isso irá substituir TODOS os dados atuais. Certifique-se de ter um backup antes de continuar.",
+                    cancel: "Cancelar",
+                    confirm: "Confirmar",
                     new_appointment: "Novo Agendamento",
                     edit_appointment: "Editar Agendamento",
                     client_name: "Nome do Cliente",
@@ -676,7 +745,11 @@
                     late_cancelled: "Cancelamento em cima da hora!",
                     completed_msg: "Atendimento concluído!",
                     error_password: "Senha incorreta",
-                    search_placeholder: "🔍 Buscar cliente..."
+                    search_placeholder: "🔍 Buscar cliente...",
+                    backup_exported: "Backup exportado!",
+                    backup_imported: "Backup importado com sucesso!",
+                    backup_invalid: "Arquivo de backup inválido!",
+                    backup_error: "Erro ao importar backup!"
                 },
                 es: {
                     welcome: "Bienvenido, Jefe",
@@ -692,6 +765,14 @@
                     dashboard: "Inicio",
                     quick_actions: "Acciones Rápidas",
                     export_report: "Exportar Caja",
+                    backup: "Copia de Seguridad",
+                    export: "Exportar",
+                    import: "Importar",
+                    backup_info: "Guarde sus datos en la nube (Google Drive, iCloud, etc)",
+                    confirm_import: "Confirmar Importación",
+                    import_warning: "⚠️ Atención: Esto reemplazará TODOS los datos actuales. Asegúrese de tener una copia de seguridad antes de continuar.",
+                    cancel: "Cancelar",
+                    confirm: "Confirmar",
                     new_appointment: "Nueva Cita",
                     edit_appointment: "Editar Cita",
                     client_name: "Nombre del Cliente",
@@ -711,7 +792,11 @@
                     late_cancelled: "¡Cancelación de última hora!",
                     completed_msg: "¡Atención completada!",
                     error_password: "Contraseña incorrecta",
-                    search_placeholder: "🔍 Buscar cliente..."
+                    search_placeholder: "🔍 Buscar cliente...",
+                    backup_exported: "¡Copia de seguridad exportada!",
+                    backup_imported: "¡Copia de seguridad importada!",
+                    backup_invalid: "¡Archivo de copia de seguridad inválido!",
+                    backup_error: "¡Error al importar copia de seguridad!"
                 }
             },
 
@@ -1103,6 +1188,72 @@
                 this.showToast(this.t('deleted'));
             },
 
+            // ==================== BACKUP FUNCTIONS ====================
+            
+            exportBackup() {
+                const backupData = {
+                    version: '1.0',
+                    exportDate: new Date().toISOString(),
+                     this.data
+                };
+                
+                const jsonString = JSON.stringify(backupData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
+                a.href = url;
+                a.download = `la-mafia-backup-${dateStr}.json`;
+                a.click();
+                
+                URL.revokeObjectURL(url);
+                this.showToast(this.t('backup_exported'), 'success');
+            },
+            
+            importBackup(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const backupData = JSON.parse(e.target.result);
+                        
+                        // Validação básica
+                        if (!backupData.data || !backupData.data.appointments) {
+                            throw new Error('Invalid backup format');
+                        }
+                        
+                        // Armazena dados temporariamente
+                        this.importData = backupData.data;
+                        
+                        // Mostra modal de confirmação
+                        this.openModal('confirmImport');
+                        
+                    } catch (error) {
+                        this.showToast(this.t('backup_invalid'), 'error');
+                    }
+                };
+                reader.onerror = () => {
+                    this.showToast(this.t('backup_error'), 'error');
+                };
+                reader.readAsText(file);
+                
+                // Reset input
+                event.target.value = '';
+            },
+            
+            confirmImport() {
+                if (this.importData) {
+                    this.data = { ...this.data, ...this.importData };
+                    this.saveData();
+                    this.importData = null;
+                    this.closeModal('confirmImport');
+                    this.showToast(this.t('backup_imported'), 'success');
+                }
+            },
+            
             exportReport() {
                 const today = new Date().toISOString().split('T')[0];
                 const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
@@ -1157,7 +1308,6 @@
             },
 
             checkInstallBanner() {
-                // Mostra banner se não estiver instalado como PWA
                 const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
                 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
                 
@@ -1168,10 +1318,12 @@
                 }
             },
 
-            showToast(message) {
+            showToast(message, type = 'info') {
                 const toast = document.getElementById('toast');
                 toast.textContent = message;
-                toast.classList.add('show');
+                toast.className = 'toast show';
+                if (type === 'error') toast.classList.add('error');
+                if (type === 'success') toast.classList.add('success');
                 setTimeout(() => toast.classList.remove('show'), 2000);
             }
         };
