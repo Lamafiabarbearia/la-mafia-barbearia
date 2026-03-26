@@ -832,18 +832,18 @@ color: var(--error);
 </div>
 <div class="form-group">
 <label class="form-label" data-i18n="service">Serviço</label>
-<select id="aptService" class="form-input" onchange="app.autoFillPrice()">
-<option value="Corte Clássico" data-price="18">Corte Clássico - €18</option>
-<option value="Corte Niño" data-price="15">Corte Niño - €15</option>
-<option value="Corte Moderno" data-price="20">Corte Moderno - €20</option>
-<option value="Corte & Barba" data-price="28">Corte & Barba - €28</option>
-<option value="Corte & Tinte" data-price="35">Corte & Tinte - €35</option>
-<option value="Corte & Dibujo" data-price="30">Corte & Dibujo - €30</option>
-<option value="Combo Corte" data-price="25">Combo Corte - €25</option>
-<option value="Combo Corte & Barba" data-price="35">Combo Corte & Barba - €35</option>
-<option value="Mechas" data-price="45">Mechas - €45</option>
-<option value="Platino" data-price="50">Platino - €50</option>
-<option value="Alisado" data-price="60">Alisado - €60</option>
+<select id="aptService" class="form-input">
+<option value="Corte Clássico">Corte Clássico</option>
+<option value="Corte Niño">Corte Niño</option>
+<option value="Corte Moderno">Corte Moderno</option>
+<option value="Corte & Barba">Corte & Barba</option>
+<option value="Corte & Tinte">Corte & Tinte</option>
+<option value="Corte & Dibujo">Corte & Dibujo</option>
+<option value="Combo Corte">Combo Corte</option>
+<option value="Combo Corte & Barba">Combo Corte & Barba</option>
+<option value="Mechas">Mechas</option>
+<option value="Platino">Platino</option>
+<option value="Alisado">Alisado</option>
 </select>
 </div>
 <div class="form-row">
@@ -934,19 +934,6 @@ slotDuration: 30
 importData: null,
 currentFilter: 'all',
 currentSort: 'name',
-servicePrices: {
-'Corte Clássico': 18,
-'Corte Niño': 15,
-'Corte Moderno': 20,
-'Corte & Barba': 28,
-'Corte & Tinte': 35,
-'Corte & Dibujo': 30,
-'Combo Corte': 25,
-'Combo Corte & Barba': 35,
-'Mechas': 45,
-'Platino': 50,
-'Alisado': 60
-},
 translations: {
 pt: {
 welcome: "Bem-vindo, Boss",
@@ -1293,13 +1280,6 @@ this.openModal('appointment');
 document.getElementById('aptTime').value = time;
 document.getElementById('aptDate').value = new Date().toISOString().split('T')[0];
 },
-autoFillPrice() {
-const service = document.getElementById('aptService');
-const price = service.options[service.selectedIndex].getAttribute('data-price');
-if (price) {
-document.getElementById('aptPrice').value = price;
-}
-},
 getClientStats(clientName) {
 const history = this.data.appointments.filter(a => a.client === clientName && a.status !== 'cancelled');
 const visits = history.length;
@@ -1317,7 +1297,6 @@ return 'frequent';
 return 'new';
 }
 },
-// Função para enviar WhatsApp
 sendWhatsApp(client, time, service, date) {
 const msg = this.t('whatsapp_msg')
 .replace('{client}', client)
@@ -1515,7 +1494,6 @@ document.getElementById('aptPrice').value = '';
 document.getElementById('aptTip').value = '';
 document.getElementById('aptNotes').value = '';
 }
-this.autoFillPrice();
 } else if (type === 'client') {
 if (clientId !== null) {
 const client = this.data.clients[clientId];
