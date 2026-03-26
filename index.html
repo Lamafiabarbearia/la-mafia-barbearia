@@ -18,9 +18,6 @@
     
     <title>La Mafia Barbearia</title>
     <style>
-        /* ============================================
-           LA MAFIA BARBEARIA - ESTILO MINIMALISTA B&W
-           ============================================ */
         :root {
             --bg: #000000;
             --surface: #121212;
@@ -105,6 +102,87 @@
         .revenue-pending { color: var(--text); }
         .revenue-completed { color: var(--success); }
 
+        /* Available Slots */
+        .slots-container {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .slots-title {
+            font-size: 12px;
+            color: var(--text-sec);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .slot-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 4px;
+            text-align: center;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .slot-item.available {
+            border-color: var(--success);
+            color: var(--success);
+        }
+        .slot-item.available:hover {
+            background: var(--success);
+            color: var(--bg);
+        }
+        .slot-item.booked {
+            border-color: var(--error);
+            color: var(--text-sec);
+            cursor: not-allowed;
+        }
+        .slot-item.tip {
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        /* Timeline View */
+        .timeline-container {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .timeline-item:last-child { border-bottom: none; }
+        .timeline-time {
+            width: 50px;
+            font-size: 11px;
+            color: var(--text-sec);
+            font-weight: 600;
+        }
+        .timeline-bar {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            margin: 0 10px;
+        }
+        .timeline-bar.available { background: var(--success); opacity: 0.3; }
+        .timeline-bar.booked { background: var(--text); }
+        .timeline-bar.completed { background: var(--success); }
+        .timeline-label {
+            font-size: 11px;
+            color: var(--text-sec);
+            width: 80px;
+            text-align: right;
+        }
+
         .section-header { 
             display: flex; justify-content: space-between; align-items: center; 
             margin: 30px 0 15px 0; 
@@ -132,6 +210,7 @@
         .apt-service { color: var(--text-sec); font-size: 13px; margin-left: 22px; margin-top: 4px; }
         .apt-date { color: var(--text-sec); font-size: 12px; margin-top: 4px; margin-left: 22px; }
         .apt-notes { color: var(--info); font-size: 11px; margin-top: 4px; margin-left: 22px; font-style: italic; }
+        .apt-tip { color: var(--warning); font-size: 11px; margin-top: 4px; margin-left: 22px; font-weight: 600; }
         .apt-price { font-weight: 700; font-size: 16px; }
         .apt-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
         .apt-btn { padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
@@ -403,6 +482,33 @@
         #importFileInput {
             display: none;
         }
+
+        /* Settings Section */
+        .settings-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+        .settings-label {
+            font-size: 13px;
+            color: var(--text-sec);
+        }
+        .settings-input {
+            width: 80px;
+            padding: 6px 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 13px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -469,6 +575,33 @@
                             <div class="revenue-item-value revenue-completed" id="statCompletedRevenue">€0,00</div>
                         </div>
                     </div>
+
+                    <!-- Gorjetas -->
+                    <div class="revenue-split">
+                        <div class="revenue-item">
+                            <div class="revenue-item-label" data-i18n="tips_today">Gorjetas Hoje</div>
+                            <div class="revenue-item-value" id="statTipsToday" style="color: var(--warning);">€0,00</div>
+                        </div>
+                        <div class="revenue-item">
+                            <div class="revenue-item-label" data-i18n="tips_month">Gorjetas Mês</div>
+                            <div class="revenue-item-value" id="statTipsMonth" style="color: var(--warning);">€0,00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Horários Disponíveis -->
+                <div class="card">
+                    <div class="stat-label" data-i18n="available_slots">Horários Disponíveis</div>
+                    <div class="slots-container">
+                        <div class="slots-title" id="slotsDateLabel">Hoje</div>
+                        <div class="slots-grid" id="availableSlotsGrid"></div>
+                    </div>
+                    
+                    <!-- Timeline Visual -->
+                    <div class="timeline-container">
+                        <div class="slots-title" data-i18n="timeline">Linha do Tempo</div>
+                        <div id="timelineView"></div>
+                    </div>
                 </div>
 
                 <div class="card">
@@ -487,6 +620,19 @@
                         </div>
                         <div class="backup-info" data-i18n="backup_info">Salve seus dados na nuvem</div>
                         <input type="file" id="importFileInput" accept=".json" onchange="app.importBackup(event)">
+                    </div>
+
+                    <!-- Configurações -->
+                    <div class="settings-section">
+                        <div class="stat-label" data-i18n="settings">Configurações</div>
+                        <div class="settings-row">
+                            <span class="settings-label" data-i18n="open_time">Abertura</span>
+                            <input type="time" id="settingOpenTime" class="settings-input" value="09:00" onchange="app.saveSettings()">
+                        </div>
+                        <div class="settings-row">
+                            <span class="settings-label" data-i18n="close_time">Fechamento</span>
+                            <input type="time" id="settingCloseTime" class="settings-input" value="20:00" onchange="app.saveSettings()">
+                        </div>
                     </div>
                 </div>
 
@@ -591,23 +737,29 @@
             </div>
             <div class="form-group">
                 <label class="form-label" data-i18n="service">Serviço</label>
-                <select id="aptService" class="form-input">
-                    <option value="Corte Clássico">Corte Clássico</option>
-                    <option value="Corte Niño">Corte Niño</option>
-                    <option value="Corte Moderno">Corte Moderno</option>
-                    <option value="Corte & Barba">Corte & Barba</option>
-                    <option value="Corte & Tinte">Corte & Tinte</option>
-                    <option value="Corte & Dibujo">Corte & Dibujo</option>
-                    <option value="Combo Corte">Combo Corte</option>
-                    <option value="Combo Corte & Barba">Combo Corte & Barba</option>
-                    <option value="Mechas">Mechas</option>
-                    <option value="Platino">Platino</option>
-                    <option value="Alisado">Alisado</option>
+                <select id="aptService" class="form-input" onchange="app.autoFillPrice()">
+                    <option value="Corte Clássico" data-price="18">Corte Clássico - €18</option>
+                    <option value="Corte Niño" data-price="15">Corte Niño - €15</option>
+                    <option value="Corte Moderno" data-price="20">Corte Moderno - €20</option>
+                    <option value="Corte & Barba" data-price="28">Corte & Barba - €28</option>
+                    <option value="Corte & Tinte" data-price="35">Corte & Tinte - €35</option>
+                    <option value="Corte & Dibujo" data-price="30">Corte & Dibujo - €30</option>
+                    <option value="Combo Corte" data-price="25">Combo Corte - €25</option>
+                    <option value="Combo Corte & Barba" data-price="35">Combo Corte & Barba - €35</option>
+                    <option value="Mechas" data-price="45">Mechas - €45</option>
+                    <option value="Platino" data-price="50">Platino - €50</option>
+                    <option value="Alisado" data-price="60">Alisado - €60</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label class="form-label" data-i18n="price">Preço (€)</label>
-                <input type="number" id="aptPrice" class="form-input" placeholder="25" step="0.50">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" data-i18n="price">Preço (€)</label>
+                    <input type="number" id="aptPrice" class="form-input" placeholder="25" step="0.50">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="tip">Gorjeta (€)</label>
+                    <input type="number" id="aptTip" class="form-input" placeholder="0" step="0.50">
+                </div>
             </div>
             <div class="form-group">
                 <label class="form-label" data-i18n="notes">Observações</label>
@@ -653,10 +805,28 @@
                 vacilao: [],
                 lang: 'pt',
                 isLoggedIn: false,
-                selectedDate: new Date().toISOString().split('T')[0]
+                selectedDate: new Date().toISOString().split('T')[0],
+                settings: {
+                    openTime: '09:00',
+                    closeTime: '20:00',
+                    slotDuration: 30
+                }
             },
             
             importData: null,
+            servicePrices: {
+                'Corte Clássico': 18,
+                'Corte Niño': 15,
+                'Corte Moderno': 20,
+                'Corte & Barba': 28,
+                'Corte & Tinte': 35,
+                'Corte & Dibujo': 30,
+                'Combo Corte': 25,
+                'Combo Corte & Barba': 35,
+                'Mechas': 45,
+                'Platino': 50,
+                'Alisado': 60
+            },
 
             translations: {
                 pt: {
@@ -665,6 +835,13 @@
                     revenue_pending: "Prevista",
                     revenue_completed: "Concluída",
                     revenue_month: "Receita Mês",
+                    tips_today: "Gorjetas Hoje",
+                    tips_month: "Gorjetas Mês",
+                    available_slots: "Horários Disponíveis",
+                    timeline: "Linha do Tempo",
+                    settings: "Configurações",
+                    open_time: "Abertura",
+                    close_time: "Fechamento",
                     appointments: "Atendimentos",
                     completed: "Concluídos",
                     agenda: "Agenda",
@@ -687,6 +864,7 @@
                     date: "Data",
                     time: "Horário",
                     price: "Preço (€)",
+                    tip: "Gorjeta (€)",
                     service: "Serviço",
                     notes: "Observações",
                     save: "Salvar",
@@ -712,6 +890,13 @@
                     revenue_pending: "Previsto",
                     revenue_completed: "Completado",
                     revenue_month: "Ingresos Mes",
+                    tips_today: "Propinas Hoy",
+                    tips_month: "Propinas Mes",
+                    available_slots: "Horarios Disponibles",
+                    timeline: "Línea de Tiempo",
+                    settings: "Ajustes",
+                    open_time: "Apertura",
+                    close_time: "Cierre",
                     appointments: "Atenciones",
                     completed: "Completados",
                     agenda: "Agenda",
@@ -734,6 +919,7 @@
                     date: "Fecha",
                     time: "Hora",
                     price: "Precio (€)",
+                    tip: "Propina (€)",
                     service: "Servicio",
                     notes: "Notas",
                     save: "Guardar",
@@ -760,6 +946,8 @@
                 this.checkAuth();
                 document.getElementById('agendaDate').value = this.data.selectedDate;
                 document.getElementById('clientSearch').placeholder = this.t('search_placeholder');
+                document.getElementById('settingOpenTime').value = this.data.settings.openTime;
+                document.getElementById('settingCloseTime').value = this.data.settings.closeTime;
                 this.checkInstallBanner();
             },
 
@@ -799,13 +987,24 @@
             loadData() {
                 const saved = localStorage.getItem('laMafiaData');
                 if (saved) {
-                    this.data = { ...this.data, ...JSON.parse(saved) };
+                    const parsed = JSON.parse(saved);
+                    this.data = { ...this.data, ...parsed };
+                    if (!this.data.settings) {
+                        this.data.settings = { openTime: '09:00', closeTime: '20:00', slotDuration: 30 };
+                    }
                 }
             },
 
             saveData() {
                 localStorage.setItem('laMafiaData', JSON.stringify(this.data));
                 this.renderAll();
+            },
+
+            saveSettings() {
+                this.data.settings.openTime = document.getElementById('settingOpenTime').value;
+                this.data.settings.closeTime = document.getElementById('settingCloseTime').value;
+                this.saveData();
+                this.showToast('Configurações salvas!');
             },
 
             navigate(view) {
@@ -819,6 +1018,7 @@
                 if (view === 'agenda') this.renderAppointments();
                 else if (view === 'vacilao') this.renderVacilao();
                 else if (view === 'clients') this.renderClients();
+                else if (view === 'dashboard') this.renderAvailableSlots();
             },
 
             toggleLanguage() {
@@ -851,6 +1051,7 @@
                 this.renderAppointments();
                 this.renderClients();
                 this.renderVacilao();
+                this.renderAvailableSlots();
             },
 
             renderStats() {
@@ -863,6 +1064,11 @@
                 const completedRevenue = completedAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
                 const totalDayRevenue = pendingRevenue + completedRevenue;
                 
+                const tipsToday = todayAppts.reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
+                const tipsMonth = this.data.appointments
+                    .filter(a => a.date.startsWith(today.substring(0, 7)) && a.status !== 'cancelled')
+                    .reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
+                
                 const monthRevenue = this.data.appointments
                     .filter(a => a.date.startsWith(today.substring(0, 7)) && a.status !== 'cancelled')
                     .reduce((sum, a) => sum + parseFloat(a.price), 0);
@@ -872,6 +1078,8 @@
                 document.getElementById('statDayTotal').textContent = this.formatCurrency(totalDayRevenue);
                 document.getElementById('statPending').textContent = this.formatCurrency(pendingRevenue);
                 document.getElementById('statCompletedRevenue').textContent = this.formatCurrency(completedRevenue);
+                document.getElementById('statTipsToday').textContent = this.formatCurrency(tipsToday);
+                document.getElementById('statTipsMonth').textContent = this.formatCurrency(tipsMonth);
                 document.getElementById('statMonth').textContent = this.formatCurrency(monthRevenue);
                 
                 const vacilaoCount = this.data.vacilao.length;
@@ -885,6 +1093,80 @@
                     document.getElementById('navVacilaoBadge').classList.add('hidden');
                 }
                 document.getElementById('vacilaoCount').textContent = `${vacilaoCount} clientes`;
+            },
+
+            renderAvailableSlots() {
+                const grid = document.getElementById('availableSlotsGrid');
+                const timeline = document.getElementById('timelineView');
+                const today = new Date().toISOString().split('T')[0];
+                
+                document.getElementById('slotsDateLabel').textContent = this.formatDate(today);
+                
+                const openTime = this.data.settings.openTime;
+                const closeTime = this.data.settings.closeTime;
+                const slotDuration = this.data.settings.slotDuration;
+                
+                const bookedTimes = this.data.appointments
+                    .filter(a => a.date === today && a.status !== 'cancelled')
+                    .map(a => a.time);
+                
+                const slots = [];
+                const timelineItems = [];
+                
+                let [openHour, openMin] = openTime.split(':').map(Number);
+                let [closeHour, closeMin] = closeTime.split(':').map(Number);
+                
+                const startTime = openHour * 60 + openMin;
+                const endTime = closeHour * 60 + closeMin;
+                
+                for (let time = startTime; time < endTime; time += slotDuration) {
+                    const h = Math.floor(time / 60);
+                    const m = time % 60;
+                    const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                    
+                    const isBooked = bookedTimes.includes(timeStr);
+                    slots.push({
+                        time: timeStr,
+                        available: !isBooked
+                    });
+                    
+                    timelineItems.push({
+                        time: timeStr,
+                        booked: isBooked,
+                        appointment: this.data.appointments.find(a => a.time === timeStr && a.date === today && a.status !== 'cancelled')
+                    });
+                }
+                
+                // Render slots grid
+                grid.innerHTML = slots.map(slot => `
+                    <div class="slot-item ${slot.available ? 'available' : 'booked'}" 
+                         ${slot.available ? `onclick="app.quickBook('${slot.time}')"` : ''}>
+                        ${slot.time}
+                    </div>
+                `).join('');
+                
+                // Render timeline
+                timeline.innerHTML = timelineItems.map(item => `
+                    <div class="timeline-item">
+                        <div class="timeline-time">${item.time}</div>
+                        <div class="timeline-bar ${item.booked ? (item.appointment?.status === 'completed' ? 'completed' : 'booked') : 'available'}"></div>
+                        <div class="timeline-label">${item.booked ? (item.appointment?.client || 'Ocupado') : 'Livre'}</div>
+                    </div>
+                `).join('');
+            },
+
+            quickBook(time) {
+                this.openModal('appointment');
+                document.getElementById('aptTime').value = time;
+                document.getElementById('aptDate').value = new Date().toISOString().split('T')[0];
+            },
+
+            autoFillPrice() {
+                const service = document.getElementById('aptService');
+                const price = service.options[service.selectedIndex].getAttribute('data-price');
+                if (price) {
+                    document.getElementById('aptPrice').value = price;
+                }
             },
 
             renderAppointments() {
@@ -916,6 +1198,7 @@
                             <div class="apt-client">${apt.client}</div>
                             <div class="apt-service">${apt.service}</div>
                             <div class="apt-date">📅 ${this.formatDate(apt.date)}</div>
+                            ${apt.tip && parseFloat(apt.tip) > 0 ? `<div class="apt-tip">💰 Gorjeta: ${this.formatCurrency(apt.tip)}</div>` : ''}
                             ${apt.notes ? `<div class="apt-notes">📝 ${apt.notes}</div>` : ''}
                         </div>
                         <div class="apt-actions">
@@ -943,10 +1226,11 @@
                 list.innerHTML = filteredClients.map((c, i) => {
                     const originalIndex = this.data.clients.indexOf(c);
                     const history = this.data.appointments.filter(a => a.client === c.name);
+                    const isFrequent = history.length >= 3;
                     return `
                     <div class="vacilao-item">
                         <div class="vacilao-info" onclick="app.showClientHistory('${c.name}')" style="cursor: pointer;">
-                            <div class="vacilao-name">${c.name} 👆</div>
+                            <div class="vacilao-name">${c.name} ${isFrequent ? '⭐' : ''} 👆</div>
                             <div class="vacilao-date">${history.length} agendamentos</div>
                         </div>
                         <button onclick="app.deleteClient(${originalIndex})" style="background:none;border:none;color:var(--error);cursor:pointer;">🗑</button>
@@ -988,7 +1272,7 @@
                     document.getElementById('clientHistoryList').innerHTML = history.map(h => `
                         <div class="history-item">
                             <span>${this.formatDate(h.date)} - ${h.time}</span>
-                            <span>${h.service} - ${this.formatCurrency(h.price)}</span>
+                            <span>${h.service} - ${this.formatCurrency(h.price)}${h.tip ? ` + ${this.formatCurrency(h.tip)}` : ''}</span>
                         </div>
                     `).join('');
                 }
@@ -1018,6 +1302,7 @@
                             document.getElementById('aptTime').value = apt.time;
                             document.getElementById('aptService').value = apt.service;
                             document.getElementById('aptPrice').value = apt.price;
+                            document.getElementById('aptTip').value = apt.tip || '';
                             document.getElementById('aptNotes').value = apt.notes || '';
                         }
                     } else {
@@ -1027,6 +1312,7 @@
                         document.getElementById('aptDate').value = today;
                         document.getElementById('aptTime').value = '';
                         document.getElementById('aptPrice').value = '';
+                        document.getElementById('aptTip').value = '';
                         document.getElementById('aptNotes').value = '';
                     }
                 }
@@ -1043,6 +1329,7 @@
                 const time = document.getElementById('aptTime').value;
                 const price = document.getElementById('aptPrice').value;
                 const service = document.getElementById('aptService').value;
+                const tip = document.getElementById('aptTip').value || '0';
                 const notes = document.getElementById('aptNotes').value;
 
                 if (!client || !date || !time || !price) {
@@ -1055,14 +1342,14 @@
                     if (aptIndex !== -1) {
                         this.data.appointments[aptIndex] = {
                             ...this.data.appointments[aptIndex],
-                            client, date, time, price, service, notes,
+                            client, date, time, price, service, tip, notes,
                             updatedAt: new Date().toISOString()
                         };
                     }
                 } else {
                     const newApt = {
                         id: Date.now().toString(),
-                        date, time, price, service, client, notes,
+                        date, time, price, service, tip, client, notes,
                         payment: 'Dinheiro',
                         status: 'active',
                         createdAt: new Date().toISOString()
@@ -1179,12 +1466,18 @@
                 const today = new Date().toISOString().split('T')[0];
                 const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
                 const total = todayAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
+                const totalTips = todayAppts.reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
                 
                 let report = `LA MAFIA BARBEARIA - Fechamento ${this.formatDate(today)}\n\n`;
-                report += `Total: ${this.formatCurrency(total)}\n`;
+                report += `=== RESUMO ===\n`;
+                report += `Serviços: ${this.formatCurrency(total)}\n`;
+                report += `Gorjetas: ${this.formatCurrency(totalTips)}\n`;
+                report += `TOTAL: ${this.formatCurrency(total + totalTips)}\n`;
                 report += `\n=== ATENDIMENTOS ===\n`;
                 todayAppts.forEach(a => {
-                    report += `${a.time} - ${a.client} - ${a.service} - €${a.price}\n`;
+                    report += `${a.time} - ${a.client} - ${a.service} - €${a.price}`;
+                    if (a.tip && parseFloat(a.tip) > 0) report += ` + €${a.tip} (gorjeta)`;
+                    report += `\n`;
                 });
 
                 const blob = new Blob([report], { type: 'text/plain' });
