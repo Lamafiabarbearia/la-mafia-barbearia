@@ -1,1530 +1,1592 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-    
-    <!-- PWA / iOS Home Screen -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="La Mafia">
-    <link rel="apple-touch-icon" href="./icon-180.png">
-    <link rel="manifest" href="./manifest.json">
-    
-    <!-- Ícone do Navegador -->
-    <link rel="icon" type="image/png" sizes="180x180" href="./icon-180.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
-    
-    <title>La Mafia Barbearia</title>
-    <style>
-        :root {
-            --bg: #000000;
-            --surface: #121212;
-            --border: #333333;
-            --text: #FFFFFF;
-            --text-sec: #A0A0A0;
-            --error: #FF4444;
-            --success: #44FF44;
-            --warning: #FFAA00;
-            --info: #44AAFF;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#000000">
+<!-- PWA / iOS Home Screen -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="La Mafia">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<link rel="manifest" href="./manifest.json">
+<!-- Ícone do Navegador -->
+<link rel="icon" type="image/png" sizes="180x180" href="./icon-180.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+<title>La Mafia Barbearia</title>
+<style>
+:root {
+--bg: #000000;
+--surface: #121212;
+--border: #333333;
+--text: #FFFFFF;
+--text-sec: #A0A0A0;
+--error: #FF4444;
+--success: #44FF44;
+--warning: #FFAA00;
+--info: #44AAFF;
+--gold: #FFD700;
+}
+* { margin: 0; padding: 0; box-sizing: border-box;
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+-webkit-tap-highlight-color: transparent; }
+body {
+background-color: var(--bg);
+color: var(--text);
+min-height: 100vh;
+padding-bottom: 80px;
+}
+.app { max-width: 480px; margin: 0 auto; padding: 20px; }
+.header {
+display: flex; justify-content: space-between; align-items: center;
+padding: 20px 0 30px 0; border-bottom: 1px solid var(--border);
+margin-bottom: 25px;
+}
+.brand { font-size: 11px; text-transform: uppercase; color: var(--text-sec); letter-spacing: 2px; font-weight: 700; }
+.title { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-top: 5px; }
+.header-actions { display: flex; gap: 10px; }
+.btn {
+padding: 14px 20px;
+border-radius: 10px;
+border: none;
+font-weight: 700;
+font-size: 15px;
+cursor: pointer;
+transition: opacity 0.2s;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+}
+.btn:active { opacity: 0.7; }
+.btn-primary { background: var(--text); color: var(--bg); width: 100%; }
+.btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+.btn-small { padding: 8px 12px; font-size: 12px; }
+.btn-icon { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
+.btn-danger { background: var(--error); color: var(--text); }
+.btn-warning { background: var(--warning); color: var(--bg); }
+.btn-success { background: var(--success); color: var(--bg); }
+.btn-info { background: var(--info); color: var(--bg); }
+.btn-gold { background: var(--gold); color: var(--bg); }
+.card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 12px;
+padding: 20px;
+margin-bottom: 16px;
+}
+.card.mafioso {
+border: 2px solid var(--gold);
+background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+}
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.stat-icon { font-size: 24px; margin-bottom: 10px; }
+.stat-label { font-size: 11px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+.stat-value { font-size: 22px; font-weight: 700; margin-top: 6px; }
+.revenue-split {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+margin-top: 16px;
+padding-top: 16px;
+border-top: 1px solid var(--border);
+}
+.revenue-item { text-align: center; }
+.revenue-item-label { font-size: 10px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+.revenue-item-value { font-size: 18px; font-weight: 700; }
+.revenue-pending { color: var(--text); }
+.revenue-completed { color: var(--success); }
+.slots-container {
+margin-top: 16px;
+padding-top: 16px;
+border-top: 1px solid var(--border);
+}
+.slots-title {
+font-size: 12px;
+color: var(--text-sec);
+text-transform: uppercase;
+font-weight: 600;
+margin-bottom: 12px;
+}
+.slots-grid {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 8px;
+}
+.slot-item {
+background: var(--bg);
+border: 1px solid var(--border);
+border-radius: 6px;
+padding: 8px 4px;
+text-align: center;
+font-size: 11px;
+cursor: pointer;
+transition: all 0.2s;
+}
+.slot-item.available {
+border-color: var(--success);
+color: var(--success);
+}
+.slot-item.available:hover {
+background: var(--success);
+color: var(--bg);
+}
+.slot-item.booked {
+border-color: var(--error);
+color: var(--text-sec);
+cursor: not-allowed;
+}
+.timeline-container {
+margin-top: 16px;
+padding-top: 16px;
+border-top: 1px solid var(--border);
+}
+.timeline-item {
+display: flex;
+align-items: center;
+padding: 8px 0;
+border-bottom: 1px solid var(--border);
+}
+.timeline-item:last-child { border-bottom: none; }
+.timeline-time {
+width: 50px;
+font-size: 11px;
+color: var(--text-sec);
+font-weight: 600;
+}
+.timeline-bar {
+flex: 1;
+height: 8px;
+border-radius: 4px;
+margin: 0 10px;
+}
+.timeline-bar.available { background: var(--success); opacity: 0.3; }
+.timeline-bar.booked { background: var(--text); }
+.timeline-bar.completed { background: var(--success); }
+.timeline-label {
+font-size: 11px;
+color: var(--text-sec);
+width: 80px;
+text-align: right;
+}
+.section-header {
+display: flex; justify-content: space-between; align-items: center;
+margin: 30px 0 15px 0;
+}
+.section-title { font-size: 20px; font-weight: 700; }
+.appointment {
+display: flex;
+flex-direction: column;
+padding: 16px 0;
+border-bottom: 1px solid var(--border);
+position: relative;
+}
+.appointment:last-child { border-bottom: none; }
+.appointment.completed { border-left: 3px solid var(--success); padding-left: 12px; }
+.appointment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.apt-time {
+background: var(--border); padding: 6px 10px;
+border-radius: 6px; font-size: 12px; font-weight: 700;
+display: inline-flex; align-items: center; gap: 6px;
+}
+.apt-info { margin-top: 8px; }
+.apt-client { font-weight: 600; font-size: 15px; }
+.apt-service { color: var(--text-sec); font-size: 13px; margin-left: 22px; margin-top: 4px; }
+.apt-date { color: var(--text-sec); font-size: 12px; margin-top: 4px; margin-left: 22px; }
+.apt-notes { color: var(--info); font-size: 11px; margin-top: 4px; margin-left: 22px; font-style: italic; }
+.apt-tip { color: var(--warning); font-size: 11px; margin-top: 4px; margin-left: 22px; font-weight: 600; }
+.apt-price { font-weight: 700; font-size: 16px; }
+.apt-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.apt-btn { padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+.apt-btn-cancel { background: var(--border); color: var(--text); }
+.apt-btn-late { background: var(--warning); color: var(--bg); }
+.apt-btn-edit { background: var(--info); color: var(--bg); }
+.apt-btn-complete { background: var(--success); color: var(--bg); }
+.status-badge {
+position: absolute;
+top: 16px;
+right: 0;
+padding: 4px 8px;
+border-radius: 4px;
+font-size: 9px;
+font-weight: 700;
+text-transform: uppercase;
+}
+.status-completed { background: var(--success); color: var(--bg); }
+.status-pending { background: var(--border); color: var(--text); }
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 12px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+.form-input {
+width: 100%;
+padding: 14px;
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 8px;
+color: var(--text);
+font-size: 15px;
+outline: none;
+}
+.form-input:focus { border-color: var(--text); }
+.form-input::placeholder { color: var(--text-sec); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-overlay {
+position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+background: rgba(0,0,0,0.9);
+display: flex; align-items: flex-end;
+z-index: 1000;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.3s;
+}
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+.modal-content {
+background: var(--bg);
+width: 100%;
+max-width: 480px;
+margin: 0 auto;
+border-radius: 20px 20px 0 0;
+padding: 25px;
+border-top: 1px solid var(--border);
+transform: translateY(100%);
+transition: transform 0.3s;
+max-height: 90vh;
+overflow-y: auto;
+}
+.modal-overlay.active .modal-content { transform: translateY(0); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.modal-title { font-size: 20px; font-weight: 700; }
+.modal-close { background: none; border: none; color: var(--text-sec); font-size: 24px; cursor: pointer; }
+.bottom-nav {
+position: fixed;
+bottom: 0;
+left: 0;
+right: 0;
+background: var(--surface);
+border-top: 1px solid var(--border);
+display: flex;
+justify-content: space-around;
+padding: 12px 0;
+max-width: 480px;
+margin: 0 auto;
+}
+.nav-item {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 4px;
+color: var(--text-sec);
+font-size: 10px;
+text-transform: uppercase;
+font-weight: 600;
+cursor: pointer;
+padding: 8px 16px;
+position: relative;
+}
+.nav-item.active { color: var(--text); }
+.nav-icon { font-size: 20px; }
+.nav-badge {
+position: absolute;
+top: 4px;
+right: 10px;
+background: var(--error);
+color: var(--text);
+font-size: 9px;
+padding: 2px 6px;
+border-radius: 10px;
+font-weight: 700;
+}
+.hidden { display: none !important; }
+.mb-20 { margin-bottom: 20px; }
+.empty-state { text-align: center; color: var(--text-sec); padding: 40px 0; }
+.login-screen {
+position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+background: var(--bg);
+display: flex; flex-direction: column;
+justify-content: center; align-items: center;
+padding: 30px;
+z-index: 2000;
+}
+.login-logo { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; }
+.login-subtitle { color: var(--text-sec); margin-bottom: 40px; }
+.login-form { width: 100%; max-width: 320px; }
+.error-msg { color: var(--error); font-size: 13px; margin-top: 10px; text-align: center; }
+.fab {
+position: fixed;
+bottom: 90px;
+right: 20px;
+width: 56px;
+height: 56px;
+background: var(--text);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 28px;
+color: var(--bg);
+box-shadow: 0 4px 15px rgba(255,255,255,0.3);
+cursor: pointer;
+z-index: 100;
+}
+.toast {
+position: fixed;
+top: 20px;
+left: 50%;
+transform: translateX(-50%) translateY(-100px);
+background: var(--surface);
+border: 1px solid var(--border);
+padding: 12px 20px;
+border-radius: 8px;
+font-size: 14px;
+z-index: 3000;
+transition: transform 0.3s;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.error { border-color: var(--error); }
+.toast.success { border-color: var(--success); }
+.date-filter {
+display: flex;
+gap: 10px;
+margin-bottom: 15px;
+align-items: center;
+}
+.date-filter input {
+flex: 1;
+padding: 10px;
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 8px;
+color: var(--text);
+font-size: 14px;
+}
+.date-filter button {
+padding: 10px 16px;
+background: var(--text);
+color: var(--bg);
+border: none;
+border-radius: 8px;
+font-weight: 700;
+cursor: pointer;
+}
+.vacilao-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 16px 0;
+border-bottom: 1px solid var(--border);
+}
+.vacilao-item:last-child { border-bottom: none; }
+.vacilao-info { flex: 1; }
+.vacilao-name { font-weight: 600; font-size: 15px; }
+.vacilao-date { color: var(--text-sec); font-size: 12px; margin-top: 4px; }
+.vacilao-badge {
+background: var(--warning);
+color: var(--bg);
+padding: 4px 8px;
+border-radius: 4px;
+font-size: 10px;
+font-weight: 700;
+text-transform: uppercase;
+}
+.search-box {
+width: 100%;
+padding: 12px;
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 8px;
+color: var(--text);
+font-size: 14px;
+margin-bottom: 15px;
+}
+.history-item {
+display: flex;
+justify-content: space-between;
+padding: 8px 0;
+font-size: 12px;
+color: var(--text-sec);
+}
+.install-banner {
+position: fixed;
+bottom: 80px;
+left: 20px;
+right: 20px;
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 12px;
+padding: 16px;
+display: none;
+align-items: center;
+gap: 12px;
+z-index: 900;
+}
+.install-banner.show { display: flex; }
+.install-banner-icon { font-size: 24px; }
+.install-banner-text { flex: 1; font-size: 13px; }
+.install-banner-btn {
+background: var(--text);
+color: var(--bg);
+border: none;
+padding: 8px 16px;
+border-radius: 6px;
+font-weight: 700;
+font-size: 12px;
+cursor: pointer;
+}
+.backup-section {
+margin-top: 20px;
+padding-top: 20px;
+border-top: 1px solid var(--border);
+}
+.backup-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+margin-top: 12px;
+}
+.backup-info {
+font-size: 11px;
+color: var(--text-sec);
+margin-top: 10px;
+text-align: center;
+}
+#importFileInput {
+display: none;
+}
+.settings-section {
+margin-top: 20px;
+padding-top: 20px;
+border-top: 1px solid var(--border);
+}
+.settings-row {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 10px 0;
+}
+.settings-label {
+font-size: 13px;
+color: var(--text-sec);
+}
+.settings-input {
+width: 80px;
+padding: 6px 10px;
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 6px;
+color: var(--text);
+font-size: 13px;
+text-align: center;
+}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            padding-bottom: 80px;
-        }
+/* Client Filters */
+.client-filters {
+display: flex;
+gap: 8px;
+margin-bottom: 15px;
+flex-wrap: wrap;
+}
+.filter-btn {
+padding: 8px 14px;
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 20px;
+color: var(--text-sec);
+font-size: 12px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.2s;
+}
+.filter-btn.active {
+background: var(--text);
+color: var(--bg);
+border-color: var(--text);
+}
+.filter-btn.mafioso {
+border-color: var(--gold);
+color: var(--gold);
+}
+.filter-btn.mafioso.active {
+background: var(--gold);
+color: var(--bg);
+}
+.sort-select {
+width: 100%;
+padding: 12px;
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 8px;
+color: var(--text);
+font-size: 14px;
+margin-bottom: 15px;
+outline: none;
+}
 
-        .app { max-width: 480px; margin: 0 auto; padding: 20px; }
-
-        .header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 20px 0 30px 0; border-bottom: 1px solid var(--border); 
-            margin-bottom: 25px;
-        }
-        .brand { font-size: 11px; text-transform: uppercase; color: var(--text-sec); letter-spacing: 2px; font-weight: 700; }
-        .title { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-top: 5px; }
-        .header-actions { display: flex; gap: 10px; }
-
-        .btn {
-            padding: 14px 20px;
-            border-radius: 10px;
-            border: none;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .btn:active { opacity: 0.7; }
-        .btn-primary { background: var(--text); color: var(--bg); width: 100%; }
-        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
-        .btn-small { padding: 8px 12px; font-size: 12px; }
-        .btn-icon { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
-        .btn-danger { background: var(--error); color: var(--text); }
-        .btn-warning { background: var(--warning); color: var(--bg); }
-        .btn-success { background: var(--success); color: var(--bg); }
-        .btn-info { background: var(--info); color: var(--bg); }
-
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-        .stat-icon { font-size: 24px; margin-bottom: 10px; }
-        .stat-label { font-size: 11px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-        .stat-value { font-size: 22px; font-weight: 700; margin-top: 6px; }
-
-        .revenue-split { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 12px; 
-            margin-top: 16px; 
-            padding-top: 16px; 
-            border-top: 1px solid var(--border);
-        }
-        .revenue-item { text-align: center; }
-        .revenue-item-label { font-size: 10px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
-        .revenue-item-value { font-size: 18px; font-weight: 700; }
-        .revenue-pending { color: var(--text); }
-        .revenue-completed { color: var(--success); }
-
-        /* Available Slots */
-        .slots-container {
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border);
-        }
-        .slots-title {
-            font-size: 12px;
-            color: var(--text-sec);
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-        .slots-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-        .slot-item {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 8px 4px;
-            text-align: center;
-            font-size: 11px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .slot-item.available {
-            border-color: var(--success);
-            color: var(--success);
-        }
-        .slot-item.available:hover {
-            background: var(--success);
-            color: var(--bg);
-        }
-        .slot-item.booked {
-            border-color: var(--error);
-            color: var(--text-sec);
-            cursor: not-allowed;
-        }
-        .slot-item.tip {
-            border-color: var(--warning);
-            color: var(--warning);
-        }
-
-        /* Timeline View */
-        .timeline-container {
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border);
-        }
-        .timeline-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .timeline-item:last-child { border-bottom: none; }
-        .timeline-time {
-            width: 50px;
-            font-size: 11px;
-            color: var(--text-sec);
-            font-weight: 600;
-        }
-        .timeline-bar {
-            flex: 1;
-            height: 8px;
-            border-radius: 4px;
-            margin: 0 10px;
-        }
-        .timeline-bar.available { background: var(--success); opacity: 0.3; }
-        .timeline-bar.booked { background: var(--text); }
-        .timeline-bar.completed { background: var(--success); }
-        .timeline-label {
-            font-size: 11px;
-            color: var(--text-sec);
-            width: 80px;
-            text-align: right;
-        }
-
-        .section-header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin: 30px 0 15px 0; 
-        }
-        .section-title { font-size: 20px; font-weight: 700; }
-        
-        .appointment {
-            display: flex;
-            flex-direction: column;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border);
-            position: relative;
-        }
-        .appointment:last-child { border-bottom: none; }
-        .appointment.completed { border-left: 3px solid var(--success); padding-left: 12px; }
-        .appointment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        
-        .apt-time { 
-            background: var(--border); padding: 6px 10px; 
-            border-radius: 6px; font-size: 12px; font-weight: 700; 
-            display: inline-flex; align-items: center; gap: 6px;
-        }
-        .apt-info { margin-top: 8px; }
-        .apt-client { font-weight: 600; font-size: 15px; }
-        .apt-service { color: var(--text-sec); font-size: 13px; margin-left: 22px; margin-top: 4px; }
-        .apt-date { color: var(--text-sec); font-size: 12px; margin-top: 4px; margin-left: 22px; }
-        .apt-notes { color: var(--info); font-size: 11px; margin-top: 4px; margin-left: 22px; font-style: italic; }
-        .apt-tip { color: var(--warning); font-size: 11px; margin-top: 4px; margin-left: 22px; font-weight: 600; }
-        .apt-price { font-weight: 700; font-size: 16px; }
-        .apt-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-        .apt-btn { padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
-        .apt-btn-cancel { background: var(--border); color: var(--text); }
-        .apt-btn-late { background: var(--warning); color: var(--bg); }
-        .apt-btn-edit { background: var(--info); color: var(--bg); }
-        .apt-btn-complete { background: var(--success); color: var(--bg); }
-
-        .status-badge {
-            position: absolute;
-            top: 16px;
-            right: 0;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-        .status-completed { background: var(--success); color: var(--bg); }
-        .status-pending { background: var(--border); color: var(--text); }
-
-        .form-group { margin-bottom: 16px; }
-        .form-label { display: block; font-size: 12px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
-        .form-input {
-            width: 100%;
-            padding: 14px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            font-size: 15px;
-            outline: none;
-        }
-        .form-input:focus { border-color: var(--text); }
-        .form-input::placeholder { color: var(--text-sec); }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.9);
-            display: flex; align-items: flex-end;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-content {
-            background: var(--bg);
-            width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
-            border-radius: 20px 20px 0 0;
-            padding: 25px;
-            border-top: 1px solid var(--border);
-            transform: translateY(100%);
-            transition: transform 0.3s;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-overlay.active .modal-content { transform: translateY(0); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-title { font-size: 20px; font-weight: 700; }
-        .modal-close { background: none; border: none; color: var(--text-sec); font-size: 24px; cursor: pointer; }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--surface);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0;
-            max-width: 480px;
-            margin: 0 auto;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: var(--text-sec);
-            font-size: 10px;
-            text-transform: uppercase;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 8px 16px;
-            position: relative;
-        }
-        .nav-item.active { color: var(--text); }
-        .nav-icon { font-size: 20px; }
-        .nav-badge {
-            position: absolute;
-            top: 4px;
-            right: 10px;
-            background: var(--error);
-            color: var(--text);
-            font-size: 9px;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-weight: 700;
-        }
-
-        .hidden { display: none !important; }
-        .mb-20 { margin-bottom: 20px; }
-        .empty-state { text-align: center; color: var(--text-sec); padding: 40px 0; }
-
-        .login-screen {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg);
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            padding: 30px;
-            z-index: 2000;
-        }
-        .login-logo { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; }
-        .login-subtitle { color: var(--text-sec); margin-bottom: 40px; }
-        .login-form { width: 100%; max-width: 320px; }
-        .error-msg { color: var(--error); font-size: 13px; margin-top: 10px; text-align: center; }
-
-        .fab {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            background: var(--text);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            color: var(--bg);
-            box-shadow: 0 4px 15px rgba(255,255,255,0.3);
-            cursor: pointer;
-            z-index: 100;
-        }
-
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            z-index: 3000;
-            transition: transform 0.3s;
-        }
-        .toast.show { transform: translateX(-50%) translateY(0); }
-        .toast.error { border-color: var(--error); }
-        .toast.success { border-color: var(--success); }
-
-        .date-filter {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            align-items: center;
-        }
-        .date-filter input {
-            flex: 1;
-            padding: 10px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            font-size: 14px;
-        }
-        .date-filter button {
-            padding: 10px 16px;
-            background: var(--text);
-            color: var(--bg);
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .vacilao-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .vacilao-item:last-child { border-bottom: none; }
-        .vacilao-info { flex: 1; }
-        .vacilao-name { font-weight: 600; font-size: 15px; }
-        .vacilao-date { color: var(--text-sec); font-size: 12px; margin-top: 4px; }
-        .vacilao-badge {
-            background: var(--warning);
-            color: var(--bg);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 12px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            font-size: 12px;
-            color: var(--text-sec);
-        }
-
-        .install-banner {
-            position: fixed;
-            bottom: 80px;
-            left: 20px;
-            right: 20px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            display: none;
-            align-items: center;
-            gap: 12px;
-            z-index: 900;
-        }
-        .install-banner.show { display: flex; }
-        .install-banner-icon { font-size: 24px; }
-        .install-banner-text { flex: 1; font-size: 13px; }
-        .install-banner-btn { 
-            background: var(--text); 
-            color: var(--bg); 
-            border: none; 
-            padding: 8px 16px; 
-            border-radius: 6px; 
-            font-weight: 700; 
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .backup-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-        }
-        .backup-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 12px;
-        }
-        .backup-info {
-            font-size: 11px;
-            color: var(--text-sec);
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        #importFileInput {
-            display: none;
-        }
-
-        /* Settings Section */
-        .settings-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-        }
-        .settings-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-        }
-        .settings-label {
-            font-size: 13px;
-            color: var(--text-sec);
-        }
-        .settings-input {
-            width: 80px;
-            padding: 6px 10px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text);
-            font-size: 13px;
-            text-align: center;
-        }
-    </style>
+/* Client Card Stats */
+.client-stats {
+display: flex;
+gap: 15px;
+margin-top: 8px;
+}
+.client-stat {
+display: flex;
+flex-direction: column;
+}
+.client-stat-value {
+font-size: 14px;
+font-weight: 700;
+color: var(--text);
+}
+.client-stat-label {
+font-size: 10px;
+color: var(--text-sec);
+text-transform: uppercase;
+}
+.mafioso-badge {
+display: inline-block;
+background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+color: #000;
+padding: 4px 10px;
+border-radius: 12px;
+font-size: 10px;
+font-weight: 800;
+text-transform: uppercase;
+margin-left: 8px;
+}
+.frequent-badge {
+display: inline-block;
+background: var(--info);
+color: #000;
+padding: 4px 10px;
+border-radius: 12px;
+font-size: 10px;
+font-weight: 700;
+text-transform: uppercase;
+margin-left: 8px;
+}
+.new-badge {
+display: inline-block;
+background: var(--success);
+color: #000;
+padding: 4px 10px;
+border-radius: 12px;
+font-size: 10px;
+font-weight: 700;
+text-transform: uppercase;
+margin-left: 8px;
+}
+</style>
 </head>
 <body>
 
-    <div class="install-banner" id="installBanner">
-        <div class="install-banner-icon">📲</div>
-        <div class="install-banner-text">Adicione La Mafia à sua tela inicial!</div>
-        <button class="install-banner-btn" onclick="document.getElementById('installBanner').classList.remove('show')">OK</button>
-    </div>
-
-    <div id="loginScreen" class="login-screen">
-        <div class="login-logo">LA MAFIA</div>
-        <div class="login-subtitle">Área Restrita</div>
-        <div class="login-form">
-            <div class="form-group">
-                <label class="form-label">Senha</label>
-                <input type="password" id="loginPassword" class="form-input" placeholder="••••••">
-            </div>
-            <button class="btn btn-primary" onclick="app.login()">ENTRAR</button>
-            <div id="loginError" class="error-msg hidden"></div>
-        </div>
-    </div>
-
-    <div id="mainApp" class="hidden">
-        <div class="app">
-            <div class="header">
-                <div>
-                    <div class="brand">LA MAFIA</div>
-                    <div class="title" id="welcomeText">Bem-vindo, Boss</div>
-                </div>
-                <div class="header-actions">
-                    <button class="btn btn-secondary btn-small" onclick="app.toggleLanguage()">
-                        <span id="langLabel">PT</span>
-                    </button>
-                    <button class="btn btn-icon btn-secondary" onclick="app.logout()">✕</button>
-                </div>
-            </div>
-
-            <div id="viewDashboard">
-                <div class="stats-grid">
-                    <div class="card">
-                        <div class="stat-icon">📅</div>
-                        <div class="stat-label" data-i18n="appointments">Atendimentos</div>
-                        <div class="stat-value" id="statCount">0</div>
-                    </div>
-                    <div class="card">
-                        <div class="stat-icon">✓</div>
-                        <div class="stat-label" data-i18n="completed">Concluídos</div>
-                        <div class="stat-value" id="statCompleted" style="color: var(--success);">0</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="stat-label" data-i18n="revenue_today">Receita de Hoje</div>
-                    <div class="stat-value" id="statDayTotal" style="font-size: 28px;">€0,00</div>
-                    
-                    <div class="revenue-split">
-                        <div class="revenue-item">
-                            <div class="revenue-item-label" data-i18n="revenue_pending">Prevista</div>
-                            <div class="revenue-item-value revenue-pending" id="statPending">€0,00</div>
-                        </div>
-                        <div class="revenue-item">
-                            <div class="revenue-item-label" data-i18n="revenue_completed">Concluída</div>
-                            <div class="revenue-item-value revenue-completed" id="statCompletedRevenue">€0,00</div>
-                        </div>
-                    </div>
-
-                    <!-- Gorjetas -->
-                    <div class="revenue-split">
-                        <div class="revenue-item">
-                            <div class="revenue-item-label" data-i18n="tips_today">Gorjetas Hoje</div>
-                            <div class="revenue-item-value" id="statTipsToday" style="color: var(--warning);">€0,00</div>
-                        </div>
-                        <div class="revenue-item">
-                            <div class="revenue-item-label" data-i18n="tips_month">Gorjetas Mês</div>
-                            <div class="revenue-item-value" id="statTipsMonth" style="color: var(--warning);">€0,00</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Horários Disponíveis -->
-                <div class="card">
-                    <div class="stat-label" data-i18n="available_slots">Horários Disponíveis</div>
-                    <div class="slots-container">
-                        <div class="slots-title" id="slotsDateLabel">Hoje</div>
-                        <div class="slots-grid" id="availableSlotsGrid"></div>
-                    </div>
-                    
-                    <!-- Timeline Visual -->
-                    <div class="timeline-container">
-                        <div class="slots-title" data-i18n="timeline">Linha do Tempo</div>
-                        <div id="timelineView"></div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="stat-label" data-i18n="revenue_month">Receita Mês</div>
-                    <div class="stat-value" id="statMonth">€0,00</div>
-                    
-                    <div class="backup-section">
-                        <div class="stat-label" data-i18n="backup">Backup</div>
-                        <div class="backup-grid">
-                            <button class="btn btn-secondary btn-small" onclick="app.exportBackup()">
-                                📤 <span data-i18n="export">Exportar</span>
-                            </button>
-                            <button class="btn btn-secondary btn-small" onclick="document.getElementById('importFileInput').click()">
-                                📥 <span data-i18n="import">Importar</span>
-                            </button>
-                        </div>
-                        <div class="backup-info" data-i18n="backup_info">Salve seus dados na nuvem</div>
-                        <input type="file" id="importFileInput" accept=".json" onchange="app.importBackup(event)">
-                    </div>
-
-                    <!-- Configurações -->
-                    <div class="settings-section">
-                        <div class="stat-label" data-i18n="settings">Configurações</div>
-                        <div class="settings-row">
-                            <span class="settings-label" data-i18n="open_time">Abertura</span>
-                            <input type="time" id="settingOpenTime" class="settings-input" value="09:00" onchange="app.saveSettings()">
-                        </div>
-                        <div class="settings-row">
-                            <span class="settings-label" data-i18n="close_time">Fechamento</span>
-                            <input type="time" id="settingCloseTime" class="settings-input" value="20:00" onchange="app.saveSettings()">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section-header">
-                    <div class="section-title" data-i18n="quick_actions">Ações Rápidas</div>
-                </div>
-
-                <button class="btn btn-primary mb-20" onclick="app.navigate('agenda')">
-                    📅 <span data-i18n="agenda">Agenda</span>
-                </button>
-                <button class="btn btn-secondary mb-20" onclick="app.navigate('clients')">
-                    👥 <span data-i18n="clients">Clientes</span>
-                </button>
-                <button class="btn btn-secondary mb-20" onclick="app.navigate('vacilao')">
-                    ⚠️ <span data-i18n="vacilao">Vacilão</span>
-                    <span id="vacilaoBadge" class="nav-badge hidden">0</span>
-                </button>
-                <button class="btn btn-secondary mb-20" onclick="app.exportReport()">
-                    📊 <span data-i18n="export_report">Exportar Caixa</span>
-                </button>
-            </div>
-
-            <div id="viewAgenda" class="hidden">
-                <div class="section-header">
-                    <div class="section-title" data-i18n="agenda">Agenda</div>
-                </div>
-                
-                <div class="date-filter">
-                    <input type="date" id="agendaDate" class="form-input">
-                    <button onclick="app.filterAgenda()" data-i18n="filter">Filtrar</button>
-                </div>
-                
-                <div class="card" id="appointmentsList">
-                    <div class="empty-state" data-i18n="no_appointments">Nenhum agendamento</div>
-                </div>
-            </div>
-
-            <div id="viewClients" class="hidden">
-                <div class="section-header">
-                    <div class="section-title" data-i18n="clients">Clientes</div>
-                </div>
-                <input type="text" id="clientSearch" class="search-box" placeholder="🔍 Buscar cliente..." oninput="app.searchClients()">
-                <div class="card" id="clientsList">
-                    <div class="empty-state" data-i18n="no_clients">Nenhum cliente cadastrado</div>
-                </div>
-            </div>
-
-            <div id="viewVacilao" class="hidden">
-                <div class="section-header">
-                    <div class="section-title">⚠️ <span data-i18n="vacilao">Vacilão</span></div>
-                    <div style="font-size: 12px; color: var(--warning);" id="vacilaoCount">0 clientes</div>
-                </div>
-                <div class="card" id="vacilaoList">
-                    <div class="empty-state" data-i18n="no_vacilao">Nenhum cliente vacilou ainda</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="fab" onclick="app.openModal('appointment')">+</div>
-
-        <div class="bottom-nav">
-            <div class="nav-item active" onclick="app.navigate('dashboard')" id="navDashboard">
-                <div class="nav-icon">🏠</div>
-                <div data-i18n="dashboard">Início</div>
-            </div>
-            <div class="nav-item" onclick="app.navigate('agenda')" id="navAgenda">
-                <div class="nav-icon">📅</div>
-                <div data-i18n="agenda">Agenda</div>
-            </div>
-            <div class="nav-item" onclick="app.navigate('clients')" id="navClients">
-                <div class="nav-icon">👥</div>
-                <div data-i18n="clients">Clientes</div>
-            </div>
-            <div class="nav-item" onclick="app.navigate('vacilao')" id="navVacilao">
-                <div class="nav-icon">⚠️</div>
-                <div data-i18n="vacilao">Vacilão</div>
-                <span id="navVacilaoBadge" class="nav-badge hidden">0</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalAppointment">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title" id="modalTitle" data-i18n="new_appointment">Novo Agendamento</div>
-                <button class="modal-close" onclick="app.closeModal('appointment')">×</button>
-            </div>
-            <input type="hidden" id="aptId">
-            <div class="form-group">
-                <label class="form-label" data-i18n="client_name">Nome do Cliente</label>
-                <input type="text" id="aptClient" class="form-input" placeholder="Ex: Carlos Ruiz">
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label" data-i18n="date">Data</label>
-                    <input type="date" id="aptDate" class="form-input">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" data-i18n="time">Horário</label>
-                    <input type="time" id="aptTime" class="form-input">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-label" data-i18n="service">Serviço</label>
-                <select id="aptService" class="form-input" onchange="app.autoFillPrice()">
-                    <option value="Corte Clássico" data-price="18">Corte Clássico - €18</option>
-                    <option value="Corte Niño" data-price="15">Corte Niño - €15</option>
-                    <option value="Corte Moderno" data-price="20">Corte Moderno - €20</option>
-                    <option value="Corte & Barba" data-price="28">Corte & Barba - €28</option>
-                    <option value="Corte & Tinte" data-price="35">Corte & Tinte - €35</option>
-                    <option value="Corte & Dibujo" data-price="30">Corte & Dibujo - €30</option>
-                    <option value="Combo Corte" data-price="25">Combo Corte - €25</option>
-                    <option value="Combo Corte & Barba" data-price="35">Combo Corte & Barba - €35</option>
-                    <option value="Mechas" data-price="45">Mechas - €45</option>
-                    <option value="Platino" data-price="50">Platino - €50</option>
-                    <option value="Alisado" data-price="60">Alisado - €60</option>
-                </select>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label" data-i18n="price">Preço (€)</label>
-                    <input type="number" id="aptPrice" class="form-input" placeholder="25" step="0.50">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" data-i18n="tip">Gorjeta (€)</label>
-                    <input type="number" id="aptTip" class="form-input" placeholder="0" step="0.50">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-label" data-i18n="notes">Observações</label>
-                <textarea id="aptNotes" class="form-input" rows="3" placeholder="Ex: Cliente prefere corte mais curto"></textarea>
-            </div>
-            <button class="btn btn-primary" onclick="app.saveAppointment()" data-i18n="save">Salvar</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalClientHistory">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title" id="clientHistoryName">Histórico</div>
-                <button class="modal-close" onclick="app.closeModal('clientHistory')">×</button>
-            </div>
-            <div id="clientHistoryList"></div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalConfirmImport">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title" data-i18n="confirm_import">Confirmar Importação</div>
-                <button class="modal-close" onclick="app.closeModal('confirmImport')">×</button>
-            </div>
-            <p style="color: var(--text-sec); margin-bottom: 20px; font-size: 14px;" data-i18n="import_warning">
-                ⚠️ Isso irá substituir TODOS os dados atuais.
-            </p>
-            <div class="backup-grid">
-                <button class="btn btn-secondary" onclick="app.closeModal('confirmImport')" data-i18n="cancel">Cancelar</button>
-                <button class="btn btn-danger" onclick="app.confirmImport()" data-i18n="confirm">Confirmar</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-    <script>
-        const app = {
-            data: {
-                appointments: [],
-                clients: [],
-                vacilao: [],
-                lang: 'pt',
-                isLoggedIn: false,
-                selectedDate: new Date().toISOString().split('T')[0],
-                settings: {
-                    openTime: '09:00',
-                    closeTime: '20:00',
-                    slotDuration: 30
-                }
-            },
-            
-            importData: null,
-            servicePrices: {
-                'Corte Clássico': 18,
-                'Corte Niño': 15,
-                'Corte Moderno': 20,
-                'Corte & Barba': 28,
-                'Corte & Tinte': 35,
-                'Corte & Dibujo': 30,
-                'Combo Corte': 25,
-                'Combo Corte & Barba': 35,
-                'Mechas': 45,
-                'Platino': 50,
-                'Alisado': 60
-            },
-
-            translations: {
-                pt: {
-                    welcome: "Bem-vindo, Boss",
-                    revenue_today: "Receita de Hoje",
-                    revenue_pending: "Prevista",
-                    revenue_completed: "Concluída",
-                    revenue_month: "Receita Mês",
-                    tips_today: "Gorjetas Hoje",
-                    tips_month: "Gorjetas Mês",
-                    available_slots: "Horários Disponíveis",
-                    timeline: "Linha do Tempo",
-                    settings: "Configurações",
-                    open_time: "Abertura",
-                    close_time: "Fechamento",
-                    appointments: "Atendimentos",
-                    completed: "Concluídos",
-                    agenda: "Agenda",
-                    clients: "Clientes",
-                    vacilao: "Vacilão",
-                    dashboard: "Início",
-                    quick_actions: "Ações Rápidas",
-                    export_report: "Exportar Caixa",
-                    backup: "Backup",
-                    export: "Exportar",
-                    import: "Importar",
-                    backup_info: "Salve seus dados na nuvem",
-                    confirm_import: "Confirmar Importação",
-                    import_warning: "⚠️ Isso irá substituir TODOS os dados atuais.",
-                    cancel: "Cancelar",
-                    confirm: "Confirmar",
-                    new_appointment: "Novo Agendamento",
-                    edit_appointment: "Editar Agendamento",
-                    client_name: "Nome do Cliente",
-                    date: "Data",
-                    time: "Horário",
-                    price: "Preço (€)",
-                    tip: "Gorjeta (€)",
-                    service: "Serviço",
-                    notes: "Observações",
-                    save: "Salvar",
-                    filter: "Filtrar",
-                    no_appointments: "Nenhum agendamento",
-                    no_clients: "Nenhum cliente cadastrado",
-                    no_vacilao: "Nenhum cliente vacilou ainda",
-                    saved: "Salvo com sucesso!",
-                    deleted: "Removido!",
-                    cancelled: "Cancelado!",
-                    late_cancelled: "Cancelamento em cima da hora!",
-                    completed_msg: "Atendimento concluído!",
-                    error_password: "Senha incorreta",
-                    search_placeholder: "🔍 Buscar cliente...",
-                    backup_exported: "Backup exportado!",
-                    backup_imported: "Backup importado!",
-                    backup_invalid: "Arquivo de backup inválido!",
-                    backup_error: "Erro ao importar backup!"
-                },
-                es: {
-                    welcome: "Bienvenido, Jefe",
-                    revenue_today: "Ingresos de Hoy",
-                    revenue_pending: "Previsto",
-                    revenue_completed: "Completado",
-                    revenue_month: "Ingresos Mes",
-                    tips_today: "Propinas Hoy",
-                    tips_month: "Propinas Mes",
-                    available_slots: "Horarios Disponibles",
-                    timeline: "Línea de Tiempo",
-                    settings: "Ajustes",
-                    open_time: "Apertura",
-                    close_time: "Cierre",
-                    appointments: "Atenciones",
-                    completed: "Completados",
-                    agenda: "Agenda",
-                    clients: "Clientes",
-                    vacilao: "Vacilón",
-                    dashboard: "Inicio",
-                    quick_actions: "Acciones Rápidas",
-                    export_report: "Exportar Caja",
-                    backup: "Copia de Seguridad",
-                    export: "Exportar",
-                    import: "Importar",
-                    backup_info: "Guarde sus datos en la nube",
-                    confirm_import: "Confirmar Importación",
-                    import_warning: "⚠️ Esto reemplazará TODOS los datos actuales.",
-                    cancel: "Cancelar",
-                    confirm: "Confirmar",
-                    new_appointment: "Nueva Cita",
-                    edit_appointment: "Editar Cita",
-                    client_name: "Nombre del Cliente",
-                    date: "Fecha",
-                    time: "Hora",
-                    price: "Precio (€)",
-                    tip: "Propina (€)",
-                    service: "Servicio",
-                    notes: "Notas",
-                    save: "Guardar",
-                    filter: "Filtrar",
-                    no_appointments: "Sin citas",
-                    no_clients: "Sin clientes registrados",
-                    no_vacilao: "Nadie ha fallado aún",
-                    saved: "¡Guardado con éxito!",
-                    deleted: "¡Eliminado!",
-                    cancelled: "¡Cancelado!",
-                    late_cancelled: "¡Cancelación de última hora!",
-                    completed_msg: "¡Atención completada!",
-                    error_password: "Contraseña incorrecta",
-                    search_placeholder: "🔍 Buscar cliente...",
-                    backup_exported: "¡Copia exportada!",
-                    backup_imported: "¡Copia importada!",
-                    backup_invalid: "¡Archivo inválido!",
-                    backup_error: "¡Error al importar!"
-                }
-            },
-
-            init() {
-                this.loadData();
-                this.checkAuth();
-                document.getElementById('agendaDate').value = this.data.selectedDate;
-                document.getElementById('clientSearch').placeholder = this.t('search_placeholder');
-                document.getElementById('settingOpenTime').value = this.data.settings.openTime;
-                document.getElementById('settingCloseTime').value = this.data.settings.closeTime;
-                this.checkInstallBanner();
-            },
-
-            checkAuth() {
-                if (localStorage.getItem('laMafiaAuth') === 'true') {
-                    this.data.isLoggedIn = true;
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('mainApp').classList.remove('hidden');
-                    this.renderAll();
-                }
-            },
-
-            login() {
-                const password = document.getElementById('loginPassword').value;
-                if (password === 'admin' || password === '1234') {
-                    localStorage.setItem('laMafiaAuth', 'true');
-                    this.data.isLoggedIn = true;
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('mainApp').classList.remove('hidden');
-                    this.renderAll();
-                } else {
-                    const errorEl = document.getElementById('loginError');
-                    errorEl.textContent = this.t('error_password');
-                    errorEl.classList.remove('hidden');
-                }
-            },
-
-            logout() {
-                localStorage.removeItem('laMafiaAuth');
-                this.data.isLoggedIn = false;
-                document.getElementById('loginScreen').classList.remove('hidden');
-                document.getElementById('mainApp').classList.add('hidden');
-                document.getElementById('loginPassword').value = '';
-                document.getElementById('loginError').classList.add('hidden');
-            },
-
-            loadData() {
-                const saved = localStorage.getItem('laMafiaData');
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    this.data = { ...this.data, ...parsed };
-                    if (!this.data.settings) {
-                        this.data.settings = { openTime: '09:00', closeTime: '20:00', slotDuration: 30 };
-                    }
-                }
-            },
-
-            saveData() {
-                localStorage.setItem('laMafiaData', JSON.stringify(this.data));
-                this.renderAll();
-            },
-
-            saveSettings() {
-                this.data.settings.openTime = document.getElementById('settingOpenTime').value;
-                this.data.settings.closeTime = document.getElementById('settingCloseTime').value;
-                this.saveData();
-                this.showToast('Configurações salvas!');
-            },
-
-            navigate(view) {
-                ['Dashboard', 'Agenda', 'Clients', 'Vacilao'].forEach(v => {
-                    document.getElementById(`view${v}`).classList.add('hidden');
-                    document.getElementById(`nav${v}`).classList.remove('active');
-                });
-                document.getElementById(`view${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.remove('hidden');
-                document.getElementById(`nav${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.add('active');
-                
-                if (view === 'agenda') this.renderAppointments();
-                else if (view === 'vacilao') this.renderVacilao();
-                else if (view === 'clients') this.renderClients();
-                else if (view === 'dashboard') this.renderAvailableSlots();
-            },
-
-            toggleLanguage() {
-                this.data.lang = this.data.lang === 'pt' ? 'es' : 'pt';
-                document.getElementById('langLabel').textContent = this.data.lang.toUpperCase();
-                this.updateTexts();
-                this.saveData();
-            },
-
-            t(key) {
-                return this.translations[this.data.lang][key] || key;
-            },
-
-            updateTexts() {
-                document.getElementById('welcomeText').textContent = this.t('welcome');
-                document.querySelectorAll('[data-i18n]').forEach(el => {
-                    const key = el.getAttribute('data-i18n');
-                    if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {
-                        el.placeholder = this.t(key);
-                    } else {
-                        el.textContent = this.t(key);
-                    }
-                });
-                document.getElementById('clientSearch').placeholder = this.t('search_placeholder');
-            },
-
-            renderAll() {
-                this.updateTexts();
-                this.renderStats();
-                this.renderAppointments();
-                this.renderClients();
-                this.renderVacilao();
-                this.renderAvailableSlots();
-            },
-
-            renderStats() {
-                const today = new Date().toISOString().split('T')[0];
-                const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
-                const pendingAppts = todayAppts.filter(a => a.status === 'active');
-                const completedAppts = todayAppts.filter(a => a.status === 'completed');
-                
-                const pendingRevenue = pendingAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
-                const completedRevenue = completedAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
-                const totalDayRevenue = pendingRevenue + completedRevenue;
-                
-                const tipsToday = todayAppts.reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
-                const tipsMonth = this.data.appointments
-                    .filter(a => a.date.startsWith(today.substring(0, 7)) && a.status !== 'cancelled')
-                    .reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
-                
-                const monthRevenue = this.data.appointments
-                    .filter(a => a.date.startsWith(today.substring(0, 7)) && a.status !== 'cancelled')
-                    .reduce((sum, a) => sum + parseFloat(a.price), 0);
-
-                document.getElementById('statCount').textContent = todayAppts.length;
-                document.getElementById('statCompleted').textContent = completedAppts.length;
-                document.getElementById('statDayTotal').textContent = this.formatCurrency(totalDayRevenue);
-                document.getElementById('statPending').textContent = this.formatCurrency(pendingRevenue);
-                document.getElementById('statCompletedRevenue').textContent = this.formatCurrency(completedRevenue);
-                document.getElementById('statTipsToday').textContent = this.formatCurrency(tipsToday);
-                document.getElementById('statTipsMonth').textContent = this.formatCurrency(tipsMonth);
-                document.getElementById('statMonth').textContent = this.formatCurrency(monthRevenue);
-                
-                const vacilaoCount = this.data.vacilao.length;
-                if (vacilaoCount > 0) {
-                    document.getElementById('vacilaoBadge').textContent = vacilaoCount;
-                    document.getElementById('vacilaoBadge').classList.remove('hidden');
-                    document.getElementById('navVacilaoBadge').textContent = vacilaoCount;
-                    document.getElementById('navVacilaoBadge').classList.remove('hidden');
-                } else {
-                    document.getElementById('vacilaoBadge').classList.add('hidden');
-                    document.getElementById('navVacilaoBadge').classList.add('hidden');
-                }
-                document.getElementById('vacilaoCount').textContent = `${vacilaoCount} clientes`;
-            },
-
-            renderAvailableSlots() {
-                const grid = document.getElementById('availableSlotsGrid');
-                const timeline = document.getElementById('timelineView');
-                const today = new Date().toISOString().split('T')[0];
-                
-                document.getElementById('slotsDateLabel').textContent = this.formatDate(today);
-                
-                const openTime = this.data.settings.openTime;
-                const closeTime = this.data.settings.closeTime;
-                const slotDuration = this.data.settings.slotDuration;
-                
-                const bookedTimes = this.data.appointments
-                    .filter(a => a.date === today && a.status !== 'cancelled')
-                    .map(a => a.time);
-                
-                const slots = [];
-                const timelineItems = [];
-                
-                let [openHour, openMin] = openTime.split(':').map(Number);
-                let [closeHour, closeMin] = closeTime.split(':').map(Number);
-                
-                const startTime = openHour * 60 + openMin;
-                const endTime = closeHour * 60 + closeMin;
-                
-                for (let time = startTime; time < endTime; time += slotDuration) {
-                    const h = Math.floor(time / 60);
-                    const m = time % 60;
-                    const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-                    
-                    const isBooked = bookedTimes.includes(timeStr);
-                    slots.push({
-                        time: timeStr,
-                        available: !isBooked
-                    });
-                    
-                    timelineItems.push({
-                        time: timeStr,
-                        booked: isBooked,
-                        appointment: this.data.appointments.find(a => a.time === timeStr && a.date === today && a.status !== 'cancelled')
-                    });
-                }
-                
-                // Render slots grid
-                grid.innerHTML = slots.map(slot => `
-                    <div class="slot-item ${slot.available ? 'available' : 'booked'}" 
-                         ${slot.available ? `onclick="app.quickBook('${slot.time}')"` : ''}>
-                        ${slot.time}
-                    </div>
-                `).join('');
-                
-                // Render timeline
-                timeline.innerHTML = timelineItems.map(item => `
-                    <div class="timeline-item">
-                        <div class="timeline-time">${item.time}</div>
-                        <div class="timeline-bar ${item.booked ? (item.appointment?.status === 'completed' ? 'completed' : 'booked') : 'available'}"></div>
-                        <div class="timeline-label">${item.booked ? (item.appointment?.client || 'Ocupado') : 'Livre'}</div>
-                    </div>
-                `).join('');
-            },
-
-            quickBook(time) {
-                this.openModal('appointment');
-                document.getElementById('aptTime').value = time;
-                document.getElementById('aptDate').value = new Date().toISOString().split('T')[0];
-            },
-
-            autoFillPrice() {
-                const service = document.getElementById('aptService');
-                const price = service.options[service.selectedIndex].getAttribute('data-price');
-                if (price) {
-                    document.getElementById('aptPrice').value = price;
-                }
-            },
-
-            renderAppointments() {
-                const list = document.getElementById('appointmentsList');
-                const selectedDate = document.getElementById('agendaDate').value || this.data.selectedDate;
-                this.data.selectedDate = selectedDate;
-                
-                const filteredAppts = this.data.appointments
-                    .filter(a => a.date === selectedDate && a.status !== 'cancelled')
-                    .sort((a, b) => a.time.localeCompare(b.time));
-
-                if (filteredAppts.length === 0) {
-                    list.innerHTML = `<div class="empty-state">${this.t('no_appointments')}</div>`;
-                    return;
-                }
-
-                list.innerHTML = filteredAppts.map((apt) => {
-                    const isCompleted = apt.status === 'completed';
-                    return `
-                    <div class="appointment ${isCompleted ? 'completed' : ''}">
-                        <span class="status-badge ${isCompleted ? 'status-completed' : 'status-pending'}">
-                            ${isCompleted ? 'CONCLUÍDO' : 'PENDENTE'}
-                        </span>
-                        <div class="appointment-header">
-                            <div class="apt-time">🕒 ${apt.time}</div>
-                            <div class="apt-price">${this.formatCurrency(apt.price)}</div>
-                        </div>
-                        <div class="apt-info">
-                            <div class="apt-client">${apt.client}</div>
-                            <div class="apt-service">${apt.service}</div>
-                            <div class="apt-date">📅 ${this.formatDate(apt.date)}</div>
-                            ${apt.tip && parseFloat(apt.tip) > 0 ? `<div class="apt-tip">💰 Gorjeta: ${this.formatCurrency(apt.tip)}</div>` : ''}
-                            ${apt.notes ? `<div class="apt-notes">📝 ${apt.notes}</div>` : ''}
-                        </div>
-                        <div class="apt-actions">
-                            ${!isCompleted ? `
-                                <button class="apt-btn apt-btn-edit" onclick="app.editAppointment('${apt.id}')">✏️ Editar</button>
-                                <button class="apt-btn apt-btn-complete" onclick="app.completeAppointment('${apt.id}')">✓ Concluir</button>
-                            ` : ''}
-                            <button class="apt-btn apt-btn-cancel" onclick="app.cancelAppointment('${apt.id}', false)">❌ Cancelar</button>
-                            <button class="apt-btn apt-btn-late" onclick="app.cancelAppointment('${apt.id}', true)">⚠️ Em Cima da Hora</button>
-                        </div>
-                    </div>
-                `}).join('');
-            },
-
-            renderClients() {
-                const list = document.getElementById('clientsList');
-                const searchTerm = document.getElementById('clientSearch').value.toLowerCase();
-                const filteredClients = this.data.clients.filter(c => c.name.toLowerCase().includes(searchTerm));
-
-                if (filteredClients.length === 0) {
-                    list.innerHTML = `<div class="empty-state">${this.t('no_clients')}</div>`;
-                    return;
-                }
-
-                list.innerHTML = filteredClients.map((c, i) => {
-                    const originalIndex = this.data.clients.indexOf(c);
-                    const history = this.data.appointments.filter(a => a.client === c.name);
-                    const isFrequent = history.length >= 3;
-                    return `
-                    <div class="vacilao-item">
-                        <div class="vacilao-info" onclick="app.showClientHistory('${c.name}')" style="cursor: pointer;">
-                            <div class="vacilao-name">${c.name} ${isFrequent ? '⭐' : ''} 👆</div>
-                            <div class="vacilao-date">${history.length} agendamentos</div>
-                        </div>
-                        <button onclick="app.deleteClient(${originalIndex})" style="background:none;border:none;color:var(--error);cursor:pointer;">🗑</button>
-                    </div>
-                `}).join('');
-            },
-
-            renderVacilao() {
-                const list = document.getElementById('vacilaoList');
-                if (this.data.vacilao.length === 0) {
-                    list.innerHTML = `<div class="empty-state">${this.t('no_vacilao')}</div>`;
-                    return;
-                }
-                list.innerHTML = this.data.vacilao.map((v) => `
-                    <div class="vacilao-item">
-                        <div class="vacilao-info">
-                            <div class="vacilao-name">${v.client}</div>
-                            <div class="vacilao-date">📅 ${this.formatDate(v.date)} • 🕒 ${v.time}</div>
-                            <div class="vacilao-date">${v.service} • ${this.formatCurrency(v.price)}</div>
-                        </div>
-                        <span class="vacilao-badge">VACILOU</span>
-                    </div>
-                `).join('');
-            },
-
-            searchClients() { this.renderClients(); },
-
-            showClientHistory(clientName) {
-                const history = this.data.appointments
-                    .filter(a => a.client === clientName)
-                    .sort((a, b) => new Date(b.date) - new Date(a.date))
-                    .slice(0, 10);
-
-                document.getElementById('clientHistoryName').textContent = clientName;
-                
-                if (history.length === 0) {
-                    document.getElementById('clientHistoryList').innerHTML = `<div class="empty-state">Sem histórico</div>`;
-                } else {
-                    document.getElementById('clientHistoryList').innerHTML = history.map(h => `
-                        <div class="history-item">
-                            <span>${this.formatDate(h.date)} - ${h.time}</span>
-                            <span>${h.service} - ${this.formatCurrency(h.price)}${h.tip ? ` + ${this.formatCurrency(h.tip)}` : ''}</span>
-                        </div>
-                    `).join('');
-                }
-                
-                document.getElementById('modalClientHistory').classList.add('active');
-            },
-
-            filterAgenda() {
-                this.data.selectedDate = document.getElementById('agendaDate').value;
-                this.renderAppointments();
-            },
-
-            openModal(type, aptId = null) {
-                document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.add('active');
-                
-                if (type === 'appointment') {
-                    const today = new Date().toISOString().split('T')[0];
-                    document.getElementById('aptDate').min = today;
-                    
-                    if (aptId) {
-                        const apt = this.data.appointments.find(a => a.id === aptId);
-                        if (apt) {
-                            document.getElementById('modalTitle').textContent = this.t('edit_appointment');
-                            document.getElementById('aptId').value = apt.id;
-                            document.getElementById('aptClient').value = apt.client;
-                            document.getElementById('aptDate').value = apt.date;
-                            document.getElementById('aptTime').value = apt.time;
-                            document.getElementById('aptService').value = apt.service;
-                            document.getElementById('aptPrice').value = apt.price;
-                            document.getElementById('aptTip').value = apt.tip || '';
-                            document.getElementById('aptNotes').value = apt.notes || '';
-                        }
-                    } else {
-                        document.getElementById('modalTitle').textContent = this.t('new_appointment');
-                        document.getElementById('aptId').value = '';
-                        document.getElementById('aptClient').value = '';
-                        document.getElementById('aptDate').value = today;
-                        document.getElementById('aptTime').value = '';
-                        document.getElementById('aptPrice').value = '';
-                        document.getElementById('aptTip').value = '';
-                        document.getElementById('aptNotes').value = '';
-                    }
-                }
-            },
-
-            closeModal(type) {
-                document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.remove('active');
-            },
-
-            saveAppointment() {
-                const aptId = document.getElementById('aptId').value;
-                const client = document.getElementById('aptClient').value;
-                const date = document.getElementById('aptDate').value;
-                const time = document.getElementById('aptTime').value;
-                const price = document.getElementById('aptPrice').value;
-                const service = document.getElementById('aptService').value;
-                const tip = document.getElementById('aptTip').value || '0';
-                const notes = document.getElementById('aptNotes').value;
-
-                if (!client || !date || !time || !price) {
-                    this.showToast('Preencha todos os campos');
-                    return;
-                }
-
-                if (aptId) {
-                    const aptIndex = this.data.appointments.findIndex(a => a.id === aptId);
-                    if (aptIndex !== -1) {
-                        this.data.appointments[aptIndex] = {
-                            ...this.data.appointments[aptIndex],
-                            client, date, time, price, service, tip, notes,
-                            updatedAt: new Date().toISOString()
-                        };
-                    }
-                } else {
-                    const newApt = {
-                        id: Date.now().toString(),
-                        date, time, price, service, tip, client, notes,
-                        payment: 'Dinheiro',
-                        status: 'active',
-                        createdAt: new Date().toISOString()
-                    };
-                    this.data.appointments.push(newApt);
-                }
-
-                const clientIndex = this.data.clients.findIndex(c => c.name === client);
-                if (clientIndex === -1) {
-                    this.data.clients.push({ name: client, phone: '', lastVisit: date });
-                } else {
-                    this.data.clients[clientIndex].lastVisit = date;
-                }
-
-                this.saveData();
-                this.closeModal('appointment');
-                this.showToast(this.t('saved'));
-            },
-
-            editAppointment(aptId) { this.openModal('appointment', aptId); },
-
-            completeAppointment(aptId) {
-                const aptIndex = this.data.appointments.findIndex(a => a.id === aptId);
-                if (aptIndex !== -1) {
-                    this.data.appointments[aptIndex].status = 'completed';
-                    this.data.appointments[aptIndex].completedAt = new Date().toISOString();
-                    this.saveData();
-                    this.showToast(this.t('completed_msg'));
-                }
-            },
-
-            cancelAppointment(aptId, isLate) {
-                const aptIndex = this.data.appointments.findIndex(a => a.id === aptId);
-                if (aptIndex === -1) return;
-
-                const apt = this.data.appointments[aptIndex];
-
-                if (isLate) {
-                    this.data.vacilao.push({ ...apt, cancelledAt: new Date().toISOString() });
-                    this.showToast(this.t('late_cancelled'));
-                } else {
-                    this.showToast(this.t('cancelled'));
-                }
-
-                this.data.appointments.splice(aptIndex, 1);
-                this.saveData();
-            },
-
-            deleteClient(index) {
-                this.data.clients.splice(index, 1);
-                this.saveData();
-                this.showToast(this.t('deleted'));
-            },
-
-            exportBackup() {
-                const backupData = {
-                    version: '1.0',
-                    exportDate: new Date().toISOString(),
-                    data: this.data
-                };
-                
-                const jsonString = JSON.stringify(backupData, null, 2);
-                const blob = new Blob([jsonString], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                
-                const a = document.createElement('a');
-                const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
-                a.href = url;
-                a.download = `la-mafia-backup-${dateStr}.json`;
-                a.click();
-                
-                URL.revokeObjectURL(url);
-                this.showToast(this.t('backup_exported'), 'success');
-            },
-            
-            importBackup(event) {
-                const file = event.target.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    try {
-                        const backupData = JSON.parse(e.target.result);
-                        
-                        if (!backupData.data || !backupData.data.appointments) {
-                            throw new Error('Invalid backup format');
-                        }
-                        
-                        this.importData = backupData.data;
-                        this.openModal('confirmImport');
-                        
-                    } catch (error) {
-                        this.showToast(this.t('backup_invalid'), 'error');
-                    }
-                };
-                reader.onerror = () => {
-                    this.showToast(this.t('backup_error'), 'error');
-                };
-                reader.readAsText(file);
-                event.target.value = '';
-            },
-            
-            confirmImport() {
-                if (this.importData) {
-                    this.data = { ...this.data, ...this.importData };
-                    this.saveData();
-                    this.importData = null;
-                    this.closeModal('confirmImport');
-                    this.showToast(this.t('backup_imported'), 'success');
-                }
-            },
-            
-            exportReport() {
-                const today = new Date().toISOString().split('T')[0];
-                const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
-                const total = todayAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
-                const totalTips = todayAppts.reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
-                
-                let report = `LA MAFIA BARBEARIA - Fechamento ${this.formatDate(today)}\n\n`;
-                report += `=== RESUMO ===\n`;
-                report += `Serviços: ${this.formatCurrency(total)}\n`;
-                report += `Gorjetas: ${this.formatCurrency(totalTips)}\n`;
-                report += `TOTAL: ${this.formatCurrency(total + totalTips)}\n`;
-                report += `\n=== ATENDIMENTOS ===\n`;
-                todayAppts.forEach(a => {
-                    report += `${a.time} - ${a.client} - ${a.service} - €${a.price}`;
-                    if (a.tip && parseFloat(a.tip) > 0) report += ` + €${a.tip} (gorjeta)`;
-                    report += `\n`;
-                });
-
-                const blob = new Blob([report], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `fechamento-${today}.txt`;
-                a.click();
-                
-                this.showToast('Relatório exportado!');
-            },
-
-            formatCurrency(value) {
-                return new Intl.NumberFormat(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', {
-                    style: 'currency',
-                    currency: 'EUR'
-                }).format(value);
-            },
-
-            formatDate(dateString) {
-                const date = new Date(dateString + 'T00:00:00');
-                const options = { day: 'numeric', month: 'short', year: 'numeric' };
-                return date.toLocaleDateString(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', options);
-            },
-
-            checkInstallBanner() {
-                const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-                
-                if (!isStandalone && isIOS && !localStorage.getItem('laMafiaInstallDismissed')) {
-                    setTimeout(() => {
-                        document.getElementById('installBanner').classList.add('show');
-                    }, 3000);
-                }
-            },
-
-            showToast(message, type = 'info') {
-                const toast = document.getElementById('toast');
-                toast.textContent = message;
-                toast.className = 'toast show';
-                if (type === 'error') toast.classList.add('error');
-                if (type === 'success') toast.classList.add('success');
-                setTimeout(() => toast.classList.remove('show'), 2000);
-            }
-        };
-
-        app.init();
-    </script>
+<div class="install-banner" id="installBanner">
+<div class="install-banner-icon">📲</div>
+<div class="install-banner-text">Adicione La Mafia à sua tela inicial!</div>
+<button class="install-banner-btn" onclick="document.getElementById('installBanner').classList.remove('show')">OK</button>
+</div>
+
+<div id="loginScreen" class="login-screen">
+<div class="login-logo">LA MAFIA</div>
+<div class="login-subtitle">Área Restrita</div>
+<div class="login-form">
+<div class="form-group">
+<label class="form-label">Senha</label>
+<input type="password" id="loginPassword" class="form-input" placeholder="••••••">
+</div>
+<button class="btn btn-primary" onclick="app.login()">ENTRAR</button>
+<div id="loginError" class="error-msg hidden"></div>
+</div>
+</div>
+
+<div id="mainApp" class="hidden">
+<div class="app">
+<div class="header">
+<div>
+<div class="brand">LA MAFIA</div>
+<div class="title" id="welcomeText">Bem-vindo, Boss</div>
+</div>
+<div class="header-actions">
+<button class="btn btn-secondary btn-small" onclick="app.toggleLanguage()">
+<span id="langLabel">PT</span>
+</button>
+<button class="btn btn-icon btn-secondary" onclick="app.logout()">✕</button>
+</div>
+</div>
+
+<div id="viewDashboard">
+<div class="stats-grid">
+<div class="card">
+<div class="stat-icon">📅</div>
+<div class="stat-label" data-i18n="appointments">Atendimentos</div>
+<div class="stat-value" id="statCount">0</div>
+</div>
+<div class="card">
+<div class="stat-icon">✓</div>
+<div class="stat-label" data-i18n="completed">Concluídos</div>
+<div class="stat-value" id="statCompleted" style="color: var(--success);">0</div>
+</div>
+</div>
+
+<div class="card">
+<div class="stat-label" data-i18n="revenue_today">Receita de Hoje</div>
+<div class="stat-value" id="statDayTotal" style="font-size: 28px;">€0,00</div>
+<div class="revenue-split">
+<div class="revenue-item">
+<div class="revenue-item-label" data-i18n="revenue_pending">Prevista</div>
+<div class="revenue-item-value revenue-pending" id="statPending">€0,00</div>
+</div>
+<div class="revenue-item">
+<div class="revenue-item-label" data-i18n="revenue_completed">Concluída</div>
+<div class="revenue-item-value revenue-completed" id="statCompletedRevenue">€0,00</div>
+</div>
+</div>
+<div class="revenue-split">
+<div class="revenue-item">
+<div class="revenue-item-label" data-i18n="tips_today">Gorjetas Hoje</div>
+<div class="revenue-item-value" id="statTipsToday" style="color: var(--warning);">€0,00</div>
+</div>
+<div class="revenue-item">
+<div class="revenue-item-label" data-i18n="tips_month">Gorjetas Mês</div>
+<div class="revenue-item-value" id="statTipsMonth" style="color: var(--warning);">€0,00</div>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div class="stat-label" data-i18n="available_slots">Horários Disponíveis</div>
+<div class="slots-container">
+<div class="slots-title" id="slotsDateLabel">Hoje</div>
+<div class="slots-grid" id="availableSlotsGrid"></div>
+</div>
+<div class="timeline-container">
+<div class="slots-title" data-i18n="timeline">Linha do Tempo</div>
+<div id="timelineView"></div>
+</div>
+</div>
+
+<div class="card">
+<div class="stat-label" data-i18n="revenue_month">Receita Mês</div>
+<div class="stat-value" id="statMonth">€0,00</div>
+<div class="backup-section">
+<div class="stat-label" data-i18n="backup">Backup</div>
+<div class="backup-grid">
+<button class="btn btn-secondary btn-small" onclick="app.exportBackup()">
+📤 <span data-i18n="export">Exportar</span>
+</button>
+<button class="btn btn-secondary btn-small" onclick="document.getElementById('importFileInput').click()">
+📥 <span data-i18n="import">Importar</span>
+</button>
+</div>
+<div class="backup-info" data-i18n="backup_info">Salve seus dados na nuvem</div>
+<input type="file" id="importFileInput" accept=".json" onchange="app.importBackup(event)">
+</div>
+<div class="settings-section">
+<div class="stat-label" data-i18n="settings">Configurações</div>
+<div class="settings-row">
+<span class="settings-label" data-i18n="open_time">Abertura</span>
+<input type="time" id="settingOpenTime" class="settings-input" value="09:00" onchange="app.saveSettings()">
+</div>
+<div class="settings-row">
+<span class="settings-label" data-i18n="close_time">Fechamento</span>
+<input type="time" id="settingCloseTime" class="settings-input" value="20:00" onchange="app.saveSettings()">
+</div>
+</div>
+</div>
+
+<div class="section-header">
+<div class="section-title" data-i18n="quick_actions">Ações Rápidas</div>
+</div>
+
+<button class="btn btn-primary mb-20" onclick="app.navigate('agenda')">
+📅 <span data-i18n="agenda">Agenda</span>
+</button>
+<button class="btn btn-secondary mb-20" onclick="app.navigate('clients')">
+👥 <span data-i18n="clients">Clientes</span>
+</button>
+<button class="btn btn-secondary mb-20" onclick="app.navigate('vacilao')">
+⚠️ <span data-i18n="vacilao">Vacilão</span>
+<span id="vacilaoBadge" class="nav-badge hidden">0</span>
+</button>
+<button class="btn btn-secondary mb-20" onclick="app.exportReport()">
+📊 <span data-i18n="export_report">Exportar Caixa</span>
+</button>
+</div>
+
+<div id="viewAgenda" class="hidden">
+<div class="section-header">
+<div class="section-title" data-i18n="agenda">Agenda</div>
+</div>
+<div class="date-filter">
+<input type="date" id="agendaDate" class="form-input">
+<button onclick="app.filterAgenda()" data-i18n="filter">Filtrar</button>
+</div>
+<div class="card" id="appointmentsList">
+<div class="empty-state" data-i18n="no_appointments">Nenhum agendamento</div>
+</div>
+</div>
+
+<div id="viewClients" class="hidden">
+<div class="section-header">
+<div class="section-title" data-i18n="clients">Clientes</div>
+<div style="font-size: 12px; color: var(--gold);" id="mafiosoCount">0 Mafiosos</div>
+</div>
+<input type="text" id="clientSearch" class="search-box" placeholder="🔍 Buscar por nome, telefone ou serviço..." oninput="app.searchClients()">
+
+<!-- Filtros -->
+<div class="client-filters">
+<button class="filter-btn active" onclick="app.filterClients('all', this)" data-i18n="all">Todos</button>
+<button class="filter-btn mafioso" onclick="app.filterClients('mafioso', this)">🎩 Mafiosos</button>
+<button class="filter-btn" onclick="app.filterClients('frequent', this)">⭐ Frequente</button>
+<button class="filter-btn" onclick="app.filterClients('new', this)">🆕 Novos</button>
+</div>
+
+<!-- Ordenação -->
+<select class="sort-select" onchange="app.sortClients(this.value)">
+<option value="name" data-i18n="sort_name">Nome (A-Z)</option>
+<option value="visits" data-i18n="sort_visits">Mais Visitas</option>
+<option value="spent" data-i18n="sort_spent">Mais Gastou</option>
+<option value="recent" data-i18n="sort_recent">Recentes</option>
+</select>
+
+<div class="card" id="clientsList">
+<div class="empty-state" data-i18n="no_clients">Nenhum cliente cadastrado</div>
+</div>
+</div>
+
+<div id="viewVacilao" class="hidden">
+<div class="section-header">
+<div class="section-title">⚠️ <span data-i18n="vacilao">Vacilão</span></div>
+<div style="font-size: 12px; color: var(--warning);" id="vacilaoCount">0 clientes</div>
+</div>
+<div class="card" id="vacilaoList">
+<div class="empty-state" data-i18n="no_vacilao">Nenhum cliente vacilou ainda</div>
+</div>
+</div>
+</div>
+
+<div class="fab" onclick="app.openModal('appointment')">+</div>
+
+<div class="bottom-nav">
+<div class="nav-item active" onclick="app.navigate('dashboard')" id="navDashboard">
+<div class="nav-icon">🏠</div>
+<div data-i18n="dashboard">Início</div>
+</div>
+<div class="nav-item" onclick="app.navigate('agenda')" id="navAgenda">
+<div class="nav-icon">📅</div>
+<div data-i18n="agenda">Agenda</div>
+</div>
+<div class="nav-item" onclick="app.navigate('clients')" id="navClients">
+<div class="nav-icon">👥</div>
+<div data-i18n="clients">Clientes</div>
+</div>
+<div class="nav-item" onclick="app.navigate('vacilao')" id="navVacilao">
+<div class="nav-icon">⚠️</div>
+<div data-i18n="vacilao">Vacilão</div>
+<span id="navVacilaoBadge" class="nav-badge hidden">0</span>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="modalAppointment">
+<div class="modal-content">
+<div class="modal-header">
+<div class="modal-title" id="modalTitle" data-i18n="new_appointment">Novo Agendamento</div>
+<button class="modal-close" onclick="app.closeModal('appointment')">×</button>
+</div>
+<input type="hidden" id="aptId">
+<div class="form-group">
+<label class="form-label" data-i18n="client_name">Nome do Cliente</label>
+<input type="text" id="aptClient" class="form-input" placeholder="Ex: Carlos Ruiz" list="clientSuggestions">
+<datalist id="clientSuggestions"></datalist>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label class="form-label" data-i18n="date">Data</label>
+<input type="date" id="aptDate" class="form-input">
+</div>
+<div class="form-group">
+<label class="form-label" data-i18n="time">Horário</label>
+<input type="time" id="aptTime" class="form-input">
+</div>
+</div>
+<div class="form-group">
+<label class="form-label" data-i18n="service">Serviço</label>
+<select id="aptService" class="form-input" onchange="app.autoFillPrice()">
+<option value="Corte Clássico" data-price="18">Corte Clássico - €18</option>
+<option value="Corte Niño" data-price="15">Corte Niño - €15</option>
+<option value="Corte Moderno" data-price="20">Corte Moderno - €20</option>
+<option value="Corte & Barba" data-price="28">Corte & Barba - €28</option>
+<option value="Corte & Tinte" data-price="35">Corte & Tinte - €35</option>
+<option value="Corte & Dibujo" data-price="30">Corte & Dibujo - €30</option>
+<option value="Combo Corte" data-price="25">Combo Corte - €25</option>
+<option value="Combo Corte & Barba" data-price="35">Combo Corte & Barba - €35</option>
+<option value="Mechas" data-price="45">Mechas - €45</option>
+<option value="Platino" data-price="50">Platino - €50</option>
+<option value="Alisado" data-price="60">Alisado - €60</option>
+</select>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label class="form-label" data-i18n="price">Preço (€)</label>
+<input type="number" id="aptPrice" class="form-input" placeholder="25" step="0.50">
+</div>
+<div class="form-group">
+<label class="form-label" data-i18n="tip">Gorjeta (€)</label>
+<input type="number" id="aptTip" class="form-input" placeholder="0" step="0.50">
+</div>
+</div>
+<div class="form-group">
+<label class="form-label" data-i18n="notes">Observações</label>
+<textarea id="aptNotes" class="form-input" rows="3" placeholder="Ex: Cliente prefere corte mais curto"></textarea>
+</div>
+<button class="btn btn-primary" onclick="app.saveAppointment()" data-i18n="save">Salvar</button>
+</div>
+</div>
+
+<div class="modal-overlay" id="modalClientHistory">
+<div class="modal-content">
+<div class="modal-header">
+<div class="modal-title" id="clientHistoryName">Histórico</div>
+<button class="modal-close" onclick="app.closeModal('clientHistory')">×</button>
+</div>
+<div id="clientHistoryList"></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="modalConfirmImport">
+<div class="modal-content">
+<div class="modal-header">
+<div class="modal-title" data-i18n="confirm_import">Confirmar Importação</div>
+<button class="modal-close" onclick="app.closeModal('confirmImport')">×</button>
+</div>
+<p style="color: var(--text-sec); margin-bottom: 20px; font-size: 14px;" data-i18n="import_warning">
+⚠️ Isso irá substituir TODOS os dados atuais.
+</p>
+<div class="backup-grid">
+<button class="btn btn-secondary" onclick="app.closeModal('confirmImport')" data-i18n="cancel">Cancelar</button>
+<button class="btn btn-danger" onclick="app.confirmImport()" data-i18n="confirm">Confirmar</button>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const app = {
+data: {
+appointments: [],
+clients: [],
+vacilao: [],
+lang: 'pt',
+isLoggedIn: false,
+selectedDate: new Date().toISOString().split('T')[0],
+settings: {
+openTime: '09:00',
+closeTime: '20:00',
+slotDuration: 30
+}
+},
+importData: null,
+currentFilter: 'all',
+currentSort: 'name',
+servicePrices: {
+'Corte Clássico': 18,
+'Corte Niño': 15,
+'Corte Moderno': 20,
+'Corte & Barba': 28,
+'Corte & Tinte': 35,
+'Corte & Dibujo': 30,
+'Combo Corte': 25,
+'Combo Corte & Barba': 35,
+'Mechas': 45,
+'Platino': 50,
+'Alisado': 60
+},
+translations: {
+pt: {
+welcome: "Bem-vindo, Boss",
+revenue_today: "Receita de Hoje",
+revenue_pending: "Prevista",
+revenue_completed: "Concluída",
+revenue_month: "Receita Mês",
+tips_today: "Gorjetas Hoje",
+tips_month: "Gorjetas Mês",
+available_slots: "Horários Disponíveis",
+timeline: "Linha do Tempo",
+settings: "Configurações",
+open_time: "Abertura",
+close_time: "Fechamento",
+appointments: "Atendimentos",
+completed: "Concluídos",
+agenda: "Agenda",
+clients: "Clientes",
+vacilao: "Vacilão",
+dashboard: "Início",
+quick_actions: "Ações Rápidas",
+export_report: "Exportar Caixa",
+backup: "Backup",
+export: "Exportar",
+import: "Importar",
+backup_info: "Salve seus dados na nuvem",
+confirm_import: "Confirmar Importação",
+import_warning: "⚠️ Isso irá substituir TODOS os dados atuais.",
+cancel: "Cancelar",
+confirm: "Confirmar",
+new_appointment: "Novo Agendamento",
+edit_appointment: "Editar Agendamento",
+client_name: "Nome do Cliente",
+date: "Data",
+time: "Horário",
+price: "Preço (€)",
+tip: "Gorjeta (€)",
+service: "Serviço",
+notes: "Observações",
+save: "Salvar",
+filter: "Filtrar",
+all: "Todos",
+sort_name: "Nome (A-Z)",
+sort_visits: "Mais Visitas",
+sort_spent: "Mais Gastou",
+sort_recent: "Recentes",
+no_appointments: "Nenhum agendamento",
+no_clients: "Nenhum cliente cadastrado",
+no_vacilao: "Nenhum cliente vacilou ainda",
+saved: "Salvo com sucesso!",
+deleted: "Removido!",
+cancelled: "Cancelado!",
+late_cancelled: "Cancelamento em cima da hora!",
+completed_msg: "Atendimento concluído!",
+error_password: "Senha incorreta",
+search_placeholder: "🔍 Buscar por nome, telefone ou serviço...",
+backup_exported: "Backup exportado!",
+backup_imported: "Backup importado!",
+backup_invalid: "Arquivo de backup inválido!",
+backup_error: "Erro ao importar backup!",
+mafioso: "Mafioso",
+frequent: "Frequente",
+new_client: "Novo"
+},
+es: {
+welcome: "Bienvenido, Jefe",
+revenue_today: "Ingresos de Hoy",
+revenue_pending: "Previsto",
+revenue_completed: "Completado",
+revenue_month: "Ingresos Mes",
+tips_today: "Propinas Hoy",
+tips_month: "Propinas Mes",
+available_slots: "Horarios Disponibles",
+timeline: "Línea de Tiempo",
+settings: "Ajustes",
+open_time: "Apertura",
+close_time: "Cierre",
+appointments: "Atenciones",
+completed: "Completados",
+agenda: "Agenda",
+clients: "Clientes",
+vacilao: "Vacilón",
+dashboard: "Inicio",
+quick_actions: "Acciones Rápidas",
+export_report: "Exportar Caja",
+backup: "Copia de Seguridad",
+export: "Exportar",
+import: "Importar",
+backup_info: "Guarde sus datos en la nube",
+confirm_import: "Confirmar Importación",
+import_warning: "⚠️ Esto reemplazará TODOS los datos actuales.",
+cancel: "Cancelar",
+confirm: "Confirmar",
+new_appointment: "Nueva Cita",
+edit_appointment: "Editar Cita",
+client_name: "Nombre del Cliente",
+date: "Fecha",
+time: "Hora",
+price: "Precio (€)",
+tip: "Propina (€)",
+service: "Servicio",
+notes: "Notas",
+save: "Guardar",
+filter: "Filtrar",
+all: "Todos",
+sort_name: "Nombre (A-Z)",
+sort_visits: "Más Visitas",
+sort_spent: "Más Gastó",
+sort_recent: "Recientes",
+no_appointments: "Sin citas",
+no_clients: "Sin clientes registrados",
+no_vacilao: "Nadie ha fallado aún",
+saved: "¡Guardado con éxito!",
+deleted: "¡Eliminado!",
+cancelled: "¡Cancelado!",
+late_cancelled: "¡Cancelación de última hora!",
+completed_msg: "¡Atención completada!",
+error_password: "Contraseña incorrecta",
+search_placeholder: "🔍 Buscar por nombre, teléfono o servicio...",
+backup_exported: "¡Copia exportada!",
+backup_imported: "¡Copia importada!",
+backup_invalid: "¡Archivo inválido!",
+backup_error: "¡Error al importar!",
+mafioso: "Mafioso",
+frequent: "Frecuente",
+new_client: "Nuevo"
+}
+},
+init() {
+this.loadData();
+this.checkAuth();
+document.getElementById('agendaDate').value = this.data.selectedDate;
+document.getElementById('clientSearch').placeholder = this.t('search_placeholder');
+document.getElementById('settingOpenTime').value = this.data.settings.openTime;
+document.getElementById('settingCloseTime').value = this.data.settings.closeTime;
+this.checkInstallBanner();
+},
+checkAuth() {
+if (localStorage.getItem('laMafiaAuth') === 'true') {
+this.data.isLoggedIn = true;
+document.getElementById('loginScreen').classList.add('hidden');
+document.getElementById('mainApp').classList.remove('hidden');
+this.renderAll();
+}
+},
+login() {
+const password = document.getElementById('loginPassword').value;
+if (password === 'admin' || password === '1234') {
+localStorage.setItem('laMafiaAuth', 'true');
+this.data.isLoggedIn = true;
+document.getElementById('loginScreen').classList.add('hidden');
+document.getElementById('mainApp').classList.remove('hidden');
+this.renderAll();
+} else {
+const errorEl = document.getElementById('loginError');
+errorEl.textContent = this.t('error_password');
+errorEl.classList.remove('hidden');
+}
+},
+logout() {
+localStorage.removeItem('laMafiaAuth');
+this.data.isLoggedIn = false;
+document.getElementById('loginScreen').classList.remove('hidden');
+document.getElementById('mainApp').classList.add('hidden');
+document.getElementById('loginPassword').value = '';
+document.getElementById('loginError').classList.add('hidden');
+},
+loadData() {
+const saved = localStorage.getItem('laMafiaData');
+if (saved) {
+const parsed = JSON.parse(saved);
+this.data = { ...this.data, ...parsed };
+if (!this.data.settings) {
+this.data.settings = { openTime: '09:00', closeTime: '20:00', slotDuration: 30 };
+}
+}
+},
+saveData() {
+localStorage.setItem('laMafiaData', JSON.stringify(this.data));
+this.renderAll();
+},
+saveSettings() {
+this.data.settings.openTime = document.getElementById('settingOpenTime').value;
+this.data.settings.closeTime = document.getElementById('settingCloseTime').value;
+this.saveData();
+this.showToast('Configurações salvas!');
+},
+navigate(view) {
+['Dashboard', 'Agenda', 'Clients', 'Vacilao'].forEach(v => {
+document.getElementById(`view${v}`).classList.add('hidden');
+document.getElementById(`nav${v}`).classList.remove('active');
+});
+document.getElementById(`view${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.remove('hidden');
+document.getElementById(`nav${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.add('active');
+if (view === 'agenda') this.renderAppointments();
+else if (view === 'vacilao') this.renderVacilao();
+else if (view === 'clients') this.renderClients();
+else if (view === 'dashboard') this.renderAvailableSlots();
+},
+toggleLanguage() {
+this.data.lang = this.data.lang === 'pt' ? 'es' : 'pt';
+document.getElementById('langLabel').textContent = this.data.lang.toUpperCase();
+this.updateTexts();
+this.saveData();
+},
+t(key) {
+return this.translations[this.data.lang][key] || key;
+},
+updateTexts() {
+document.getElementById('welcomeText').textContent = this.t('welcome');
+document.querySelectorAll('[data-i18n]').forEach(el => {
+const key = el.getAttribute('data-i18n');
+if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {
+el.placeholder = this.t(key);
+} else {
+el.textContent = this.t(key);
+}
+});
+document.getElementById('clientSearch').placeholder = this.t('search_placeholder');
+},
+renderAll() {
+this.updateTexts();
+this.renderStats();
+this.renderAppointments();
+this.renderClients();
+this.renderVacilao();
+this.renderAvailableSlots();
+this.updateClientSuggestions();
+},
+renderStats() {
+const today = new Date().toISOString().split('T')[0];
+const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
+const pendingAppts = todayAppts.filter(a => a.status === 'active');
+const completedAppts = todayAppts.filter(a => a.status === 'completed');
+const pendingRevenue = pendingAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
+const completedRevenue = completedAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
+const totalDayRevenue = pendingRevenue + completedRevenue;
+const tipsToday = todayAppts.reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
+const tipsMonth = this.data.appointments
+.filter(a => a.date.startsWith(today.substring(0, 7)) && a.status !== 'cancelled')
+.reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
+const monthRevenue = this.data.appointments
+.filter(a => a.date.startsWith(today.substring(0, 7)) && a.status !== 'cancelled')
+.reduce((sum, a) => sum + parseFloat(a.price), 0);
+document.getElementById('statCount').textContent = todayAppts.length;
+document.getElementById('statCompleted').textContent = completedAppts.length;
+document.getElementById('statDayTotal').textContent = this.formatCurrency(totalDayRevenue);
+document.getElementById('statPending').textContent = this.formatCurrency(pendingRevenue);
+document.getElementById('statCompletedRevenue').textContent = this.formatCurrency(completedRevenue);
+document.getElementById('statTipsToday').textContent = this.formatCurrency(tipsToday);
+document.getElementById('statTipsMonth').textContent = this.formatCurrency(tipsMonth);
+document.getElementById('statMonth').textContent = this.formatCurrency(monthRevenue);
+const vacilaoCount = this.data.vacilao.length;
+if (vacilaoCount > 0) {
+document.getElementById('vacilaoBadge').textContent = vacilaoCount;
+document.getElementById('vacilaoBadge').classList.remove('hidden');
+document.getElementById('navVacilaoBadge').textContent = vacilaoCount;
+document.getElementById('navVacilaoBadge').classList.remove('hidden');
+} else {
+document.getElementById('vacilaoBadge').classList.add('hidden');
+document.getElementById('navVacilaoBadge').classList.add('hidden');
+}
+document.getElementById('vacilaoCount').textContent = `${vacilaoCount} clientes`;
+},
+renderAvailableSlots() {
+const grid = document.getElementById('availableSlotsGrid');
+const timeline = document.getElementById('timelineView');
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('slotsDateLabel').textContent = this.formatDate(today);
+const openTime = this.data.settings.openTime;
+const closeTime = this.data.settings.closeTime;
+const slotDuration = this.data.settings.slotDuration;
+const bookedTimes = this.data.appointments
+.filter(a => a.date === today && a.status !== 'cancelled')
+.map(a => a.time);
+const slots = [];
+const timelineItems = [];
+let [openHour, openMin] = openTime.split(':').map(Number);
+let [closeHour, closeMin] = closeTime.split(':').map(Number);
+const startTime = openHour * 60 + openMin;
+const endTime = closeHour * 60 + closeMin;
+for (let time = startTime; time < endTime; time += slotDuration) {
+const h = Math.floor(time / 60);
+const m = time % 60;
+const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+const isBooked = bookedTimes.includes(timeStr);
+slots.push({ time: timeStr, available: !isBooked });
+timelineItems.push({
+time: timeStr,
+booked: isBooked,
+appointment: this.data.appointments.find(a => a.time === timeStr && a.date === today && a.status !== 'cancelled')
+});
+}
+grid.innerHTML = slots.map(slot => `
+<div class="slot-item ${slot.available ? 'available' : 'booked'}"
+${slot.available ? `onclick="app.quickBook('${slot.time}')"` : ''}>
+${slot.time}
+</div>
+`).join('');
+timeline.innerHTML = timelineItems.map(item => `
+<div class="timeline-item">
+<div class="timeline-time">${item.time}</div>
+<div class="timeline-bar ${item.booked ? (item.appointment?.status === 'completed' ? 'completed' : 'booked') : 'available'}"></div>
+<div class="timeline-label">${item.booked ? (item.appointment?.client || 'Ocupado') : 'Livre'}</div>
+</div>
+`).join('');
+},
+quickBook(time) {
+this.openModal('appointment');
+document.getElementById('aptTime').value = time;
+document.getElementById('aptDate').value = new Date().toISOString().split('T')[0];
+},
+autoFillPrice() {
+const service = document.getElementById('aptService');
+const price = service.options[service.selectedIndex].getAttribute('data-price');
+if (price) {
+document.getElementById('aptPrice').value = price;
+}
+},
+getClientStats(clientName) {
+const history = this.data.appointments.filter(a => a.client === clientName && a.status !== 'cancelled');
+const visits = history.length;
+const totalSpent = history.reduce((sum, a) => sum + parseFloat(a.price), 0);
+const lastVisit = history.length > 0 ? history[history.length - 1].date : null;
+return { visits, totalSpent, lastVisit };
+},
+getClientCategory(clientName) {
+const stats = this.getClientStats(clientName);
+if (stats.visits >= 5 || stats.totalSpent >= 200) {
+return 'mafioso';
+} else if (stats.visits >= 3) {
+return 'frequent';
+} else {
+return 'new';
+}
+},
+renderClients() {
+const list = document.getElementById('clientsList');
+const searchTerm = document.getElementById('clientSearch').value.toLowerCase();
+const category = this.currentFilter;
+const sort = this.currentSort;
+
+let filteredClients = this.data.clients.filter(c => {
+const stats = this.getClientStats(c.name);
+const categoryMatch = this.checkCategoryMatch(stats, category);
+const searchMatch = c.name.toLowerCase().includes(searchTerm) ||
+(stats.lastVisit && stats.lastVisit.includes(searchTerm));
+return categoryMatch && searchMatch;
+});
+
+// Sort
+filteredClients.sort((a, b) => {
+const statsA = this.getClientStats(a.name);
+const statsB = this.getClientStats(b.name);
+if (sort === 'name') return a.name.localeCompare(b.name);
+if (sort === 'visits') return statsB.visits - statsA.visits;
+if (sort === 'spent') return statsB.totalSpent - statsA.totalSpent;
+if (sort === 'recent') {
+if (!statsA.lastVisit) return 1;
+if (!statsB.lastVisit) return -1;
+return new Date(statsB.lastVisit) - new Date(statsA.lastVisit);
+}
+return 0;
+});
+
+// Update mafioso count
+const mafiosoCount = this.data.clients.filter(c => this.getClientCategory(c.name) === 'mafioso').length;
+document.getElementById('mafiosoCount').textContent = `${mafiosoCount} Mafiosos`;
+
+if (filteredClients.length === 0) {
+list.innerHTML = `<div class="empty-state">${this.t('no_clients')}</div>`;
+return;
+}
+
+list.innerHTML = filteredClients.map((c, i) => {
+const originalIndex = this.data.clients.indexOf(c);
+const stats = this.getClientStats(c.name);
+const category = this.getClientCategory(c.name);
+const isMafioso = category === 'mafioso';
+const isFrequent = category === 'frequent';
+const isNew = category === 'new';
+
+return `
+<div class="card ${isMafioso ? 'mafioso' : ''}" onclick="app.showClientHistory('${c.name}')" style="cursor: pointer;">
+<div class="vacilao-item" style="border: none; padding: 0;">
+<div class="vacilao-info" style="flex: 1;">
+<div class="vacilao-name">
+${c.name}
+${isMafioso ? '<span class="mafioso-badge">🎩 ' + this.t('mafioso') + '</span>' : ''}
+${isFrequent ? '<span class="frequent-badge">⭐ ' + this.t('frequent') + '</span>' : ''}
+${isNew ? '<span class="new-badge">🆕 ' + this.t('new_client') + '</span>' : ''}
+</div>
+<div class="client-stats">
+<div class="client-stat">
+<span class="client-stat-value">${stats.visits}</span>
+<span class="client-stat-label">Visitas</span>
+</div>
+<div class="client-stat">
+<span class="client-stat-value">${this.formatCurrency(stats.totalSpent)}</span>
+<span class="client-stat-label">Total</span>
+</div>
+<div class="client-stat">
+<span class="client-stat-value">${stats.lastVisit ? this.formatDate(stats.lastVisit) : '-'}</span>
+<span class="client-stat-label">Última</span>
+</div>
+</div>
+</div>
+<button onclick="event.stopPropagation(); app.deleteClient(${originalIndex})" style="background:none;border:none;color:var(--error);cursor:pointer; padding: 10px;">🗑</button>
+</div>
+</div>
+`;
+}).join('');
+},
+checkCategoryMatch(stats, category) {
+if (category === 'all') return true;
+if (category === 'mafioso') return stats.visits >= 5 || stats.totalSpent >= 200;
+if (category === 'frequent') return stats.visits >= 3 && stats.visits < 5 && stats.totalSpent < 200;
+if (category === 'new') return stats.visits < 3;
+return true;
+},
+filterClients(category, btn) {
+this.currentFilter = category;
+document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+btn.classList.add('active');
+this.renderClients();
+},
+sortClients(sort) {
+this.currentSort = sort;
+this.renderClients();
+},
+searchClients() {
+this.renderClients();
+},
+updateClientSuggestions() {
+const datalist = document.getElementById('clientSuggestions');
+datalist.innerHTML = this.data.clients.map(c => `<option value="${c.name}">`).join('');
+},
+showClientHistory(clientName) {
+const history = this.data.appointments
+.filter(a => a.client === clientName)
+.sort((a, b) => new Date(b.date) - new Date(a.date))
+.slice(0, 10);
+const stats = this.getClientStats(clientName);
+const category = this.getClientCategory(clientName);
+
+document.getElementById('clientHistoryName').textContent = clientName;
+
+if (history.length === 0) {
+document.getElementById('clientHistoryList').innerHTML = `<div class="empty-state">Sem histórico</div>`;
+} else {
+document.getElementById('clientHistoryList').innerHTML = `
+<div class="card" style="margin-bottom: 15px;">
+<div class="client-stats" style="justify-content: space-around;">
+<div class="client-stat">
+<span class="client-stat-value" style="font-size: 18px;">${stats.visits}</span>
+<span class="client-stat-label">Visitas</span>
+</div>
+<div class="client-stat">
+<span class="client-stat-value" style="font-size: 18px; color: var(--gold);">${this.formatCurrency(stats.totalSpent)}</span>
+<span class="client-stat-label">Total Gasto</span>
+</div>
+<div class="client-stat">
+<span class="client-stat-value" style="font-size: 18px;">${category === 'mafioso' ? '🎩' : category === 'frequent' ? '⭐' : '🆕'}</span>
+<span class="client-stat-label">Categoria</span>
+</div>
+</div>
+</div>
+` + history.map(h => `
+<div class="history-item">
+<span>${this.formatDate(h.date)} - ${h.time}</span>
+<span>${h.service} - ${this.formatCurrency(h.price)}${h.tip ? ` + ${this.formatCurrency(h.tip)}` : ''}</span>
+</div>
+`).join('');
+}
+document.getElementById('modalClientHistory').classList.add('active');
+},
+filterAgenda() {
+this.data.selectedDate = document.getElementById('agendaDate').value;
+this.renderAppointments();
+},
+openModal(type, aptId = null) {
+document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.add('active');
+if (type === 'appointment') {
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('aptDate').min = today;
+if (aptId) {
+const apt = this.data.appointments.find(a => a.id === aptId);
+if (apt) {
+document.getElementById('modalTitle').textContent = this.t('edit_appointment');
+document.getElementById('aptId').value = apt.id;
+document.getElementById('aptClient').value = apt.client;
+document.getElementById('aptDate').value = apt.date;
+document.getElementById('aptTime').value = apt.time;
+document.getElementById('aptService').value = apt.service;
+document.getElementById('aptPrice').value = apt.price;
+document.getElementById('aptTip').value = apt.tip || '';
+document.getElementById('aptNotes').value = apt.notes || '';
+}
+} else {
+document.getElementById('modalTitle').textContent = this.t('new_appointment');
+document.getElementById('aptId').value = '';
+document.getElementById('aptClient').value = '';
+document.getElementById('aptDate').value = today;
+document.getElementById('aptTime').value = '';
+document.getElementById('aptPrice').value = '';
+document.getElementById('aptTip').value = '';
+document.getElementById('aptNotes').value = '';
+}
+}
+},
+closeModal(type) {
+document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.remove('active');
+},
+saveAppointment() {
+const aptId = document.getElementById('aptId').value;
+const client = document.getElementById('aptClient').value;
+const date = document.getElementById('aptDate').value;
+const time = document.getElementById('aptTime').value;
+const price = document.getElementById('aptPrice').value;
+const service = document.getElementById('aptService').value;
+const tip = document.getElementById('aptTip').value || '0';
+const notes = document.getElementById('aptNotes').value;
+if (!client || !date || !time || !price) {
+this.showToast('Preencha todos os campos');
+return;
+}
+if (aptId) {
+const aptIndex = this.data.appointments.findIndex(a => a.id === aptId);
+if (aptIndex !== -1) {
+this.data.appointments[aptIndex] = {
+...this.data.appointments[aptIndex],
+client, date, time, price, service, tip, notes,
+updatedAt: new Date().toISOString()
+};
+}
+} else {
+const newApt = {
+id: Date.now().toString(),
+date, time, price, service, tip, client, notes,
+payment: 'Dinheiro',
+status: 'active',
+createdAt: new Date().toISOString()
+};
+this.data.appointments.push(newApt);
+}
+const clientIndex = this.data.clients.findIndex(c => c.name === client);
+if (clientIndex === -1) {
+this.data.clients.push({ name: client, phone: '', lastVisit: date });
+} else {
+this.data.clients[clientIndex].lastVisit = date;
+}
+this.saveData();
+this.closeModal('appointment');
+this.showToast(this.t('saved'));
+},
+editAppointment(aptId) { this.openModal('appointment', aptId); },
+completeAppointment(aptId) {
+const aptIndex = this.data.appointments.findIndex(a => a.id === aptId);
+if (aptIndex !== -1) {
+this.data.appointments[aptIndex].status = 'completed';
+this.data.appointments[aptIndex].completedAt = new Date().toISOString();
+this.saveData();
+this.showToast(this.t('completed_msg'));
+}
+},
+cancelAppointment(aptId, isLate) {
+const aptIndex = this.data.appointments.findIndex(a => a.id === aptId);
+if (aptIndex === -1) return;
+const apt = this.data.appointments[aptIndex];
+if (isLate) {
+this.data.vacilao.push({ ...apt, cancelledAt: new Date().toISOString() });
+this.showToast(this.t('late_cancelled'));
+} else {
+this.showToast(this.t('cancelled'));
+}
+this.data.appointments.splice(aptIndex, 1);
+this.saveData();
+},
+deleteClient(index) {
+if (confirm('Tem certeza que deseja excluir este cliente?')) {
+this.data.clients.splice(index, 1);
+this.saveData();
+this.showToast(this.t('deleted'));
+}
+},
+exportBackup() {
+const backupData = {
+version: '1.0',
+exportDate: new Date().toISOString(),
+data: this.data
+};
+const jsonString = JSON.stringify(backupData, null, 2);
+const blob = new Blob([jsonString], { type: 'application/json' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
+a.href = url;
+a.download = `la-mafia-backup-${dateStr}.json`;
+a.click();
+URL.revokeObjectURL(url);
+this.showToast(this.t('backup_exported'), 'success');
+},
+importBackup(event) {
+const file = event.target.files[0];
+if (!file) return;
+const reader = new FileReader();
+reader.onload = (e) => {
+try {
+const backupData = JSON.parse(e.target.result);
+if (!backupData.data || !backupData.data.appointments) {
+throw new Error('Invalid backup format');
+}
+this.importData = backupData.data;
+this.openModal('confirmImport');
+} catch (error) {
+this.showToast(this.t('backup_invalid'), 'error');
+}
+};
+reader.onerror = () => {
+this.showToast(this.t('backup_error'), 'error');
+};
+reader.readAsText(file);
+event.target.value = '';
+},
+confirmImport() {
+if (this.importData) {
+this.data = { ...this.data, ...this.importData };
+this.saveData();
+this.importData = null;
+this.closeModal('confirmImport');
+this.showToast(this.t('backup_imported'), 'success');
+}
+},
+exportReport() {
+const today = new Date().toISOString().split('T')[0];
+const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
+const total = todayAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
+const totalTips = todayAppts.reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
+let report = `LA MAFIA BARBEARIA - Fechamento ${this.formatDate(today)}\n\n`;
+report += `=== RESUMO ===\n`;
+report += `Serviços: ${this.formatCurrency(total)}\n`;
+report += `Gorjetas: ${this.formatCurrency(totalTips)}\n`;
+report += `TOTAL: ${this.formatCurrency(total + totalTips)}\n`;
+report += `\n=== ATENDIMENTOS ===\n`;
+todayAppts.forEach(a => {
+report += `${a.time} - ${a.client} - ${a.service} - €${a.price}`;
+if (a.tip && parseFloat(a.tip) > 0) report += ` + €${a.tip} (gorjeta)`;
+report += `\n`;
+});
+const blob = new Blob([report], { type: 'text/plain' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = `fechamento-${today}.txt`;
+a.click();
+this.showToast('Relatório exportado!');
+},
+formatCurrency(value) {
+return new Intl.NumberFormat(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', {
+style: 'currency',
+currency: 'EUR'
+}).format(value);
+},
+formatDate(dateString) {
+const date = new Date(dateString + 'T00:00:00');
+const options = { day: 'numeric', month: 'short', year: 'numeric' };
+return date.toLocaleDateString(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', options);
+},
+checkInstallBanner() {
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+if (!isStandalone && isIOS && !localStorage.getItem('laMafiaInstallDismissed')) {
+setTimeout(() => {
+document.getElementById('installBanner').classList.add('show');
+}, 3000);
+}
+},
+showToast(message, type = 'info') {
+const toast = document.getElementById('toast');
+toast.textContent = message;
+toast.className = 'toast show';
+if (type === 'error') toast.classList.add('error');
+if (type === 'success') toast.classList.add('success');
+setTimeout(() => toast.classList.remove('show'), 2000);
+}
+};
+app.init();
+</script>
 </body>
 </html>
