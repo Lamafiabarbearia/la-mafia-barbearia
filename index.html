@@ -476,8 +476,6 @@ color: var(--text);
 font-size: 13px;
 text-align: center;
 }
-
-/* Client Filters */
 .client-filters {
 display: flex;
 gap: 8px;
@@ -519,8 +517,6 @@ font-size: 14px;
 margin-bottom: 15px;
 outline: none;
 }
-
-/* Client Card Stats */
 .client-stats {
 display: flex;
 gap: 15px;
@@ -729,23 +725,18 @@ margin-left: 8px;
 <div style="font-size: 12px; color: var(--gold);" id="mafiosoCount">0 Mafiosos</div>
 </div>
 <input type="text" id="clientSearch" class="search-box" placeholder="🔍 Buscar por nome, telefone ou serviço..." oninput="app.searchClients()">
-
-<!-- Filtros -->
 <div class="client-filters">
 <button class="filter-btn active" onclick="app.filterClients('all', this)" data-i18n="all">Todos</button>
 <button class="filter-btn mafioso" onclick="app.filterClients('mafioso', this)">🎩 Mafiosos</button>
 <button class="filter-btn" onclick="app.filterClients('frequent', this)">⭐ Frequente</button>
 <button class="filter-btn" onclick="app.filterClients('new', this)">🆕 Novos</button>
 </div>
-
-<!-- Ordenação -->
 <select class="sort-select" onchange="app.sortClients(this.value)">
 <option value="name" data-i18n="sort_name">Nome (A-Z)</option>
 <option value="visits" data-i18n="sort_visits">Mais Visitas</option>
 <option value="spent" data-i18n="sort_spent">Mais Gastou</option>
 <option value="recent" data-i18n="sort_recent">Recentes</option>
 </select>
-
 <div class="card" id="clientsList">
 <div class="empty-state" data-i18n="no_clients">Nenhum cliente cadastrado</div>
 </div>
@@ -1068,18 +1059,31 @@ document.getElementById('loginPassword').value = '';
 document.getElementById('loginError').classList.add('hidden');
 },
 loadData() {
+try {
 const saved = localStorage.getItem('laMafiaData');
 if (saved) {
 const parsed = JSON.parse(saved);
-this.data = { ...this.data, ...parsed };
-if (!this.data.settings) {
-this.data.settings = { openTime: '09:00', closeTime: '20:00', slotDuration: 30 };
+this.data.appointments = parsed.appointments || [];
+this.data.clients = parsed.clients || [];
+this.data.vacilao = parsed.vacilao || [];
+this.data.lang = parsed.lang || 'pt';
+this.data.settings = parsed.settings || { openTime: '09:00', closeTime: '20:00', slotDuration: 30 };
 }
+} catch (e) {
+console.error('Erro ao carregar dados:', e);
+this.data.appointments = [];
+this.data.clients = [];
+this.data.vacilao = [];
 }
 },
 saveData() {
+try {
 localStorage.setItem('laMafiaData', JSON.stringify(this.data));
 this.renderAll();
+} catch (e) {
+console.error('Erro ao salvar dados:', e);
+this.showToast('Erro ao salvar!', 'error');
+}
 },
 saveSettings() {
 this.data.settings.openTime = document.getElementById('settingOpenTime').value;
@@ -1094,8 +1098,10 @@ document.getElementById(`nav${v}`).classList.remove('active');
 });
 document.getElementById(`view${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.remove('hidden');
 document.getElementById(`nav${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.add('active');
-if (view === 'agenda') this.renderAppointments();
-else if (view === 'vacilao') this.renderVacilao();
+if (view === 'agenda') {
+this.data.selectedDate = document.getElementById('agendaDate').value || new Date().toISOString().split('T')[0];
+this.renderAppointments();
+} else if (view === 'vacilao') this.renderVacilao();
 else if (view === 'clients') this.renderClients();
 else if (view === 'dashboard') this.renderAvailableSlots();
 },
@@ -1132,10 +1138,10 @@ this.updateClientSuggestions();
 renderStats() {
 const today = new Date().toISOString().split('T')[0];
 const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
-const pendingAppts = todayAppts.filter(a => a.status === 'active');
+const pendingAppts = todayAppts.filter(a => a.status === 'active' || !a.status);
 const completedAppts = todayAppts.filter(a => a.status === 'completed');
-const pendingRevenue = pendingAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
-const completedRevenue = completedAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
+const pendingRevenue = pendingAppts.reduce((sum, a) => sum + parseFloat(a.price || 0), 0);
+const completedRevenue = completedAppts.reduce((sum, a) => sum + parseFloat(a.price || 0), 0);
 const totalDayRevenue = pendingRevenue + completedRevenue;
 const tipsToday = todayAppts.reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
 const tipsMonth = this.data.appointments
@@ -1143,7 +1149,7 @@ const tipsMonth = this.data.appointments
 .reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
 const monthRevenue = this.data.appointments
 .filter(a => a.date.startsWith(today.substring(0, 7)) && a.status !== 'cancelled')
-.reduce((sum, a) => sum + parseFloat(a.price), 0);
+.reduce((sum, a) => sum + parseFloat(a.price || 0), 0);
 document.getElementById('statCount').textContent = todayAppts.length;
 document.getElementById('statCompleted').textContent = completedAppts.length;
 document.getElementById('statDayTotal').textContent = this.formatCurrency(totalDayRevenue);
@@ -1222,7 +1228,7 @@ document.getElementById('aptPrice').value = price;
 getClientStats(clientName) {
 const history = this.data.appointments.filter(a => a.client === clientName && a.status !== 'cancelled');
 const visits = history.length;
-const totalSpent = history.reduce((sum, a) => sum + parseFloat(a.price), 0);
+const totalSpent = history.reduce((sum, a) => sum + parseFloat(a.price || 0), 0);
 const lastVisit = history.length > 0 ? history[history.length - 1].date : null;
 return { visits, totalSpent, lastVisit };
 },
@@ -1236,21 +1242,62 @@ return 'frequent';
 return 'new';
 }
 },
+renderAppointments() {
+const list = document.getElementById('appointmentsList');
+const selectedDate = document.getElementById('agendaDate').value || this.data.selectedDate;
+this.data.selectedDate = selectedDate;
+const filteredAppts = this.data.appointments
+.filter(a => {
+const aptDate = a.date ? a.date.split('T')[0] : '';
+return aptDate === selectedDate && a.status !== 'cancelled';
+})
+.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+console.log('Agendamentos encontrados:', filteredAppts.length);
+if (filteredAppts.length === 0) {
+list.innerHTML = `<div class="empty-state">${this.t('no_appointments')}</div>`;
+return;
+}
+list.innerHTML = filteredAppts.map((apt) => {
+const isCompleted = apt.status === 'completed';
+return `
+<div class="appointment ${isCompleted ? 'completed' : ''}">
+<span class="status-badge ${isCompleted ? 'status-completed' : 'status-pending'}">
+${isCompleted ? 'CONCLUÍDO' : 'PENDENTE'}
+</span>
+<div class="appointment-header">
+<div class="apt-time">🕒 ${apt.time || ''}</div>
+<div class="apt-price">${this.formatCurrency(apt.price || 0)}</div>
+</div>
+<div class="apt-info">
+<div class="apt-client">${apt.client || ''}</div>
+<div class="apt-service">${apt.service || ''}</div>
+<div class="apt-date">📅 ${this.formatDate(apt.date || '')}</div>
+${apt.tip && parseFloat(apt.tip) > 0 ? `<div class="apt-tip">💰 Gorjeta: ${this.formatCurrency(apt.tip)}</div>` : ''}
+${apt.notes ? `<div class="apt-notes">📝 ${apt.notes}</div>` : ''}
+</div>
+<div class="apt-actions">
+${!isCompleted ? `
+<button class="apt-btn apt-btn-edit" onclick="app.editAppointment('${apt.id}')">✏️ Editar</button>
+<button class="apt-btn apt-btn-complete" onclick="app.completeAppointment('${apt.id}')">✓ Concluir</button>
+` : ''}
+<button class="apt-btn apt-btn-cancel" onclick="app.cancelAppointment('${apt.id}', false)">❌ Cancelar</button>
+<button class="apt-btn apt-btn-late" onclick="app.cancelAppointment('${apt.id}', true)">⚠️ Em Cima da Hora</button>
+</div>
+</div>
+`;
+}).join('');
+},
 renderClients() {
 const list = document.getElementById('clientsList');
 const searchTerm = document.getElementById('clientSearch').value.toLowerCase();
 const category = this.currentFilter;
 const sort = this.currentSort;
-
 let filteredClients = this.data.clients.filter(c => {
 const stats = this.getClientStats(c.name);
 const categoryMatch = this.checkCategoryMatch(stats, category);
-const searchMatch = c.name.toLowerCase().includes(searchTerm) ||
-(stats.lastVisit && stats.lastVisit.includes(searchTerm));
+const searchMatch = c.name.toLowerCase().includes(searchTerm);
 return categoryMatch && searchMatch;
 });
-
-// Sort
 filteredClients.sort((a, b) => {
 const statsA = this.getClientStats(a.name);
 const statsB = this.getClientStats(b.name);
@@ -1264,16 +1311,12 @@ return new Date(statsB.lastVisit) - new Date(statsA.lastVisit);
 }
 return 0;
 });
-
-// Update mafioso count
 const mafiosoCount = this.data.clients.filter(c => this.getClientCategory(c.name) === 'mafioso').length;
 document.getElementById('mafiosoCount').textContent = `${mafiosoCount} Mafiosos`;
-
 if (filteredClients.length === 0) {
 list.innerHTML = `<div class="empty-state">${this.t('no_clients')}</div>`;
 return;
 }
-
 list.innerHTML = filteredClients.map((c, i) => {
 const originalIndex = this.data.clients.indexOf(c);
 const stats = this.getClientStats(c.name);
@@ -1281,7 +1324,6 @@ const category = this.getClientCategory(c.name);
 const isMafioso = category === 'mafioso';
 const isFrequent = category === 'frequent';
 const isNew = category === 'new';
-
 return `
 <div class="card ${isMafioso ? 'mafioso' : ''}" onclick="app.showClientHistory('${c.name}')" style="cursor: pointer;">
 <div class="vacilao-item" style="border: none; padding: 0;">
@@ -1313,6 +1355,23 @@ ${isNew ? '<span class="new-badge">🆕 ' + this.t('new_client') + '</span>' : '
 `;
 }).join('');
 },
+renderVacilao() {
+const list = document.getElementById('vacilaoList');
+if (this.data.vacilao.length === 0) {
+list.innerHTML = `<div class="empty-state">${this.t('no_vacilao')}</div>`;
+return;
+}
+list.innerHTML = this.data.vacilao.map((v) => `
+<div class="vacilao-item">
+<div class="vacilao-info">
+<div class="vacilao-name">${v.client || ''}</div>
+<div class="vacilao-date">📅 ${this.formatDate(v.date || '')} • 🕒 ${v.time || ''}</div>
+<div class="vacilao-date">${v.service || ''} • ${this.formatCurrency(v.price || 0)}</div>
+</div>
+<span class="vacilao-badge">VACILOU</span>
+</div>
+`).join('');
+},
 checkCategoryMatch(stats, category) {
 if (category === 'all') return true;
 if (category === 'mafioso') return stats.visits >= 5 || stats.totalSpent >= 200;
@@ -1340,13 +1399,11 @@ datalist.innerHTML = this.data.clients.map(c => `<option value="${c.name}">`).jo
 showClientHistory(clientName) {
 const history = this.data.appointments
 .filter(a => a.client === clientName)
-.sort((a, b) => new Date(b.date) - new Date(a.date))
+.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
 .slice(0, 10);
 const stats = this.getClientStats(clientName);
 const category = this.getClientCategory(clientName);
-
 document.getElementById('clientHistoryName').textContent = clientName;
-
 if (history.length === 0) {
 document.getElementById('clientHistoryList').innerHTML = `<div class="empty-state">Sem histórico</div>`;
 } else {
@@ -1369,8 +1426,8 @@ document.getElementById('clientHistoryList').innerHTML = `
 </div>
 ` + history.map(h => `
 <div class="history-item">
-<span>${this.formatDate(h.date)} - ${h.time}</span>
-<span>${h.service} - ${this.formatCurrency(h.price)}${h.tip ? ` + ${this.formatCurrency(h.tip)}` : ''}</span>
+<span>${this.formatDate(h.date || '')} - ${h.time || ''}</span>
+<span>${h.service || ''} - ${this.formatCurrency(h.price || 0)}${h.tip ? ` + ${this.formatCurrency(h.tip)}` : ''}</span>
 </div>
 `).join('');
 }
@@ -1390,11 +1447,11 @@ const apt = this.data.appointments.find(a => a.id === aptId);
 if (apt) {
 document.getElementById('modalTitle').textContent = this.t('edit_appointment');
 document.getElementById('aptId').value = apt.id;
-document.getElementById('aptClient').value = apt.client;
-document.getElementById('aptDate').value = apt.date;
-document.getElementById('aptTime').value = apt.time;
-document.getElementById('aptService').value = apt.service;
-document.getElementById('aptPrice').value = apt.price;
+document.getElementById('aptClient').value = apt.client || '';
+document.getElementById('aptDate').value = apt.date ? apt.date.split('T')[0] : today;
+document.getElementById('aptTime').value = apt.time || '';
+document.getElementById('aptService').value = apt.service || '';
+document.getElementById('aptPrice').value = apt.price || '';
 document.getElementById('aptTip').value = apt.tip || '';
 document.getElementById('aptNotes').value = apt.notes || '';
 }
@@ -1408,6 +1465,7 @@ document.getElementById('aptPrice').value = '';
 document.getElementById('aptTip').value = '';
 document.getElementById('aptNotes').value = '';
 }
+this.autoFillPrice();
 }
 },
 closeModal(type) {
@@ -1536,7 +1594,7 @@ this.showToast(this.t('backup_imported'), 'success');
 exportReport() {
 const today = new Date().toISOString().split('T')[0];
 const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
-const total = todayAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
+const total = todayAppts.reduce((sum, a) => sum + parseFloat(a.price || 0), 0);
 const totalTips = todayAppts.reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
 let report = `LA MAFIA BARBEARIA - Fechamento ${this.formatDate(today)}\n\n`;
 report += `=== RESUMO ===\n`;
@@ -1564,6 +1622,7 @@ currency: 'EUR'
 }).format(value);
 },
 formatDate(dateString) {
+if (!dateString) return '-';
 const date = new Date(dateString + 'T00:00:00');
 const options = { day: 'numeric', month: 'short', year: 'numeric' };
 return date.toLocaleDateString(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', options);
