@@ -327,6 +327,9 @@ box-shadow: 0 4px 15px rgba(255,255,255,0.3);
 cursor: pointer;
 z-index: 100;
 }
+.fab.clients-fab {
+background: var(--gold);
+}
 .toast {
 position: fixed;
 top: 20px;
@@ -569,6 +572,27 @@ font-weight: 700;
 text-transform: uppercase;
 margin-left: 8px;
 }
+.client-actions {
+display: flex;
+gap: 8px;
+margin-top: 12px;
+}
+.client-action-btn {
+padding: 6px 12px;
+font-size: 11px;
+border-radius: 6px;
+border: none;
+cursor: pointer;
+font-weight: 600;
+}
+.client-action-btn-edit {
+background: var(--info);
+color: var(--bg);
+}
+.client-action-btn-delete {
+background: var(--border);
+color: var(--error);
+}
 </style>
 </head>
 <body>
@@ -753,7 +777,11 @@ margin-left: 8px;
 </div>
 </div>
 
-<div class="fab" onclick="app.openModal('appointment')">+</div>
+<!-- FAB para Agenda -->
+<div class="fab" id="fabAppointment" onclick="app.openModal('appointment')">+</div>
+
+<!-- FAB para Clientes -->
+<div class="fab clients-fab hidden" id="fabClient" onclick="app.openModal('client')">👤</div>
 
 <div class="bottom-nav">
 <div class="nav-item active" onclick="app.navigate('dashboard')" id="navDashboard">
@@ -776,10 +804,11 @@ margin-left: 8px;
 </div>
 </div>
 
+<!-- Modal de Agendamento -->
 <div class="modal-overlay" id="modalAppointment">
 <div class="modal-content">
 <div class="modal-header">
-<div class="modal-title" id="modalTitle" data-i18n="new_appointment">Novo Agendamento</div>
+<div class="modal-title" id="modalTitleAppointment" data-i18n="new_appointment">Novo Agendamento</div>
 <button class="modal-close" onclick="app.closeModal('appointment')">×</button>
 </div>
 <input type="hidden" id="aptId">
@@ -829,6 +858,30 @@ margin-left: 8px;
 <textarea id="aptNotes" class="form-input" rows="3" placeholder="Ex: Cliente prefere corte mais curto"></textarea>
 </div>
 <button class="btn btn-primary" onclick="app.saveAppointment()" data-i18n="save">Salvar</button>
+</div>
+</div>
+
+<!-- Modal de Cliente -->
+<div class="modal-overlay" id="modalClient">
+<div class="modal-content">
+<div class="modal-header">
+<div class="modal-title" id="modalTitleClient">Novo Cliente</div>
+<button class="modal-close" onclick="app.closeModal('client')">×</button>
+</div>
+<input type="hidden" id="clientId">
+<div class="form-group">
+<label class="form-label">Nome do Cliente</label>
+<input type="text" id="clientName" class="form-input" placeholder="Ex: Carlos Ruiz">
+</div>
+<div class="form-group">
+<label class="form-label">Telefone</label>
+<input type="tel" id="clientPhone" class="form-input" placeholder="+34 600 000 000">
+</div>
+<div class="form-group">
+<label class="form-label">Observações</label>
+<textarea id="clientNotes" class="form-input" rows="3" placeholder="Ex: Prefere atendimento pela manhã, alérgico a..."></textarea>
+</div>
+<button class="btn btn-primary" onclick="app.saveClient()" data-i18n="save">Salvar</button>
 </div>
 </div>
 
@@ -923,7 +976,11 @@ cancel: "Cancelar",
 confirm: "Confirmar",
 new_appointment: "Novo Agendamento",
 edit_appointment: "Editar Agendamento",
+new_client: "Novo Cliente",
+edit_client: "Editar Cliente",
 client_name: "Nome do Cliente",
+client_phone: "Telefone",
+client_notes: "Observações",
 date: "Data",
 time: "Horário",
 price: "Preço (€)",
@@ -953,7 +1010,7 @@ backup_invalid: "Arquivo de backup inválido!",
 backup_error: "Erro ao importar backup!",
 mafioso: "Mafioso",
 frequent: "Frequente",
-new_client: "Novo"
+new_client_badge: "Novo"
 },
 es: {
 welcome: "Bienvenido, Jefe",
@@ -986,7 +1043,11 @@ cancel: "Cancelar",
 confirm: "Confirmar",
 new_appointment: "Nueva Cita",
 edit_appointment: "Editar Cita",
+new_client: "Nuevo Cliente",
+edit_client: "Editar Cliente",
 client_name: "Nombre del Cliente",
+client_phone: "Teléfono",
+client_notes: "Notas",
 date: "Fecha",
 time: "Hora",
 price: "Precio (€)",
@@ -1016,7 +1077,7 @@ backup_invalid: "¡Archivo inválido!",
 backup_error: "¡Error al importar!",
 mafioso: "Mafioso",
 frequent: "Frecuente",
-new_client: "Nuevo"
+new_client_badge: "Nuevo"
 }
 },
 init() {
@@ -1098,6 +1159,19 @@ document.getElementById(`nav${v}`).classList.remove('active');
 });
 document.getElementById(`view${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.remove('hidden');
 document.getElementById(`nav${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.add('active');
+
+// Controla qual FAB mostrar
+const fabAppointment = document.getElementById('fabAppointment');
+const fabClient = document.getElementById('fabClient');
+
+if (view === 'clients') {
+fabAppointment.classList.add('hidden');
+fabClient.classList.remove('hidden');
+} else {
+fabAppointment.classList.remove('hidden');
+fabClient.classList.add('hidden');
+}
+
 if (view === 'agenda') {
 this.data.selectedDate = document.getElementById('agendaDate').value || new Date().toISOString().split('T')[0];
 this.renderAppointments();
@@ -1252,7 +1326,6 @@ const aptDate = a.date ? a.date.split('T')[0] : '';
 return aptDate === selectedDate && a.status !== 'cancelled';
 })
 .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
-console.log('Agendamentos encontrados:', filteredAppts.length);
 if (filteredAppts.length === 0) {
 list.innerHTML = `<div class="empty-state">${this.t('no_appointments')}</div>`;
 return;
@@ -1295,7 +1368,7 @@ const sort = this.currentSort;
 let filteredClients = this.data.clients.filter(c => {
 const stats = this.getClientStats(c.name);
 const categoryMatch = this.checkCategoryMatch(stats, category);
-const searchMatch = c.name.toLowerCase().includes(searchTerm);
+const searchMatch = c.name.toLowerCase().includes(searchTerm) || (c.phone && c.phone.includes(searchTerm));
 return categoryMatch && searchMatch;
 });
 filteredClients.sort((a, b) => {
@@ -1325,14 +1398,14 @@ const isMafioso = category === 'mafioso';
 const isFrequent = category === 'frequent';
 const isNew = category === 'new';
 return `
-<div class="card ${isMafioso ? 'mafioso' : ''}" onclick="app.showClientHistory('${c.name}')" style="cursor: pointer;">
+<div class="card ${isMafioso ? 'mafioso' : ''}">
 <div class="vacilao-item" style="border: none; padding: 0;">
-<div class="vacilao-info" style="flex: 1;">
+<div class="vacilao-info" style="flex: 1;" onclick="app.showClientHistory('${c.name}')" style="cursor: pointer;">
 <div class="vacilao-name">
 ${c.name}
 ${isMafioso ? '<span class="mafioso-badge">🎩 ' + this.t('mafioso') + '</span>' : ''}
 ${isFrequent ? '<span class="frequent-badge">⭐ ' + this.t('frequent') + '</span>' : ''}
-${isNew ? '<span class="new-badge">🆕 ' + this.t('new_client') + '</span>' : ''}
+${isNew ? '<span class="new-badge">🆕 ' + this.t('new_client_badge') + '</span>' : ''}
 </div>
 <div class="client-stats">
 <div class="client-stat">
@@ -1348,8 +1421,13 @@ ${isNew ? '<span class="new-badge">🆕 ' + this.t('new_client') + '</span>' : '
 <span class="client-stat-label">Última</span>
 </div>
 </div>
+${c.phone ? `<div class="vacilao-date" style="margin-top: 8px;">📞 ${c.phone}</div>` : ''}
+${c.notes ? `<div class="vacilao-date" style="margin-top: 4px; font-style: italic;">📝 ${c.notes}</div>` : ''}
 </div>
-<button onclick="event.stopPropagation(); app.deleteClient(${originalIndex})" style="background:none;border:none;color:var(--error);cursor:pointer; padding: 10px;">🗑</button>
+<div class="client-actions">
+<button class="client-action-btn client-action-btn-edit" onclick="app.editClient(${originalIndex})">✏️ Editar</button>
+<button class="client-action-btn client-action-btn-delete" onclick="app.deleteClient(${originalIndex})">🗑</button>
+</div>
 </div>
 </div>
 `;
@@ -1396,6 +1474,92 @@ updateClientSuggestions() {
 const datalist = document.getElementById('clientSuggestions');
 datalist.innerHTML = this.data.clients.map(c => `<option value="${c.name}">`).join('');
 },
+// Funções de Cliente
+openModal(type, aptId = null, clientId = null) {
+document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.add('active');
+if (type === 'appointment') {
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('aptDate').min = today;
+if (aptId) {
+const apt = this.data.appointments.find(a => a.id === aptId);
+if (apt) {
+document.getElementById('modalTitleAppointment').textContent = this.t('edit_appointment');
+document.getElementById('aptId').value = apt.id;
+document.getElementById('aptClient').value = apt.client || '';
+document.getElementById('aptDate').value = apt.date ? apt.date.split('T')[0] : today;
+document.getElementById('aptTime').value = apt.time || '';
+document.getElementById('aptService').value = apt.service || '';
+document.getElementById('aptPrice').value = apt.price || '';
+document.getElementById('aptTip').value = apt.tip || '';
+document.getElementById('aptNotes').value = apt.notes || '';
+}
+} else {
+document.getElementById('modalTitleAppointment').textContent = this.t('new_appointment');
+document.getElementById('aptId').value = '';
+document.getElementById('aptClient').value = '';
+document.getElementById('aptDate').value = today;
+document.getElementById('aptTime').value = '';
+document.getElementById('aptPrice').value = '';
+document.getElementById('aptTip').value = '';
+document.getElementById('aptNotes').value = '';
+}
+this.autoFillPrice();
+} else if (type === 'client') {
+if (clientId !== null) {
+const client = this.data.clients[clientId];
+if (client) {
+document.getElementById('modalTitleClient').textContent = this.t('edit_client');
+document.getElementById('clientId').value = clientId;
+document.getElementById('clientName').value = client.name || '';
+document.getElementById('clientPhone').value = client.phone || '';
+document.getElementById('clientNotes').value = client.notes || '';
+}
+} else {
+document.getElementById('modalTitleClient').textContent = this.t('new_client');
+document.getElementById('clientId').value = '';
+document.getElementById('clientName').value = '';
+document.getElementById('clientPhone').value = '';
+document.getElementById('clientNotes').value = '';
+}
+}
+},
+closeModal(type) {
+document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.remove('active');
+},
+saveClient() {
+const clientId = document.getElementById('clientId').value;
+const name = document.getElementById('clientName').value;
+const phone = document.getElementById('clientPhone').value;
+const notes = document.getElementById('clientNotes').value;
+if (!name) {
+this.showToast('Nome é obrigatório');
+return;
+}
+if (clientId !== '') {
+// Editar cliente existente
+this.data.clients[clientId] = {
+...this.data.clients[clientId],
+name, phone, notes,
+updatedAt: new Date().toISOString()
+};
+this.showToast('Cliente atualizado!');
+} else {
+// Novo cliente
+const newClient = {
+name,
+phone: phone || '',
+notes: notes || '',
+createdAt: new Date().toISOString()
+};
+this.data.clients.push(newClient);
+this.showToast('Cliente cadastrado!');
+}
+this.saveData();
+this.closeModal('client');
+},
+editClient(index) {
+this.openModal('client', null, index);
+},
 showClientHistory(clientName) {
 const history = this.data.appointments
 .filter(a => a.client === clientName)
@@ -1436,40 +1600,6 @@ document.getElementById('modalClientHistory').classList.add('active');
 filterAgenda() {
 this.data.selectedDate = document.getElementById('agendaDate').value;
 this.renderAppointments();
-},
-openModal(type, aptId = null) {
-document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.add('active');
-if (type === 'appointment') {
-const today = new Date().toISOString().split('T')[0];
-document.getElementById('aptDate').min = today;
-if (aptId) {
-const apt = this.data.appointments.find(a => a.id === aptId);
-if (apt) {
-document.getElementById('modalTitle').textContent = this.t('edit_appointment');
-document.getElementById('aptId').value = apt.id;
-document.getElementById('aptClient').value = apt.client || '';
-document.getElementById('aptDate').value = apt.date ? apt.date.split('T')[0] : today;
-document.getElementById('aptTime').value = apt.time || '';
-document.getElementById('aptService').value = apt.service || '';
-document.getElementById('aptPrice').value = apt.price || '';
-document.getElementById('aptTip').value = apt.tip || '';
-document.getElementById('aptNotes').value = apt.notes || '';
-}
-} else {
-document.getElementById('modalTitle').textContent = this.t('new_appointment');
-document.getElementById('aptId').value = '';
-document.getElementById('aptClient').value = '';
-document.getElementById('aptDate').value = today;
-document.getElementById('aptTime').value = '';
-document.getElementById('aptPrice').value = '';
-document.getElementById('aptTip').value = '';
-document.getElementById('aptNotes').value = '';
-}
-this.autoFillPrice();
-}
-},
-closeModal(type) {
-document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.remove('active');
 },
 saveAppointment() {
 const aptId = document.getElementById('aptId').value;
