@@ -9,12 +9,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="La Mafia">
-    <link rel="apple-touch-icon" href="icon-180.png">
-    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="./icon-180.png">
+    <link rel="manifest" href="./manifest.json">
     
     <!-- Ícone do Navegador -->
-    <link rel="icon" type="image/png" sizes="180x180" href="icon-180.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    <link rel="icon" type="image/png" sizes="180x180" href="./icon-180.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
     
     <title>La Mafia Barbearia</title>
     <style>
@@ -44,10 +44,8 @@
             padding-bottom: 80px;
         }
 
-        /* Container Principal */
         .app { max-width: 480px; margin: 0 auto; padding: 20px; }
 
-        /* Header */
         .header { 
             display: flex; justify-content: space-between; align-items: center; 
             padding: 20px 0 30px 0; border-bottom: 1px solid var(--border); 
@@ -57,7 +55,6 @@
         .title { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-top: 5px; }
         .header-actions { display: flex; gap: 10px; }
 
-        /* Botões */
         .btn {
             padding: 14px 20px;
             border-radius: 10px;
@@ -81,7 +78,6 @@
         .btn-success { background: var(--success); color: var(--bg); }
         .btn-info { background: var(--info); color: var(--bg); }
 
-        /* Cards */
         .card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -90,13 +86,11 @@
             margin-bottom: 16px;
         }
 
-        /* Grid de Stats */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
         .stat-icon { font-size: 24px; margin-bottom: 10px; }
         .stat-label { font-size: 11px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
         .stat-value { font-size: 22px; font-weight: 700; margin-top: 6px; }
 
-        /* Revenue Split Card */
         .revenue-split { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -111,7 +105,6 @@
         .revenue-pending { color: var(--text); }
         .revenue-completed { color: var(--success); }
 
-        /* Lista de Agenda */
         .section-header { 
             display: flex; justify-content: space-between; align-items: center; 
             margin: 30px 0 15px 0; 
@@ -147,7 +140,6 @@
         .apt-btn-edit { background: var(--info); color: var(--bg); }
         .apt-btn-complete { background: var(--success); color: var(--bg); }
 
-        /* Status Badge */
         .status-badge {
             position: absolute;
             top: 16px;
@@ -161,7 +153,6 @@
         .status-completed { background: var(--success); color: var(--bg); }
         .status-pending { background: var(--border); color: var(--text); }
 
-        /* Formulários */
         .form-group { margin-bottom: 16px; }
         .form-label { display: block; font-size: 12px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
         .form-input {
@@ -178,7 +169,6 @@
         .form-input::placeholder { color: var(--text-sec); }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        /* Modal */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.9);
@@ -207,7 +197,6 @@
         .modal-title { font-size: 20px; font-weight: 700; }
         .modal-close { background: none; border: none; color: var(--text-sec); font-size: 24px; cursor: pointer; }
 
-        /* Navegação Inferior */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -248,13 +237,10 @@
             font-weight: 700;
         }
 
-        /* Utilitários */
         .hidden { display: none !important; }
-        .text-right { text-align: right; }
         .mb-20 { margin-bottom: 20px; }
         .empty-state { text-align: center; color: var(--text-sec); padding: 40px 0; }
 
-        /* Login Screen */
         .login-screen {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: var(--bg);
@@ -268,7 +254,6 @@
         .login-form { width: 100%; max-width: 320px; }
         .error-msg { color: var(--error); font-size: 13px; margin-top: 10px; text-align: center; }
 
-        /* FAB */
         .fab {
             position: fixed;
             bottom: 90px;
@@ -287,7 +272,6 @@
             z-index: 100;
         }
 
-        /* Toast Notification */
         .toast {
             position: fixed;
             top: 20px;
@@ -302,8 +286,9 @@
             transition: transform 0.3s;
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.error { border-color: var(--error); }
+        .toast.success { border-color: var(--success); }
 
-        /* Date Filter */
         .date-filter {
             display: flex;
             gap: 10px;
@@ -329,7 +314,6 @@
             cursor: pointer;
         }
 
-        /* Vacilão Tab Styles */
         .vacilao-item {
             display: flex;
             justify-content: space-between;
@@ -351,7 +335,6 @@
             text-transform: uppercase;
         }
 
-        /* Search Box */
         .search-box {
             width: 100%;
             padding: 12px;
@@ -363,12 +346,6 @@
             margin-bottom: 15px;
         }
 
-        /* Client History */
-        .client-history {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid var(--border);
-        }
         .history-item {
             display: flex;
             justify-content: space-between;
@@ -377,7 +354,6 @@
             color: var(--text-sec);
         }
 
-        /* Install Banner */
         .install-banner {
             position: fixed;
             bottom: 80px;
@@ -405,18 +381,38 @@
             font-size: 12px;
             cursor: pointer;
         }
+
+        .backup-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .backup-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .backup-info {
+            font-size: 11px;
+            color: var(--text-sec);
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        #importFileInput {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Install Banner (iOS) -->
     <div class="install-banner" id="installBanner">
         <div class="install-banner-icon">📲</div>
-        <div class="install-banner-text">Adicione La Mafia à sua tela inicial para acesso rápido!</div>
+        <div class="install-banner-text">Adicione La Mafia à sua tela inicial!</div>
         <button class="install-banner-btn" onclick="document.getElementById('installBanner').classList.remove('show')">OK</button>
     </div>
 
-    <!-- TELA DE LOGIN -->
     <div id="loginScreen" class="login-screen">
         <div class="login-logo">LA MAFIA</div>
         <div class="login-subtitle">Área Restrita</div>
@@ -430,10 +426,8 @@
         </div>
     </div>
 
-    <!-- APP PRINCIPAL -->
     <div id="mainApp" class="hidden">
         <div class="app">
-            <!-- Header -->
             <div class="header">
                 <div>
                     <div class="brand">LA MAFIA</div>
@@ -447,7 +441,6 @@
                 </div>
             </div>
 
-            <!-- DASHBOARD -->
             <div id="viewDashboard">
                 <div class="stats-grid">
                     <div class="card">
@@ -466,7 +459,6 @@
                     <div class="stat-label" data-i18n="revenue_today">Receita de Hoje</div>
                     <div class="stat-value" id="statDayTotal" style="font-size: 28px;">€0,00</div>
                     
-                    <!-- Revenue Split -->
                     <div class="revenue-split">
                         <div class="revenue-item">
                             <div class="revenue-item-label" data-i18n="revenue_pending">Prevista</div>
@@ -482,6 +474,20 @@
                 <div class="card">
                     <div class="stat-label" data-i18n="revenue_month">Receita Mês</div>
                     <div class="stat-value" id="statMonth">€0,00</div>
+                    
+                    <div class="backup-section">
+                        <div class="stat-label" data-i18n="backup">Backup</div>
+                        <div class="backup-grid">
+                            <button class="btn btn-secondary btn-small" onclick="app.exportBackup()">
+                                📤 <span data-i18n="export">Exportar</span>
+                            </button>
+                            <button class="btn btn-secondary btn-small" onclick="document.getElementById('importFileInput').click()">
+                                📥 <span data-i18n="import">Importar</span>
+                            </button>
+                        </div>
+                        <div class="backup-info" data-i18n="backup_info">Salve seus dados na nuvem</div>
+                        <input type="file" id="importFileInput" accept=".json" onchange="app.importBackup(event)">
+                    </div>
                 </div>
 
                 <div class="section-header">
@@ -503,13 +509,11 @@
                 </button>
             </div>
 
-            <!-- AGENDA -->
             <div id="viewAgenda" class="hidden">
                 <div class="section-header">
                     <div class="section-title" data-i18n="agenda">Agenda</div>
                 </div>
                 
-                <!-- Filtro de Data -->
                 <div class="date-filter">
                     <input type="date" id="agendaDate" class="form-input">
                     <button onclick="app.filterAgenda()" data-i18n="filter">Filtrar</button>
@@ -520,7 +524,6 @@
                 </div>
             </div>
 
-            <!-- CLIENTES -->
             <div id="viewClients" class="hidden">
                 <div class="section-header">
                     <div class="section-title" data-i18n="clients">Clientes</div>
@@ -531,7 +534,6 @@
                 </div>
             </div>
 
-            <!-- VACILÃO -->
             <div id="viewVacilao" class="hidden">
                 <div class="section-header">
                     <div class="section-title">⚠️ <span data-i18n="vacilao">Vacilão</span></div>
@@ -543,10 +545,8 @@
             </div>
         </div>
 
-        <!-- Floating Action Button -->
         <div class="fab" onclick="app.openModal('appointment')">+</div>
 
-        <!-- Navegação Inferior -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="app.navigate('dashboard')" id="navDashboard">
                 <div class="nav-icon">🏠</div>
@@ -568,7 +568,6 @@
         </div>
     </div>
 
-    <!-- MODAL DE AGENDAMENTO (NOVO/EDITAR) -->
     <div class="modal-overlay" id="modalAppointment">
         <div class="modal-content">
             <div class="modal-header">
@@ -612,13 +611,12 @@
             </div>
             <div class="form-group">
                 <label class="form-label" data-i18n="notes">Observações</label>
-                <textarea id="aptNotes" class="form-input" rows="3" placeholder="Ex: Cliente prefere corte mais curto nas laterais"></textarea>
+                <textarea id="aptNotes" class="form-input" rows="3" placeholder="Ex: Cliente prefere corte mais curto"></textarea>
             </div>
             <button class="btn btn-primary" onclick="app.saveAppointment()" data-i18n="save">Salvar</button>
         </div>
     </div>
 
-    <!-- MODAL DE HISTÓRICO DO CLIENTE -->
     <div class="modal-overlay" id="modalClientHistory">
         <div class="modal-content">
             <div class="modal-header">
@@ -629,12 +627,27 @@
         </div>
     </div>
 
-    <!-- TOAST -->
+    <div class="modal-overlay" id="modalConfirmImport">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" data-i18n="confirm_import">Confirmar Importação</div>
+                <button class="modal-close" onclick="app.closeModal('confirmImport')">×</button>
+            </div>
+            <p style="color: var(--text-sec); margin-bottom: 20px; font-size: 14px;" data-i18n="import_warning">
+                ⚠️ Isso irá substituir TODOS os dados atuais.
+            </p>
+            <div class="backup-grid">
+                <button class="btn btn-secondary" onclick="app.closeModal('confirmImport')" data-i18n="cancel">Cancelar</button>
+                <button class="btn btn-danger" onclick="app.confirmImport()" data-i18n="confirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
         const app = {
-             {
+            data: {
                 appointments: [],
                 clients: [],
                 vacilao: [],
@@ -642,6 +655,8 @@
                 isLoggedIn: false,
                 selectedDate: new Date().toISOString().split('T')[0]
             },
+            
+            importData: null,
 
             translations: {
                 pt: {
@@ -658,6 +673,14 @@
                     dashboard: "Início",
                     quick_actions: "Ações Rápidas",
                     export_report: "Exportar Caixa",
+                    backup: "Backup",
+                    export: "Exportar",
+                    import: "Importar",
+                    backup_info: "Salve seus dados na nuvem",
+                    confirm_import: "Confirmar Importação",
+                    import_warning: "⚠️ Isso irá substituir TODOS os dados atuais.",
+                    cancel: "Cancelar",
+                    confirm: "Confirmar",
                     new_appointment: "Novo Agendamento",
                     edit_appointment: "Editar Agendamento",
                     client_name: "Nome do Cliente",
@@ -677,7 +700,11 @@
                     late_cancelled: "Cancelamento em cima da hora!",
                     completed_msg: "Atendimento concluído!",
                     error_password: "Senha incorreta",
-                    search_placeholder: "🔍 Buscar cliente..."
+                    search_placeholder: "🔍 Buscar cliente...",
+                    backup_exported: "Backup exportado!",
+                    backup_imported: "Backup importado!",
+                    backup_invalid: "Arquivo de backup inválido!",
+                    backup_error: "Erro ao importar backup!"
                 },
                 es: {
                     welcome: "Bienvenido, Jefe",
@@ -693,6 +720,14 @@
                     dashboard: "Inicio",
                     quick_actions: "Acciones Rápidas",
                     export_report: "Exportar Caja",
+                    backup: "Copia de Seguridad",
+                    export: "Exportar",
+                    import: "Importar",
+                    backup_info: "Guarde sus datos en la nube",
+                    confirm_import: "Confirmar Importación",
+                    import_warning: "⚠️ Esto reemplazará TODOS los datos actuales.",
+                    cancel: "Cancelar",
+                    confirm: "Confirmar",
                     new_appointment: "Nueva Cita",
                     edit_appointment: "Editar Cita",
                     client_name: "Nombre del Cliente",
@@ -712,14 +747,17 @@
                     late_cancelled: "¡Cancelación de última hora!",
                     completed_msg: "¡Atención completada!",
                     error_password: "Contraseña incorrecta",
-                    search_placeholder: "🔍 Buscar cliente..."
+                    search_placeholder: "🔍 Buscar cliente...",
+                    backup_exported: "¡Copia exportada!",
+                    backup_imported: "¡Copia importada!",
+                    backup_invalid: "¡Archivo inválido!",
+                    backup_error: "¡Error al importar!"
                 }
             },
 
             init() {
                 this.loadData();
                 this.checkAuth();
-                this.updateDate();
                 document.getElementById('agendaDate').value = this.data.selectedDate;
                 document.getElementById('clientSearch').placeholder = this.t('search_placeholder');
                 this.checkInstallBanner();
@@ -778,13 +816,9 @@
                 document.getElementById(`view${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.remove('hidden');
                 document.getElementById(`nav${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.add('active');
                 
-                if (view === 'agenda') {
-                    this.renderAppointments();
-                } else if (view === 'vacilao') {
-                    this.renderVacilao();
-                } else if (view === 'clients') {
-                    this.renderClients();
-                }
+                if (view === 'agenda') this.renderAppointments();
+                else if (view === 'vacilao') this.renderVacilao();
+                else if (view === 'clients') this.renderClients();
             },
 
             toggleLanguage() {
@@ -821,7 +855,6 @@
 
             renderStats() {
                 const today = new Date().toISOString().split('T')[0];
-                
                 const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
                 const pendingAppts = todayAppts.filter(a => a.status === 'active');
                 const completedAppts = todayAppts.filter(a => a.status === 'completed');
@@ -836,7 +869,6 @@
 
                 document.getElementById('statCount').textContent = todayAppts.length;
                 document.getElementById('statCompleted').textContent = completedAppts.length;
-                
                 document.getElementById('statDayTotal').textContent = this.formatCurrency(totalDayRevenue);
                 document.getElementById('statPending').textContent = this.formatCurrency(pendingRevenue);
                 document.getElementById('statCompletedRevenue').textContent = this.formatCurrency(completedRevenue);
@@ -874,7 +906,7 @@
                     return `
                     <div class="appointment ${isCompleted ? 'completed' : ''}">
                         <span class="status-badge ${isCompleted ? 'status-completed' : 'status-pending'}">
-                            ${isCompleted ? (this.data.lang === 'pt' ? 'CONCLUÍDO' : 'COMPLETADO') : (this.data.lang === 'pt' ? 'PENDENTE' : 'PENDIENTE')}
+                            ${isCompleted ? 'CONCLUÍDO' : 'PENDENTE'}
                         </span>
                         <div class="appointment-header">
                             <div class="apt-time">🕒 ${apt.time}</div>
@@ -888,19 +920,11 @@
                         </div>
                         <div class="apt-actions">
                             ${!isCompleted ? `
-                                <button class="apt-btn apt-btn-edit" onclick="app.editAppointment('${apt.id}')">
-                                    ✏️ ${this.data.lang === 'pt' ? 'Editar' : 'Editar'}
-                                </button>
-                                <button class="apt-btn apt-btn-complete" onclick="app.completeAppointment('${apt.id}')">
-                                    ✓ ${this.data.lang === 'pt' ? 'Concluir' : 'Completar'}
-                                </button>
+                                <button class="apt-btn apt-btn-edit" onclick="app.editAppointment('${apt.id}')">✏️ Editar</button>
+                                <button class="apt-btn apt-btn-complete" onclick="app.completeAppointment('${apt.id}')">✓ Concluir</button>
                             ` : ''}
-                            <button class="apt-btn apt-btn-cancel" onclick="app.cancelAppointment('${apt.id}', false)">
-                                ❌ ${this.data.lang === 'pt' ? 'Cancelar' : 'Cancelar'}
-                            </button>
-                            <button class="apt-btn apt-btn-late" onclick="app.cancelAppointment('${apt.id}', true)">
-                                ⚠️ ${this.data.lang === 'pt' ? 'Em Cima da Hora' : 'Última Hora'}
-                            </button>
+                            <button class="apt-btn apt-btn-cancel" onclick="app.cancelAppointment('${apt.id}', false)">❌ Cancelar</button>
+                            <button class="apt-btn apt-btn-late" onclick="app.cancelAppointment('${apt.id}', true)">⚠️ Em Cima da Hora</button>
                         </div>
                     </div>
                 `}).join('');
@@ -909,10 +933,7 @@
             renderClients() {
                 const list = document.getElementById('clientsList');
                 const searchTerm = document.getElementById('clientSearch').value.toLowerCase();
-                
-                const filteredClients = this.data.clients.filter(c => 
-                    c.name.toLowerCase().includes(searchTerm)
-                );
+                const filteredClients = this.data.clients.filter(c => c.name.toLowerCase().includes(searchTerm));
 
                 if (filteredClients.length === 0) {
                     list.innerHTML = `<div class="empty-state">${this.t('no_clients')}</div>`;
@@ -926,7 +947,6 @@
                     <div class="vacilao-item">
                         <div class="vacilao-info" onclick="app.showClientHistory('${c.name}')" style="cursor: pointer;">
                             <div class="vacilao-name">${c.name} 👆</div>
-                            <div class="vacilao-date">${c.phone || ''} ${c.lastVisit ? '• Última: ' + this.formatDate(c.lastVisit) : ''}</div>
                             <div class="vacilao-date">${history.length} agendamentos</div>
                         </div>
                         <button onclick="app.deleteClient(${originalIndex})" style="background:none;border:none;color:var(--error);cursor:pointer;">🗑</button>
@@ -940,21 +960,19 @@
                     list.innerHTML = `<div class="empty-state">${this.t('no_vacilao')}</div>`;
                     return;
                 }
-                list.innerHTML = this.data.vacilao.map((v, i) => `
+                list.innerHTML = this.data.vacilao.map((v) => `
                     <div class="vacilao-item">
                         <div class="vacilao-info">
                             <div class="vacilao-name">${v.client}</div>
                             <div class="vacilao-date">📅 ${this.formatDate(v.date)} • 🕒 ${v.time}</div>
                             <div class="vacilao-date">${v.service} • ${this.formatCurrency(v.price)}</div>
                         </div>
-                        <span class="vacilao-badge">${this.data.lang === 'pt' ? 'VACILOU' : 'FALLÓ'}</span>
+                        <span class="vacilao-badge">VACILOU</span>
                     </div>
                 `).join('');
             },
 
-            searchClients() {
-                this.renderClients();
-            },
+            searchClients() { this.renderClients(); },
 
             showClientHistory(clientName) {
                 const history = this.data.appointments
@@ -1064,9 +1082,7 @@
                 this.showToast(this.t('saved'));
             },
 
-            editAppointment(aptId) {
-                this.openModal('appointment', aptId);
-            },
+            editAppointment(aptId) { this.openModal('appointment', aptId); },
 
             completeAppointment(aptId) {
                 const aptIndex = this.data.appointments.findIndex(a => a.id === aptId);
@@ -1085,10 +1101,7 @@
                 const apt = this.data.appointments[aptIndex];
 
                 if (isLate) {
-                    this.data.vacilao.push({
-                        ...apt,
-                        cancelledAt: new Date().toISOString()
-                    });
+                    this.data.vacilao.push({ ...apt, cancelledAt: new Date().toISOString() });
                     this.showToast(this.t('late_cancelled'));
                 } else {
                     this.showToast(this.t('cancelled'));
@@ -1104,26 +1117,75 @@
                 this.showToast(this.t('deleted'));
             },
 
+            exportBackup() {
+                const backupData = {
+                    version: '1.0',
+                    exportDate: new Date().toISOString(),
+                    data: this.data
+                };
+                
+                const jsonString = JSON.stringify(backupData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
+                a.href = url;
+                a.download = `la-mafia-backup-${dateStr}.json`;
+                a.click();
+                
+                URL.revokeObjectURL(url);
+                this.showToast(this.t('backup_exported'), 'success');
+            },
+            
+            importBackup(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const backupData = JSON.parse(e.target.result);
+                        
+                        if (!backupData.data || !backupData.data.appointments) {
+                            throw new Error('Invalid backup format');
+                        }
+                        
+                        this.importData = backupData.data;
+                        this.openModal('confirmImport');
+                        
+                    } catch (error) {
+                        this.showToast(this.t('backup_invalid'), 'error');
+                    }
+                };
+                reader.onerror = () => {
+                    this.showToast(this.t('backup_error'), 'error');
+                };
+                reader.readAsText(file);
+                event.target.value = '';
+            },
+            
+            confirmImport() {
+                if (this.importData) {
+                    this.data = { ...this.data, ...this.importData };
+                    this.saveData();
+                    this.importData = null;
+                    this.closeModal('confirmImport');
+                    this.showToast(this.t('backup_imported'), 'success');
+                }
+            },
+            
             exportReport() {
                 const today = new Date().toISOString().split('T')[0];
                 const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
-                const pendingAppts = todayAppts.filter(a => a.status === 'active');
-                const completedAppts = todayAppts.filter(a => a.status === 'completed');
                 const total = todayAppts.reduce((sum, a) => sum + parseFloat(a.price), 0);
                 
                 let report = `LA MAFIA BARBEARIA - Fechamento ${this.formatDate(today)}\n\n`;
-                report += `=== RESUMO ===\n`;
-                report += `Receita Prevista: ${this.formatCurrency(pendingAppts.reduce((s, a) => s + parseFloat(a.price), 0))}\n`;
-                report += `Receita Concluída: ${this.formatCurrency(completedAppts.reduce((s, a) => s + parseFloat(a.price), 0))}\n`;
                 report += `Total: ${this.formatCurrency(total)}\n`;
-                report += `Concluídos: ${completedAppts.length}/${todayAppts.length}\n`;
                 report += `\n=== ATENDIMENTOS ===\n`;
                 todayAppts.forEach(a => {
-                    const status = a.status === 'completed' ? '[OK]' : '[PEND]';
-                    report += `${status} ${a.time} - ${a.client} - ${a.service} - €${a.price}\n`;
-                    if (a.notes) report += `   Notas: ${a.notes}\n`;
+                    report += `${a.time} - ${a.client} - ${a.service} - €${a.price}\n`;
                 });
-                report += `\nTOTAL GERAL: ${this.formatCurrency(total)}`;
 
                 const blob = new Blob([report], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
@@ -1148,17 +1210,7 @@
                 return date.toLocaleDateString(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', options);
             },
 
-            updateDate() {
-                const options = { day: 'numeric', month: 'short', year: 'numeric' };
-                const today = new Date();
-                const currentDateEl = document.getElementById('currentDate');
-                if (currentDateEl) {
-                    currentDateEl.textContent = today.toLocaleDateString(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', options);
-                }
-            },
-
             checkInstallBanner() {
-                // Mostra banner se não estiver instalado como PWA
                 const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
                 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
                 
@@ -1169,10 +1221,12 @@
                 }
             },
 
-            showToast(message) {
+            showToast(message, type = 'info') {
                 const toast = document.getElementById('toast');
                 toast.textContent = message;
-                toast.classList.add('show');
+                toast.className = 'toast show';
+                if (type === 'error') toast.classList.add('error');
+                if (type === 'success') toast.classList.add('success');
                 setTimeout(() => toast.classList.remove('show'), 2000);
             }
         };
