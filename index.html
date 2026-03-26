@@ -26,6 +26,7 @@
 --warning: #FFAA00;
 --info: #44AAFF;
 --gold: #FFD700;
+--whatsapp: #25D366;
 }
 * { margin: 0; padding: 0; box-sizing: border-box;
 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -68,6 +69,7 @@ gap: 8px;
 .btn-success { background: var(--success); color: var(--bg); }
 .btn-info { background: var(--info); color: var(--bg); }
 .btn-gold { background: var(--gold); color: var(--bg); }
+.btn-whatsapp { background: var(--whatsapp); color: #fff; }
 .card {
 background: var(--surface);
 border: 1px solid var(--border);
@@ -202,6 +204,7 @@ display: inline-flex; align-items: center; gap: 6px;
 .apt-btn-late { background: var(--warning); color: var(--bg); }
 .apt-btn-edit { background: var(--info); color: var(--bg); }
 .apt-btn-complete { background: var(--success); color: var(--bg); }
+.apt-btn-whatsapp { background: var(--whatsapp); color: #fff; }
 .status-badge {
 position: absolute;
 top: 16px;
@@ -1010,7 +1013,8 @@ backup_invalid: "Arquivo de backup inválido!",
 backup_error: "Erro ao importar backup!",
 mafioso: "Mafioso",
 frequent: "Frequente",
-new_client_badge: "Novo"
+new_client_badge: "Novo",
+whatsapp_msg: "Olá {client}! Lembrando do seu agendamento na La Mafia Barbearia hoje às {time}. Até já! 🎩"
 },
 es: {
 welcome: "Bienvenido, Jefe",
@@ -1077,7 +1081,8 @@ backup_invalid: "¡Archivo inválido!",
 backup_error: "¡Error al importar!",
 mafioso: "Mafioso",
 frequent: "Frecuente",
-new_client_badge: "Nuevo"
+new_client_badge: "Nuevo",
+whatsapp_msg: "¡Hola {client}! Recordando tu cita en La Mafia Barbearia hoy a las {time}. ¡Nos vemos! 🎩"
 }
 },
 init() {
@@ -1159,11 +1164,8 @@ document.getElementById(`nav${v}`).classList.remove('active');
 });
 document.getElementById(`view${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.remove('hidden');
 document.getElementById(`nav${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.add('active');
-
-// Controla qual FAB mostrar
 const fabAppointment = document.getElementById('fabAppointment');
 const fabClient = document.getElementById('fabClient');
-
 if (view === 'clients') {
 fabAppointment.classList.add('hidden');
 fabClient.classList.remove('hidden');
@@ -1171,7 +1173,6 @@ fabClient.classList.remove('hidden');
 fabAppointment.classList.remove('hidden');
 fabClient.classList.add('hidden');
 }
-
 if (view === 'agenda') {
 this.data.selectedDate = document.getElementById('agendaDate').value || new Date().toISOString().split('T')[0];
 this.renderAppointments();
@@ -1316,6 +1317,17 @@ return 'frequent';
 return 'new';
 }
 },
+// Função para enviar WhatsApp
+sendWhatsApp(client, time, service, date) {
+const msg = this.t('whatsapp_msg')
+.replace('{client}', client)
+.replace('{time}', time)
+.replace('{service}', service)
+.replace('{date}', this.formatDate(date));
+const encodedMsg = encodeURIComponent(msg);
+const whatsappUrl = `https://wa.me/?text=${encodedMsg}`;
+window.open(whatsappUrl, '_blank');
+},
 renderAppointments() {
 const list = document.getElementById('appointmentsList');
 const selectedDate = document.getElementById('agendaDate').value || this.data.selectedDate;
@@ -1350,6 +1362,7 @@ ${apt.notes ? `<div class="apt-notes">📝 ${apt.notes}</div>` : ''}
 </div>
 <div class="apt-actions">
 ${!isCompleted ? `
+<button class="apt-btn apt-btn-whatsapp" onclick="app.sendWhatsApp('${apt.client}', '${apt.time}', '${apt.service}', '${apt.date}')">📱 WhatsApp</button>
 <button class="apt-btn apt-btn-edit" onclick="app.editAppointment('${apt.id}')">✏️ Editar</button>
 <button class="apt-btn apt-btn-complete" onclick="app.completeAppointment('${apt.id}')">✓ Concluir</button>
 ` : ''}
@@ -1474,7 +1487,6 @@ updateClientSuggestions() {
 const datalist = document.getElementById('clientSuggestions');
 datalist.innerHTML = this.data.clients.map(c => `<option value="${c.name}">`).join('');
 },
-// Funções de Cliente
 openModal(type, aptId = null, clientId = null) {
 document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.add('active');
 if (type === 'appointment') {
@@ -1536,7 +1548,6 @@ this.showToast('Nome é obrigatório');
 return;
 }
 if (clientId !== '') {
-// Editar cliente existente
 this.data.clients[clientId] = {
 ...this.data.clients[clientId],
 name, phone, notes,
@@ -1544,7 +1555,6 @@ updatedAt: new Date().toISOString()
 };
 this.showToast('Cliente atualizado!');
 } else {
-// Novo cliente
 const newClient = {
 name,
 phone: phone || '',
