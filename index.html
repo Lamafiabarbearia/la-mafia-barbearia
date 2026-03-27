@@ -27,6 +27,7 @@
 --info: #44AAFF;
 --gold: #FFD700;
 --whatsapp: #25D366;
+--purple: #AA44FF;
 }
 * { margin: 0; padding: 0; box-sizing: border-box;
 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -70,6 +71,7 @@ gap: 8px;
 .btn-info { background: var(--info); color: var(--bg); }
 .btn-gold { background: var(--gold); color: var(--bg); }
 .btn-whatsapp { background: var(--whatsapp); color: #fff; }
+.btn-purple { background: var(--purple); color: #fff; }
 .card {
 background: var(--surface);
 border: 1px solid var(--border);
@@ -596,6 +598,102 @@ color: var(--bg);
 background: var(--border);
 color: var(--error);
 }
+
+/* Finance Tab Styles */
+.finance-selector {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+margin-bottom: 16px;
+}
+.finance-card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 12px;
+padding: 16px;
+}
+.finance-card.highlight {
+border-color: var(--gold);
+background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+}
+.finance-label {
+font-size: 11px;
+color: var(--text-sec);
+text-transform: uppercase;
+font-weight: 600;
+margin-bottom: 8px;
+}
+.finance-value {
+font-size: 24px;
+font-weight: 700;
+color: var(--text);
+}
+.finance-value.success { color: var(--success); }
+.finance-value.warning { color: var(--warning); }
+.finance-value.info { color: var(--info); }
+.finance-comparison {
+display: flex;
+align-items: center;
+gap: 6px;
+margin-top: 8px;
+font-size: 11px;
+}
+.finance-comparison.up { color: var(--success); }
+.finance-comparison.down { color: var(--error); }
+.service-breakdown {
+margin-top: 16px;
+padding-top: 16px;
+border-top: 1px solid var(--border);
+}
+.service-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 10px 0;
+border-bottom: 1px solid var(--border);
+}
+.service-item:last-child { border-bottom: none; }
+.service-name { font-size: 13px; color: var(--text-sec); }
+.service-count { font-size: 12px; color: var(--text-sec); }
+.service-total { font-size: 14px; font-weight: 700; color: var(--text); }
+.daily-chart {
+display: flex;
+align-items: flex-end;
+gap: 4px;
+height: 100px;
+margin-top: 16px;
+padding-top: 16px;
+border-top: 1px solid var(--border);
+}
+.chart-bar {
+flex: 1;
+background: var(--border);
+border-radius: 4px 4px 0 0;
+min-height: 4px;
+position: relative;
+}
+.chart-bar.active { background: var(--success); }
+.chart-bar-label {
+position: absolute;
+bottom: -20px;
+left: 50%;
+transform: translateX(-50%);
+font-size: 9px;
+color: var(--text-sec);
+}
+.top-days {
+margin-top: 16px;
+padding-top: 16px;
+border-top: 1px solid var(--border);
+}
+.top-day-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 8px 0;
+}
+.top-day-date { font-size: 12px; color: var(--text-sec); }
+.top-day-value { font-size: 13px; font-weight: 700; color: var(--gold); }
 </style>
 </head>
 <body>
@@ -724,6 +822,9 @@ color: var(--error);
 <button class="btn btn-secondary mb-20" onclick="app.navigate('clients')">
 👥 <span data-i18n="clients">Clientes</span>
 </button>
+<button class="btn btn-secondary mb-20" onclick="app.navigate('finance')">
+💰 <span data-i18n="finance">Finanças</span>
+</button>
 <button class="btn btn-secondary mb-20" onclick="app.navigate('vacilao')">
 ⚠️ <span data-i18n="vacilao">Vacilão</span>
 <span id="vacilaoBadge" class="nav-badge hidden">0</span>
@@ -769,6 +870,61 @@ color: var(--error);
 </div>
 </div>
 
+<!-- NOVA ABA DE FINANÇAS -->
+<div id="viewFinance" class="hidden">
+<div class="section-header">
+<div class="section-title" data-i18n="finance">Finanças</div>
+</div>
+
+<!-- Seletor de Período -->
+<div class="finance-selector">
+<div class="finance-card">
+<div class="finance-label" data-i18n="select_day">Selecionar Dia</div>
+<input type="date" id="financeDaySelect" class="form-input" onchange="app.renderFinanceDay()">
+</div>
+<div class="finance-card">
+<div class="finance-label" data-i18n="select_month">Selecionar Mês</div>
+<input type="month" id="financeMonthSelect" class="form-input" onchange="app.renderFinanceMonth()">
+</div>
+</div>
+
+<!-- Resumo do Dia Selecionado -->
+<div class="card finance-card highlight">
+<div class="finance-label" data-i18n="selected_day_revenue">Receita do Dia Selecionado</div>
+<div class="finance-value success" id="financeDayRevenue">€0,00</div>
+<div class="finance-comparison" id="financeDayComparison">
+<span>📊</span>
+<span id="financeDayComparisonText">-</span>
+</div>
+<div class="service-breakdown" id="financeDayServices"></div>
+</div>
+
+<!-- Resumo do Mês Selecionado -->
+<div class="card">
+<div class="finance-label" data-i18n="selected_month_revenue">Receita do Mês Selecionado</div>
+<div class="finance-value info" id="financeMonthRevenue">€0,00</div>
+<div class="finance-label" style="margin-top: 12px;" data-i18n="month_days">Dias com Atendimento</div>
+<div class="finance-value" id="financeMonthDays" style="font-size: 18px;">0</div>
+<div class="finance-label" style="margin-top: 12px;" data-i18n="avg_daily">Média Diária</div>
+<div class="finance-value warning" id="financeMonthAvg">€0,00</div>
+<div class="daily-chart" id="financeMonthChart"></div>
+<div class="top-days" id="financeTopDays"></div>
+</div>
+
+<!-- Comparação com Período Anterior -->
+<div class="card">
+<div class="finance-label" data-i18n="previous_day">Dia Anterior</div>
+<div class="finance-value" id="financePreviousDay">€0,00</div>
+<div class="finance-label" style="margin-top: 12px;" data-i18n="previous_month">Mês Anterior</div>
+<div class="finance-value" id="financePreviousMonth">€0,00</div>
+</div>
+
+<!-- Exportar Relatório Financeiro -->
+<button class="btn btn-purple mb-20" onclick="app.exportFinanceReport()">
+📤 <span data-i18n="export_finance">Exportar Relatório Financeiro</span>
+</button>
+</div>
+
 <div id="viewVacilao" class="hidden">
 <div class="section-header">
 <div class="section-title">⚠️ <span data-i18n="vacilao">Vacilão</span></div>
@@ -798,6 +954,10 @@ color: var(--error);
 <div class="nav-item" onclick="app.navigate('clients')" id="navClients">
 <div class="nav-icon">👥</div>
 <div data-i18n="clients">Clientes</div>
+</div>
+<div class="nav-item" onclick="app.navigate('finance')" id="navFinance">
+<div class="nav-icon">💰</div>
+<div data-i18n="finance">Finanças</div>
 </div>
 <div class="nav-item" onclick="app.navigate('vacilao')" id="navVacilao">
 <div class="nav-icon">⚠️</div>
@@ -952,6 +1112,16 @@ appointments: "Atendimentos",
 completed: "Concluídos",
 agenda: "Agenda",
 clients: "Clientes",
+finance: "Finanças",
+select_day: "Selecionar Dia",
+select_month: "Selecionar Mês",
+selected_day_revenue: "Receita do Dia Selecionado",
+selected_month_revenue: "Receita do Mês Selecionado",
+month_days: "Dias com Atendimento",
+avg_daily: "Média Diária",
+previous_day: "Dia Anterior",
+previous_month: "Mês Anterior",
+export_finance: "Exportar Relatório Financeiro",
 vacilao: "Vacilão",
 dashboard: "Início",
 quick_actions: "Ações Rápidas",
@@ -1020,6 +1190,16 @@ appointments: "Atenciones",
 completed: "Completados",
 agenda: "Agenda",
 clients: "Clientes",
+finance: "Finanzas",
+select_day: "Seleccionar Día",
+select_month: "Seleccionar Mes",
+selected_day_revenue: "Ingresos del Día",
+selected_month_revenue: "Ingresos del Mes",
+month_days: "Días con Atención",
+avg_daily: "Promedio Diario",
+previous_day: "Día Anterior",
+previous_month: "Mes Anterior",
+export_finance: "Exportar Informe",
 vacilao: "Vacilón",
 dashboard: "Inicio",
 quick_actions: "Acciones Rápidas",
@@ -1076,6 +1256,8 @@ init() {
 this.loadData();
 this.checkAuth();
 document.getElementById('agendaDate').value = this.data.selectedDate;
+document.getElementById('financeDaySelect').value = this.data.selectedDate;
+document.getElementById('financeMonthSelect').value = this.data.selectedDate.substring(0, 7);
 document.getElementById('clientSearch').placeholder = this.t('search_placeholder');
 document.getElementById('settingOpenTime').value = this.data.settings.openTime;
 document.getElementById('settingCloseTime').value = this.data.settings.closeTime;
@@ -1145,7 +1327,7 @@ this.saveData();
 this.showToast('Configurações salvas!');
 },
 navigate(view) {
-['Dashboard', 'Agenda', 'Clients', 'Vacilao'].forEach(v => {
+['Dashboard', 'Agenda', 'Clients', 'Finance', 'Vacilao'].forEach(v => {
 document.getElementById(`view${v}`).classList.add('hidden');
 document.getElementById(`nav${v}`).classList.remove('active');
 });
@@ -1165,6 +1347,7 @@ this.data.selectedDate = document.getElementById('agendaDate').value || new Date
 this.renderAppointments();
 } else if (view === 'vacilao') this.renderVacilao();
 else if (view === 'clients') this.renderClients();
+else if (view === 'finance') this.renderFinance();
 else if (view === 'dashboard') this.renderAvailableSlots();
 },
 toggleLanguage() {
@@ -1231,6 +1414,127 @@ document.getElementById('vacilaoBadge').classList.add('hidden');
 document.getElementById('navVacilaoBadge').classList.add('hidden');
 }
 document.getElementById('vacilaoCount').textContent = `${vacilaoCount} clientes`;
+},
+renderFinance() {
+this.renderFinanceDay();
+this.renderFinanceMonth();
+},
+renderFinanceDay() {
+const selectedDate = document.getElementById('financeDaySelect').value || new Date().toISOString().split('T')[0];
+const dayAppts = this.data.appointments.filter(a => {
+const aptDate = a.date ? a.date.split('T')[0] : '';
+return aptDate === selectedDate && a.status !== 'cancelled';
+});
+const dayRevenue = dayAppts.reduce((sum, a) => sum + parseFloat(a.price || 0), 0);
+const dayTips = dayAppts.reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
+document.getElementById('financeDayRevenue').textContent = this.formatCurrency(dayRevenue);
+// Comparação com dia anterior
+const yesterday = new Date(selectedDate);
+yesterday.setDate(yesterday.getDate() - 1);
+const yesterdayStr = yesterday.toISOString().split('T')[0];
+const yesterdayAppts = this.data.appointments.filter(a => {
+const aptDate = a.date ? a.date.split('T')[0] : '';
+return aptDate === yesterdayStr && a.status !== 'cancelled';
+});
+const yesterdayRevenue = yesterdayAppts.reduce((sum, a) => sum + parseFloat(a.price || 0), 0);
+const comparison = dayRevenue - yesterdayRevenue;
+const comparisonEl = document.getElementById('financeDayComparison');
+const comparisonText = document.getElementById('financeDayComparisonText');
+if (yesterdayRevenue > 0) {
+const percent = ((comparison / yesterdayRevenue) * 100).toFixed(1);
+comparisonEl.className = `finance-comparison ${comparison >= 0 ? 'up' : 'down'}`;
+comparisonText.textContent = `${comparison >= 0 ? '↑' : '↓'} ${Math.abs(percent)}% vs ontem (${this.formatCurrency(yesterdayRevenue)})`;
+document.getElementById('financePreviousDay').textContent = this.formatCurrency(yesterdayRevenue);
+} else {
+comparisonEl.className = 'finance-comparison';
+comparisonText.textContent = 'Sem comparação';
+document.getElementById('financePreviousDay').textContent = '€0,00';
+}
+// Breakdown por serviço
+const serviceBreakdown = {};
+dayAppts.forEach(a => {
+if (!serviceBreakdown[a.service]) {
+serviceBreakdown[a.service] = { count: 0, total: 0 };
+}
+serviceBreakdown[a.service].count++;
+serviceBreakdown[a.service].total += parseFloat(a.price || 0);
+});
+const servicesHtml = Object.entries(serviceBreakdown).map(([service, data]) => `
+<div class="service-item">
+<div>
+<div class="service-name">${service}</div>
+<div class="service-count">${data.count}x</div>
+</div>
+<div class="service-total">${this.formatCurrency(data.total)}</div>
+</div>
+`).join('');
+document.getElementById('financeDayServices').innerHTML = servicesHtml;
+},
+renderFinanceMonth() {
+const selectedMonth = document.getElementById('financeMonthSelect').value || new Date().toISOString().substring(0, 7);
+const monthAppts = this.data.appointments.filter(a => {
+const aptDate = a.date ? a.date.split('T')[0] : '';
+return aptDate.startsWith(selectedMonth) && a.status !== 'cancelled';
+});
+const monthRevenue = monthAppts.reduce((sum, a) => sum + parseFloat(a.price || 0), 0);
+document.getElementById('financeMonthRevenue').textContent = this.formatCurrency(monthRevenue);
+// Dias com atendimento
+const uniqueDays = [...new Set(monthAppts.map(a => a.date.split('T')[0]))];
+document.getElementById('financeMonthDays').textContent = uniqueDays.length;
+// Média diária
+const avgDaily = uniqueDays.length > 0 ? monthRevenue / uniqueDays.length : 0;
+document.getElementById('financeMonthAvg').textContent = this.formatCurrency(avgDaily);
+// Comparação com mês anterior
+const prevMonth = new Date(selectedMonth + '-01');
+prevMonth.setMonth(prevMonth.getMonth() - 1);
+const prevMonthStr = prevMonth.toISOString().substring(0, 7);
+const prevMonthAppts = this.data.appointments.filter(a => {
+const aptDate = a.date ? a.date.split('T')[0] : '';
+return aptDate.startsWith(prevMonthStr) && a.status !== 'cancelled';
+});
+const prevMonthRevenue = prevMonthAppts.reduce((sum, a) => sum + parseFloat(a.price || 0), 0);
+document.getElementById('financePreviousMonth').textContent = this.formatCurrency(prevMonthRevenue);
+// Gráfico dos últimos 7 dias
+const chartData = [];
+for (let i = 6; i >= 0; i--) {
+const date = new Date();
+date.setDate(date.getDate() - i);
+const dateStr = date.toISOString().split('T')[0];
+const dayAppts = this.data.appointments.filter(a => {
+const aptDate = a.date ? a.date.split('T')[0] : '';
+return aptDate === dateStr && a.status !== 'cancelled';
+});
+const dayRevenue = dayAppts.reduce((sum, a) => sum + parseFloat(a.price || 0), 0);
+chartData.push({ date: dateStr, revenue: dayRevenue, day: date.getDate() });
+}
+const maxRevenue = Math.max(...chartData.map(d => d.revenue), 1);
+const chartHtml = chartData.map(d => {
+const height = (d.revenue / maxRevenue) * 80;
+const isToday = d.date === new Date().toISOString().split('T')[0];
+return `
+<div class="chart-bar ${isToday ? 'active' : ''}" style="height: ${height}px;">
+<div class="chart-bar-label">${d.day}</div>
+</div>
+`;
+}).join('');
+document.getElementById('financeMonthChart').innerHTML = chartHtml;
+// Top 5 dias do mês
+const dailyRevenue = {};
+monthAppts.forEach(a => {
+const date = a.date.split('T')[0];
+if (!dailyRevenue[date]) dailyRevenue[date] = 0;
+dailyRevenue[date] += parseFloat(a.price || 0);
+});
+const topDays = Object.entries(dailyRevenue)
+.sort((a, b) => b[1] - a[1])
+.slice(0, 5);
+const topDaysHtml = topDays.map(([date, revenue]) => `
+<div class="top-day-item">
+<div class="top-day-date">${this.formatDate(date)}</div>
+<div class="top-day-value">${this.formatCurrency(revenue)}</div>
+</div>
+`).join('');
+document.getElementById('financeTopDays').innerHTML = `<div class="finance-label" style="margin-bottom: 8px;">🏆 Top 5 Dias</div>${topDaysHtml}`;
 },
 renderAvailableSlots() {
 const grid = document.getElementById('availableSlotsGrid');
@@ -1714,7 +2018,7 @@ const today = new Date().toISOString().split('T')[0];
 const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
 const total = todayAppts.reduce((sum, a) => sum + parseFloat(a.price || 0), 0);
 const totalTips = todayAppts.reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
-let report = `LA MAFIA BARBEARIA - Fechamento ${this.formatDate(today)}\n\n`;
+let report = `LA MAFIA BARBEARIA - Fechamento ${this.formatDate(today)}\n`;
 report += `=== RESUMO ===\n`;
 report += `Serviços: ${this.formatCurrency(total)}\n`;
 report += `Gorjetas: ${this.formatCurrency(totalTips)}\n`;
@@ -1732,6 +2036,41 @@ a.href = url;
 a.download = `fechamento-${today}.txt`;
 a.click();
 this.showToast('Relatório exportado!');
+},
+exportFinanceReport() {
+const selectedMonth = document.getElementById('financeMonthSelect').value || new Date().toISOString().substring(0, 7);
+const monthAppts = this.data.appointments.filter(a => {
+const aptDate = a.date ? a.date.split('T')[0] : '';
+return aptDate.startsWith(selectedMonth) && a.status !== 'cancelled';
+});
+const monthRevenue = monthAppts.reduce((sum, a) => sum + parseFloat(a.price || 0), 0);
+const monthTips = monthAppts.reduce((sum, a) => sum + (parseFloat(a.tip) || 0), 0);
+// Breakdown por serviço
+const serviceBreakdown = {};
+monthAppts.forEach(a => {
+if (!serviceBreakdown[a.service]) {
+serviceBreakdown[a.service] = { count: 0, total: 0 };
+}
+serviceBreakdown[a.service].count++;
+serviceBreakdown[a.service].total += parseFloat(a.price || 0);
+});
+let report = `LA MAFIA BARBEARIA - Relatório Financeiro ${selectedMonth}\n\n`;
+report += `=== RESUMO DO MÊS ===\n`;
+report += `Total Serviços: ${this.formatCurrency(monthRevenue)}\n`;
+report += `Total Gorjetas: ${this.formatCurrency(monthTips)}\n`;
+report += `TOTAL GERAL: ${this.formatCurrency(monthRevenue + monthTips)}\n`;
+report += `Atendimentos: ${monthAppts.length}\n\n`;
+report += `=== POR SERVIÇO ===\n`;
+Object.entries(serviceBreakdown).forEach(([service, data]) => {
+report += `${service}: ${data.count}x = ${this.formatCurrency(data.total)}\n`;
+});
+const blob = new Blob([report], { type: 'text/plain' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = `financeiro-${selectedMonth}.txt`;
+a.click();
+this.showToast('Relatório financeiro exportado!');
 },
 formatCurrency(value) {
 return new Intl.NumberFormat(this.data.lang === 'pt' ? 'pt-PT' : 'es-ES', {
