@@ -509,7 +509,14 @@ const app={
 
   logout(){localStorage.removeItem('laMafiaAuth');this.data.isLoggedIn=false;document.getElementById('loginScreen').classList.remove('hidden');document.getElementById('mainApp').classList.add('hidden');document.getElementById('loginPassword').value='';document.getElementById('loginError').classList.add('hidden');},
 
-  toggleLanguage(){this.data.lang=this.data.lang==='pt'?'es':'pt';document.getElementById('langLabel').textContent=this.data.lang.toUpperCase();localStorage.setItem('laMafiaLang',this.data.lang);db.from('settings').update({lang:this.data.lang}).eq('id',1).then(()=>{});this.renderAll();},
+ toggleLanguage(){
+    this.data.lang=this.data.lang==='pt'?'es':'pt';
+    document.getElementById('langLabel').textContent=this.data.lang.toUpperCase();
+    document.getElementById('welcomeText').textContent=this.data.lang==='pt'?'Bem-vindo, Boss':'Bienvenido, Jefe';
+    localStorage.setItem('laMafiaLang',this.data.lang);
+    db.from('settings').update({lang:this.data.lang}).eq('id',1).then(()=>{});
+    this.renderAll();
+},
 
   async saveSettings(){
     this.data.settings.openTime=document.getElementById('settingOpenTime').value;
