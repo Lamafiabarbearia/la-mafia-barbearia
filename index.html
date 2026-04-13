@@ -14,378 +14,184 @@
 <title>La Mafia Barbearia</title>
 <style>
 :root {
---bg: #000000;
---surface: #121212;
---border: #333333;
---text: #FFFFFF;
---text-sec: #A0A0A0;
---error: #FF4444;
---success: #44FF44;
---warning: #FFAA00;
---info: #44AAFF;
---gold: #FFD700;
---whatsapp: #25D366;
---purple: #AA44FF;
+--bg: #000000; --surface: #121212; --border: #333333; --text: #FFFFFF;
+--text-sec: #A0A0A0; --error: #FF4444; --success: #44FF44; --warning: #FFAA00;
+--info: #44AAFF; --gold: #FFD700; --whatsapp: #25D366; --purple: #AA44FF;
 }
-* { margin: 0; padding: 0; box-sizing: border-box;
-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
--webkit-tap-highlight-color: transparent; }
-body {
-background-color: var(--bg);
-color: var(--text);
-min-height: 100vh;
-padding-bottom: 80px;
-}
-.app { max-width: 480px; margin: 0 auto; padding: 20px; }
-.header {
-display: flex; justify-content: space-between; align-items: center;
-padding: 20px 0 30px 0; border-bottom: 1px solid var(--border);
-margin-bottom: 25px;
-}
-.brand { font-size: 11px; text-transform: uppercase; color: var(--text-sec); letter-spacing: 2px; font-weight: 700; }
-.title { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-top: 5px; }
-.header-actions { display: flex; gap: 10px; }
-.btn {
-padding: 14px 20px;
-border-radius: 10px;
-border: none;
-font-weight: 700;
-font-size: 15px;
-cursor: pointer;
-transition: opacity 0.2s;
-display: flex;
-align-items: center;
-justify-content: center;
-gap: 8px;
-}
-.btn:active { opacity: 0.7; }
-.btn-primary { background: var(--text); color: var(--bg); width: 100%; }
-.btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
-.btn-small { padding: 8px 12px; font-size: 12px; }
-.btn-icon { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
-.btn-danger { background: var(--error); color: var(--text); }
-.btn-warning { background: var(--warning); color: var(--bg); }
-.btn-success { background: var(--success); color: var(--bg); }
-.btn-info { background: var(--info); color: var(--bg); }
-.btn-gold { background: var(--gold); color: var(--bg); }
-.btn-whatsapp { background: var(--whatsapp); color: #fff; }
-.btn-purple { background: var(--purple); color: #fff; }
-.card {
-background: var(--surface);
-border: 1px solid var(--border);
-border-radius: 12px;
-padding: 20px;
-margin-bottom: 16px;
-}
-.card.mafioso {
-border: 2px solid var(--gold);
-background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
-}
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-.stat-icon { font-size: 24px; margin-bottom: 10px; }
-.stat-label { font-size: 11px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-.stat-value { font-size: 22px; font-weight: 700; margin-top: 6px; }
-.revenue-split {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 12px;
-margin-top: 16px;
-padding-top: 16px;
-border-top: 1px solid var(--border);
-}
-.revenue-item { text-align: center; }
-.revenue-item-label { font-size: 10px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
-.revenue-item-value { font-size: 18px; font-weight: 700; }
-.revenue-pending { color: var(--text); }
-.revenue-completed { color: var(--success); }
-.slots-container { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
-.slots-title { font-size: 12px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; margin-bottom: 12px; }
-.slots-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.slot-item {
-background: var(--bg);
-border: 1px solid var(--border);
-border-radius: 6px;
-padding: 8px 4px;
-text-align: center;
-font-size: 11px;
-cursor: pointer;
-transition: all 0.2s;
-}
-.slot-item.available { border-color: var(--success); color: var(--success); }
-.slot-item.available:hover { background: var(--success); color: var(--bg); }
-.slot-item.booked { border-color: var(--error); color: var(--text-sec); cursor: not-allowed; }
-.slot-item.current-slot { border-color: var(--gold); color: var(--gold); }
-/* slot ocupado noutro dia — bloqueado visualmente igual ao de hoje */
-.slot-item.booked-future { border-color: var(--error); color: var(--text-sec); cursor: not-allowed; opacity: 0.7; }
-.timeline-container { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
-.timeline-item { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
-.timeline-item:last-child { border-bottom: none; }
-.timeline-time { width: 50px; font-size: 11px; color: var(--text-sec); font-weight: 600; }
-.timeline-bar { flex: 1; height: 8px; border-radius: 4px; margin: 0 10px; }
-.timeline-bar.available { background: var(--success); opacity: 0.3; }
-.timeline-bar.booked { background: var(--text); }
-.timeline-bar.completed { background: var(--success); }
-.timeline-label { font-size: 11px; color: var(--text-sec); width: 80px; text-align: right; }
-.section-header { display: flex; justify-content: space-between; align-items: center; margin: 30px 0 15px 0; }
-.section-title { font-size: 20px; font-weight: 700; }
-.appointment {
-display: flex; flex-direction: column;
-padding: 16px 0; border-bottom: 1px solid var(--border); position: relative;
-}
-.appointment:last-child { border-bottom: none; }
-.appointment.completed { border-left: 3px solid var(--success); padding-left: 12px; }
-.appointment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.apt-time {
-background: var(--border); padding: 6px 10px;
-border-radius: 6px; font-size: 12px; font-weight: 700;
-display: inline-flex; align-items: center; gap: 6px;
-}
-.apt-info { margin-top: 8px; }
-.apt-client { font-weight: 600; font-size: 15px; }
-.apt-service { color: var(--text-sec); font-size: 13px; margin-left: 22px; margin-top: 4px; }
-.apt-date { color: var(--text-sec); font-size: 12px; margin-top: 4px; margin-left: 22px; }
-.apt-notes { color: var(--info); font-size: 11px; margin-top: 4px; margin-left: 22px; font-style: italic; }
-.apt-tip { color: var(--warning); font-size: 11px; margin-top: 4px; margin-left: 22px; font-weight: 600; }
-.apt-price { font-weight: 700; font-size: 16px; }
-.apt-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-.apt-btn { padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
-.apt-btn-cancel { background: var(--border); color: var(--text); }
-.apt-btn-late { background: var(--warning); color: var(--bg); }
-.apt-btn-edit { background: var(--info); color: var(--bg); }
-.apt-btn-complete { background: var(--success); color: var(--bg); }
-.apt-btn-whatsapp { background: var(--whatsapp); color: #fff; }
-.status-badge {
-position: absolute; top: 16px; right: 0;
-padding: 4px 8px; border-radius: 4px;
-font-size: 9px; font-weight: 700; text-transform: uppercase;
-}
-.status-completed { background: var(--success); color: var(--bg); }
-.status-pending { background: var(--border); color: var(--text); }
-.form-group { margin-bottom: 16px; }
-.form-label { display: block; font-size: 12px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
-.form-input {
-width: 100%; padding: 14px;
-background: var(--surface); border: 1px solid var(--border);
-border-radius: 8px; color: var(--text); font-size: 15px; outline: none;
-}
-.form-input:focus { border-color: var(--text); }
-.form-input::placeholder { color: var(--text-sec); }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.modal-overlay {
-position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-background: rgba(0,0,0,0.9);
-display: flex; align-items: flex-end;
-z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s;
-}
-.modal-overlay.active { opacity: 1; pointer-events: all; }
-.modal-content {
-background: var(--bg); width: 100%; max-width: 480px; margin: 0 auto;
-border-radius: 20px 20px 0 0; padding: 25px; border-top: 1px solid var(--border);
-transform: translateY(100%); transition: transform 0.3s;
-max-height: 90vh; overflow-y: auto;
-}
-.modal-overlay.active .modal-content { transform: translateY(0); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.modal-title { font-size: 20px; font-weight: 700; }
-.modal-close { background: none; border: none; color: var(--text-sec); font-size: 24px; cursor: pointer; }
-/* Banner de conflito de horário dentro do modal */
-.conflict-banner {
-background: rgba(255,68,68,0.15);
-border: 1px solid var(--error);
-border-radius: 8px;
-padding: 12px 14px;
-margin-bottom: 16px;
-font-size: 13px;
-color: var(--error);
-display: none;
-}
-.conflict-banner.show { display: block; }
-.bottom-nav {
-position: fixed; bottom: 0; left: 0; right: 0;
-background: var(--surface); border-top: 1px solid var(--border);
-display: flex; justify-content: space-around; padding: 12px 0;
-max-width: 480px; margin: 0 auto;
-}
-.nav-item {
-display: flex; flex-direction: column; align-items: center; gap: 4px;
-color: var(--text-sec); font-size: 10px; text-transform: uppercase;
-font-weight: 600; cursor: pointer; padding: 8px 16px; position: relative;
-}
-.nav-item.active { color: var(--text); }
-.nav-icon { font-size: 20px; }
-.nav-badge {
-position: absolute; top: 4px; right: 10px;
-background: var(--error); color: var(--text);
-font-size: 9px; padding: 2px 6px; border-radius: 10px; font-weight: 700;
-}
-.hidden { display: none !important; }
-.mb-20 { margin-bottom: 20px; }
-.empty-state { text-align: center; color: var(--text-sec); padding: 40px 0; }
-.login-screen {
-position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-background: var(--bg); display: flex; flex-direction: column;
-justify-content: center; align-items: center; padding: 30px; z-index: 2000;
-}
-.login-logo { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; }
-.login-subtitle { color: var(--text-sec); margin-bottom: 40px; }
-.login-form { width: 100%; max-width: 320px; }
-.error-msg { color: var(--error); font-size: 13px; margin-top: 10px; text-align: center; }
-.fab {
-position: fixed; bottom: 90px; right: 20px;
-width: 56px; height: 56px; background: var(--text);
-border-radius: 50%; display: flex; align-items: center; justify-content: center;
-font-size: 28px; color: var(--bg);
-box-shadow: 0 4px 15px rgba(255,255,255,0.3);
-cursor: pointer; z-index: 100;
-}
-.fab.clients-fab { background: var(--gold); }
-.toast {
-position: fixed; top: 20px; left: 50%;
-transform: translateX(-50%) translateY(-100px);
-background: var(--surface); border: 1px solid var(--border);
-padding: 12px 20px; border-radius: 8px; font-size: 14px;
-z-index: 3000; transition: transform 0.3s;
-}
-.toast.show { transform: translateX(-50%) translateY(0); }
-.toast.error { border-color: var(--error); }
-.toast.success { border-color: var(--success); }
-.date-filter { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
-.date-filter input {
-flex: 1; padding: 10px; background: var(--surface);
-border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px;
-}
-.date-filter button {
-padding: 10px 16px; background: var(--text); color: var(--bg);
-border: none; border-radius: 8px; font-weight: 700; cursor: pointer;
-}
-.vacilao-item {
-display: flex; justify-content: space-between; align-items: center;
-padding: 16px 0; border-bottom: 1px solid var(--border);
-}
-.vacilao-item:last-child { border-bottom: none; }
-.vacilao-info { flex: 1; }
-.vacilao-name { font-weight: 600; font-size: 15px; }
-.vacilao-date { color: var(--text-sec); font-size: 12px; margin-top: 4px; }
-.vacilao-badge {
-background: var(--warning); color: var(--bg);
-padding: 4px 8px; border-radius: 4px;
-font-size: 10px; font-weight: 700; text-transform: uppercase;
-}
-.search-box {
-width: 100%; padding: 12px; background: var(--surface);
-border: 1px solid var(--border); border-radius: 8px;
-color: var(--text); font-size: 14px; margin-bottom: 15px;
-}
-.history-item {
-display: flex; justify-content: space-between;
-padding: 8px 0; font-size: 12px; color: var(--text-sec);
-}
-.install-banner {
-position: fixed; bottom: 80px; left: 20px; right: 20px;
-background: var(--surface); border: 1px solid var(--border);
-border-radius: 12px; padding: 16px;
-display: none; align-items: center; gap: 12px; z-index: 900;
-}
-.install-banner.show { display: flex; }
-.install-banner-icon { font-size: 24px; }
-.install-banner-text { flex: 1; font-size: 13px; }
-.install-banner-btn {
-background: var(--text); color: var(--bg); border: none;
-padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer;
-}
-.backup-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
-.backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
-.backup-info { font-size: 11px; color: var(--text-sec); margin-top: 10px; text-align: center; }
-#importFileInput { display: none; }
-.settings-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
-.settings-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
-.settings-label { font-size: 13px; color: var(--text-sec); }
-.settings-input {
-width: 80px; padding: 6px 10px; background: var(--surface);
-border: 1px solid var(--border); border-radius: 6px;
-color: var(--text); font-size: 13px; text-align: center;
-}
-.client-filters { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-.filter-btn {
-padding: 8px 14px; background: var(--surface); border: 1px solid var(--border);
-border-radius: 20px; color: var(--text-sec); font-size: 12px; font-weight: 600;
-cursor: pointer; transition: all 0.2s;
-}
-.filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-.filter-btn.mafioso { border-color: var(--gold); color: var(--gold); }
-.filter-btn.mafioso.active { background: var(--gold); color: var(--bg); }
-.sort-select {
-width: 100%; padding: 12px; background: var(--surface);
-border: 1px solid var(--border); border-radius: 8px;
-color: var(--text); font-size: 14px; margin-bottom: 15px; outline: none;
-}
-.client-stats { display: flex; gap: 15px; margin-top: 8px; }
-.client-stat { display: flex; flex-direction: column; }
-.client-stat-value { font-size: 14px; font-weight: 700; color: var(--text); }
-.client-stat-label { font-size: 10px; color: var(--text-sec); text-transform: uppercase; }
-.mafioso-badge {
-display: inline-block;
-background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-color: #000; padding: 4px 10px; border-radius: 12px;
-font-size: 10px; font-weight: 800; text-transform: uppercase; margin-left: 8px;
-}
-.frequent-badge {
-display: inline-block; background: var(--info); color: #000;
-padding: 4px 10px; border-radius: 12px;
-font-size: 10px; font-weight: 700; text-transform: uppercase; margin-left: 8px;
-}
-.new-badge {
-display: inline-block; background: var(--success); color: #000;
-padding: 4px 10px; border-radius: 12px;
-font-size: 10px; font-weight: 700; text-transform: uppercase; margin-left: 8px;
-}
-.client-actions { display: flex; gap: 8px; margin-top: 12px; }
-.client-action-btn { padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
-.client-action-btn-edit { background: var(--info); color: var(--bg); }
-.client-action-btn-delete { background: var(--border); color: var(--error); }
-.finance-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-.finance-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-.finance-card.highlight {
-border-color: var(--gold);
-background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
-}
-.finance-label { font-size: 11px; color: var(--text-sec); text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
-.finance-value { font-size: 24px; font-weight: 700; color: var(--text); }
-.finance-value.success { color: var(--success); }
-.finance-value.warning { color: var(--warning); }
-.finance-value.info { color: var(--info); }
-.finance-comparison { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 11px; }
-.finance-comparison.up { color: var(--success); }
-.finance-comparison.down { color: var(--error); }
-.service-breakdown { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
-.service-item {
-display: flex; justify-content: space-between; align-items: center;
-padding: 10px 0; border-bottom: 1px solid var(--border);
-}
-.service-item:last-child { border-bottom: none; }
-.service-name { font-size: 13px; color: var(--text-sec); }
-.service-count { font-size: 12px; color: var(--text-sec); }
-.service-total { font-size: 14px; font-weight: 700; color: var(--text); }
-.daily-chart {
-display: flex; align-items: flex-end; gap: 4px;
-height: 100px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
-}
-.chart-bar { flex: 1; background: var(--border); border-radius: 4px 4px 0 0; min-height: 4px; position: relative; }
-.chart-bar.active { background: var(--success); }
-.chart-bar-label { position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: 9px; color: var(--text-sec); }
-.top-days { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
-.top-day-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
-.top-day-date { font-size: 12px; color: var(--text-sec); }
-.top-day-value { font-size: 13px; font-weight: 700; color: var(--gold); }
+* { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; -webkit-tap-highlight-color:transparent; }
+body { background-color:var(--bg); color:var(--text); min-height:100vh; padding-bottom:80px; }
+.app { max-width:480px; margin:0 auto; padding:20px; }
+.header { display:flex; justify-content:space-between; align-items:center; padding:20px 0 30px 0; border-bottom:1px solid var(--border); margin-bottom:25px; }
+.brand { font-size:11px; text-transform:uppercase; color:var(--text-sec); letter-spacing:2px; font-weight:700; }
+.title { font-size:28px; font-weight:800; letter-spacing:-1px; margin-top:5px; }
+.header-actions { display:flex; gap:10px; }
+.btn { padding:14px 20px; border-radius:10px; border:none; font-weight:700; font-size:15px; cursor:pointer; transition:opacity 0.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+.btn:active { opacity:0.7; }
+.btn-primary { background:var(--text); color:var(--bg); width:100%; }
+.btn-secondary { background:transparent; border:1px solid var(--border); color:var(--text); }
+.btn-small { padding:8px 12px; font-size:12px; }
+.btn-icon { width:40px; height:40px; padding:0; border-radius:50%; }
+.btn-danger { background:var(--error); color:var(--text); }
+.btn-warning { background:var(--warning); color:var(--bg); }
+.btn-whatsapp { background:var(--whatsapp); color:#fff; }
+.btn-purple { background:var(--purple); color:#fff; }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px; }
+.card.mafioso { border:2px solid var(--gold); background:linear-gradient(135deg,#1a1a1a 0%,#0d0d0d 100%); }
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.stat-icon { font-size:24px; margin-bottom:10px; }
+.stat-label { font-size:11px; color:var(--text-sec); text-transform:uppercase; font-weight:600; letter-spacing:0.5px; }
+.stat-value { font-size:22px; font-weight:700; margin-top:6px; }
+.revenue-split { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+.revenue-item { text-align:center; }
+.revenue-item-label { font-size:10px; color:var(--text-sec); text-transform:uppercase; font-weight:600; margin-bottom:6px; }
+.revenue-item-value { font-size:18px; font-weight:700; }
+.revenue-pending { color:var(--text); }
+.revenue-completed { color:var(--success); }
+.slots-container { margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+.slots-title { font-size:12px; color:var(--text-sec); text-transform:uppercase; font-weight:600; margin-bottom:12px; }
+.slots-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.slot-item { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:8px 4px; text-align:center; font-size:11px; cursor:pointer; transition:all 0.2s; }
+.slot-item.available { border-color:var(--success); color:var(--success); }
+.slot-item.available:hover { background:var(--success); color:var(--bg); }
+.slot-item.booked { border-color:var(--error); color:var(--text-sec); cursor:not-allowed; }
+.slot-item.current-slot { border-color:var(--gold); color:var(--gold); }
+.timeline-container { margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+.timeline-item { display:flex; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); }
+.timeline-item:last-child { border-bottom:none; }
+.timeline-time { width:50px; font-size:11px; color:var(--text-sec); font-weight:600; }
+.timeline-bar { flex:1; height:8px; border-radius:4px; margin:0 10px; }
+.timeline-bar.available { background:var(--success); opacity:0.3; }
+.timeline-bar.booked { background:var(--text); }
+.timeline-bar.completed { background:var(--success); }
+.timeline-label { font-size:11px; color:var(--text-sec); width:80px; text-align:right; }
+.section-header { display:flex; justify-content:space-between; align-items:center; margin:30px 0 15px 0; }
+.section-title { font-size:20px; font-weight:700; }
+.appointment { display:flex; flex-direction:column; padding:16px 0; border-bottom:1px solid var(--border); position:relative; }
+.appointment:last-child { border-bottom:none; }
+.appointment.completed { border-left:3px solid var(--success); padding-left:12px; }
+.appointment-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.apt-time { background:var(--border); padding:6px 10px; border-radius:6px; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:6px; }
+.apt-info { margin-top:8px; }
+.apt-client { font-weight:600; font-size:15px; }
+.apt-service { color:var(--text-sec); font-size:13px; margin-left:22px; margin-top:4px; }
+.apt-date { color:var(--text-sec); font-size:12px; margin-top:4px; margin-left:22px; }
+.apt-notes { color:var(--info); font-size:11px; margin-top:4px; margin-left:22px; font-style:italic; }
+.apt-tip { color:var(--warning); font-size:11px; margin-top:4px; margin-left:22px; font-weight:600; }
+.apt-price { font-weight:700; font-size:16px; }
+.apt-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.apt-btn { padding:6px 12px; font-size:11px; border-radius:6px; border:none; cursor:pointer; font-weight:600; }
+.apt-btn-cancel { background:var(--border); color:var(--text); }
+.apt-btn-late { background:var(--warning); color:var(--bg); }
+.apt-btn-edit { background:var(--info); color:var(--bg); }
+.apt-btn-complete { background:var(--success); color:var(--bg); }
+.apt-btn-whatsapp { background:var(--whatsapp); color:#fff; }
+.status-badge { position:absolute; top:16px; right:0; padding:4px 8px; border-radius:4px; font-size:9px; font-weight:700; text-transform:uppercase; }
+.status-completed { background:var(--success); color:var(--bg); }
+.status-pending { background:var(--border); color:var(--text); }
+.form-group { margin-bottom:16px; }
+.form-label { display:block; font-size:12px; color:var(--text-sec); text-transform:uppercase; font-weight:600; margin-bottom:8px; }
+.form-input { width:100%; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:15px; outline:none; }
+.form-input:focus { border-color:var(--text); }
+.form-input::placeholder { color:var(--text-sec); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.9); display:flex; align-items:flex-end; z-index:1000; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+.modal-overlay.active { opacity:1; pointer-events:all; }
+.modal-content { background:var(--bg); width:100%; max-width:480px; margin:0 auto; border-radius:20px 20px 0 0; padding:25px; border-top:1px solid var(--border); transform:translateY(100%); transition:transform 0.3s; max-height:90vh; overflow-y:auto; }
+.modal-overlay.active .modal-content { transform:translateY(0); }
+.modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.modal-title { font-size:20px; font-weight:700; }
+.modal-close { background:none; border:none; color:var(--text-sec); font-size:24px; cursor:pointer; }
+.conflict-banner { background:rgba(255,68,68,0.15); border:1px solid var(--error); border-radius:8px; padding:12px 14px; margin-bottom:16px; font-size:13px; color:var(--error); display:none; }
+.conflict-banner.show { display:block; }
+.sync-bar { display:flex; align-items:center; gap:8px; padding:10px 14px; background:rgba(68,170,255,0.08); border:1px solid rgba(68,170,255,0.25); border-radius:8px; font-size:12px; color:var(--info); margin-bottom:16px; }
+.sync-dot { width:8px; height:8px; border-radius:50%; background:var(--info); flex-shrink:0; }
+.sync-dot.syncing { animation:pulse 1s infinite; }
+.sync-dot.ok { background:var(--success); }
+.sync-dot.error { background:var(--error); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.bottom-nav { position:fixed; bottom:0; left:0; right:0; background:var(--surface); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:12px 0; max-width:480px; margin:0 auto; }
+.nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--text-sec); font-size:10px; text-transform:uppercase; font-weight:600; cursor:pointer; padding:8px 16px; position:relative; }
+.nav-item.active { color:var(--text); }
+.nav-icon { font-size:20px; }
+.nav-badge { position:absolute; top:4px; right:10px; background:var(--error); color:var(--text); font-size:9px; padding:2px 6px; border-radius:10px; font-weight:700; }
+.hidden { display:none !important; }
+.mb-20 { margin-bottom:20px; }
+.empty-state { text-align:center; color:var(--text-sec); padding:40px 0; }
+.login-screen { position:fixed; top:0; left:0; right:0; bottom:0; background:var(--bg); display:flex; flex-direction:column; justify-content:center; align-items:center; padding:30px; z-index:2000; }
+.login-logo { font-size:32px; font-weight:800; letter-spacing:-1px; margin-bottom:10px; }
+.login-subtitle { color:var(--text-sec); margin-bottom:40px; }
+.login-form { width:100%; max-width:320px; }
+.error-msg { color:var(--error); font-size:13px; margin-top:10px; text-align:center; }
+.fab { position:fixed; bottom:90px; right:20px; width:56px; height:56px; background:var(--text); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:28px; color:var(--bg); box-shadow:0 4px 15px rgba(255,255,255,0.3); cursor:pointer; z-index:100; }
+.fab.clients-fab { background:var(--gold); }
+.toast { position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-100px); background:var(--surface); border:1px solid var(--border); padding:12px 20px; border-radius:8px; font-size:14px; z-index:3000; transition:transform 0.3s; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+.toast.error { border-color:var(--error); }
+.toast.success { border-color:var(--success); }
+.date-filter { display:flex; gap:10px; margin-bottom:15px; align-items:center; }
+.date-filter input { flex:1; padding:10px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px; }
+.date-filter button { padding:10px 16px; background:var(--text); color:var(--bg); border:none; border-radius:8px; font-weight:700; cursor:pointer; }
+.vacilao-item { display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-bottom:1px solid var(--border); }
+.vacilao-item:last-child { border-bottom:none; }
+.vacilao-info { flex:1; }
+.vacilao-name { font-weight:600; font-size:15px; }
+.vacilao-date { color:var(--text-sec); font-size:12px; margin-top:4px; }
+.vacilao-badge { background:var(--warning); color:var(--bg); padding:4px 8px; border-radius:4px; font-size:10px; font-weight:700; text-transform:uppercase; }
+.search-box { width:100%; padding:12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px; margin-bottom:15px; }
+.history-item { display:flex; justify-content:space-between; padding:8px 0; font-size:12px; color:var(--text-sec); }
+.backup-section { margin-top:20px; padding-top:20px; border-top:1px solid var(--border); }
+.backup-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+.backup-info { font-size:11px; color:var(--text-sec); margin-top:10px; text-align:center; }
+#importFileInput { display:none; }
+.settings-section { margin-top:20px; padding-top:20px; border-top:1px solid var(--border); }
+.settings-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; }
+.settings-label { font-size:13px; color:var(--text-sec); }
+.settings-input { width:80px; padding:6px 10px; background:var(--surface); border:1px solid var(--border); border-radius:6px; color:var(--text); font-size:13px; text-align:center; }
+.client-filters { display:flex; gap:8px; margin-bottom:15px; flex-wrap:wrap; }
+.filter-btn { padding:8px 14px; background:var(--surface); border:1px solid var(--border); border-radius:20px; color:var(--text-sec); font-size:12px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+.filter-btn.active { background:var(--text); color:var(--bg); border-color:var(--text); }
+.filter-btn.mafioso { border-color:var(--gold); color:var(--gold); }
+.filter-btn.mafioso.active { background:var(--gold); color:var(--bg); }
+.sort-select { width:100%; padding:12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px; margin-bottom:15px; outline:none; }
+.client-stats { display:flex; gap:15px; margin-top:8px; }
+.client-stat { display:flex; flex-direction:column; }
+.client-stat-value { font-size:14px; font-weight:700; color:var(--text); }
+.client-stat-label { font-size:10px; color:var(--text-sec); text-transform:uppercase; }
+.mafioso-badge { display:inline-block; background:linear-gradient(135deg,#FFD700 0%,#FFA500 100%); color:#000; padding:4px 10px; border-radius:12px; font-size:10px; font-weight:800; text-transform:uppercase; margin-left:8px; }
+.frequent-badge { display:inline-block; background:var(--info); color:#000; padding:4px 10px; border-radius:12px; font-size:10px; font-weight:700; text-transform:uppercase; margin-left:8px; }
+.new-badge { display:inline-block; background:var(--success); color:#000; padding:4px 10px; border-radius:12px; font-size:10px; font-weight:700; text-transform:uppercase; margin-left:8px; }
+.client-actions { display:flex; gap:8px; margin-top:12px; }
+.client-action-btn { padding:6px 12px; font-size:11px; border-radius:6px; border:none; cursor:pointer; font-weight:600; }
+.client-action-btn-edit { background:var(--info); color:var(--bg); }
+.client-action-btn-delete { background:var(--border); color:var(--error); }
+.finance-selector { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.finance-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; }
+.finance-card.highlight { border-color:var(--gold); background:linear-gradient(135deg,#1a1a1a 0%,#0d0d0d 100%); }
+.finance-label { font-size:11px; color:var(--text-sec); text-transform:uppercase; font-weight:600; margin-bottom:8px; }
+.finance-value { font-size:24px; font-weight:700; color:var(--text); }
+.finance-value.success { color:var(--success); }
+.finance-value.warning { color:var(--warning); }
+.finance-value.info { color:var(--info); }
+.finance-comparison { display:flex; align-items:center; gap:6px; margin-top:8px; font-size:11px; }
+.finance-comparison.up { color:var(--success); }
+.finance-comparison.down { color:var(--error); }
+.service-breakdown { margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+.service-item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
+.service-item:last-child { border-bottom:none; }
+.service-name { font-size:13px; color:var(--text-sec); }
+.service-count { font-size:12px; color:var(--text-sec); }
+.service-total { font-size:14px; font-weight:700; color:var(--text); }
+.daily-chart { display:flex; align-items:flex-end; gap:4px; height:100px; margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+.chart-bar { flex:1; background:var(--border); border-radius:4px 4px 0 0; min-height:4px; position:relative; }
+.chart-bar.active { background:var(--success); }
+.chart-bar-label { position:absolute; bottom:-20px; left:50%; transform:translateX(-50%); font-size:9px; color:var(--text-sec); }
+.top-days { margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+.top-day-item { display:flex; justify-content:space-between; align-items:center; padding:8px 0; }
+.top-day-date { font-size:12px; color:var(--text-sec); }
+.top-day-value { font-size:13px; font-weight:700; color:var(--gold); }
 </style>
 </head>
 <body>
-
-<div class="install-banner" id="installBanner">
-  <div class="install-banner-icon">📲</div>
-  <div class="install-banner-text">Adicione La Mafia à sua tela inicial!</div>
-  <button class="install-banner-btn" onclick="document.getElementById('installBanner').classList.remove('show')">OK</button>
-</div>
 
 <div id="loginScreen" class="login-screen">
   <div class="login-logo">LA MAFIA</div>
@@ -408,183 +214,121 @@ height: 100px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--
         <div class="title" id="welcomeText">Bem-vindo, Boss</div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-secondary btn-small" onclick="app.toggleLanguage()">
-          <span id="langLabel">PT</span>
-        </button>
+        <button class="btn btn-secondary btn-small" onclick="app.toggleLanguage()"><span id="langLabel">PT</span></button>
         <button class="btn btn-icon btn-secondary" onclick="app.logout()">✕</button>
       </div>
     </div>
 
-    <!-- DASHBOARD -->
     <div id="viewDashboard">
+      <div class="sync-bar" id="syncBar">
+        <div class="sync-dot ok" id="syncDot"></div>
+        <span id="syncText">Ligado ao Supabase</span>
+        <button onclick="app.syncAll()" style="margin-left:auto;background:none;border:none;color:var(--info);font-size:12px;cursor:pointer;font-weight:600;">↻ Sincronizar</button>
+      </div>
       <div class="stats-grid">
-        <div class="card">
-          <div class="stat-icon">📅</div>
-          <div class="stat-label" data-i18n="appointments">Atendimentos</div>
-          <div class="stat-value" id="statCount">0</div>
-        </div>
-        <div class="card">
-          <div class="stat-icon">✓</div>
-          <div class="stat-label" data-i18n="completed">Concluídos</div>
-          <div class="stat-value" id="statCompleted" style="color:var(--success)">0</div>
-        </div>
+        <div class="card"><div class="stat-icon">📅</div><div class="stat-label">Atendimentos</div><div class="stat-value" id="statCount">0</div></div>
+        <div class="card"><div class="stat-icon">✓</div><div class="stat-label">Concluídos</div><div class="stat-value" id="statCompleted" style="color:var(--success)">0</div></div>
       </div>
       <div class="card">
-        <div class="stat-label" data-i18n="revenue_today">Receita de Hoje</div>
+        <div class="stat-label">Receita de Hoje</div>
         <div class="stat-value" id="statDayTotal" style="font-size:28px">€0,00</div>
         <div class="revenue-split">
-          <div class="revenue-item">
-            <div class="revenue-item-label" data-i18n="revenue_pending">Prevista</div>
-            <div class="revenue-item-value revenue-pending" id="statPending">€0,00</div>
-          </div>
-          <div class="revenue-item">
-            <div class="revenue-item-label" data-i18n="revenue_completed">Concluída</div>
-            <div class="revenue-item-value revenue-completed" id="statCompletedRevenue">€0,00</div>
-          </div>
+          <div class="revenue-item"><div class="revenue-item-label">Prevista</div><div class="revenue-item-value revenue-pending" id="statPending">€0,00</div></div>
+          <div class="revenue-item"><div class="revenue-item-label">Concluída</div><div class="revenue-item-value revenue-completed" id="statCompletedRevenue">€0,00</div></div>
         </div>
         <div class="revenue-split">
-          <div class="revenue-item">
-            <div class="revenue-item-label" data-i18n="tips_today">Gorjetas Hoje</div>
-            <div class="revenue-item-value" id="statTipsToday" style="color:var(--warning)">€0,00</div>
-          </div>
-          <div class="revenue-item">
-            <div class="revenue-item-label" data-i18n="tips_month">Gorjetas Mês</div>
-            <div class="revenue-item-value" id="statTipsMonth" style="color:var(--warning)">€0,00</div>
-          </div>
+          <div class="revenue-item"><div class="revenue-item-label">Gorjetas Hoje</div><div class="revenue-item-value" id="statTipsToday" style="color:var(--warning)">€0,00</div></div>
+          <div class="revenue-item"><div class="revenue-item-label">Gorjetas Mês</div><div class="revenue-item-value" id="statTipsMonth" style="color:var(--warning)">€0,00</div></div>
         </div>
       </div>
       <div class="card">
-        <div class="stat-label" data-i18n="available_slots">Horários Disponíveis</div>
+        <div class="stat-label">Horários Disponíveis</div>
         <div class="slots-container">
           <div class="slots-title" id="slotsDateLabel">Hoje</div>
           <div class="slots-grid" id="availableSlotsGrid"></div>
         </div>
         <div class="timeline-container">
-          <div class="slots-title" data-i18n="timeline">Linha do Tempo</div>
+          <div class="slots-title">Linha do Tempo</div>
           <div id="timelineView"></div>
         </div>
       </div>
       <div class="card">
-        <div class="stat-label" data-i18n="revenue_month">Receita Mês</div>
+        <div class="stat-label">Receita Mês</div>
         <div class="stat-value" id="statMonth">€0,00</div>
         <div class="backup-section">
-          <div class="stat-label" data-i18n="backup">Backup</div>
+          <div class="stat-label">Backup Local</div>
           <div class="backup-grid">
-            <button class="btn btn-secondary btn-small" onclick="app.exportBackup()">📤 <span data-i18n="export">Exportar</span></button>
-            <button class="btn btn-secondary btn-small" onclick="document.getElementById('importFileInput').click()">📥 <span data-i18n="import">Importar</span></button>
+            <button class="btn btn-secondary btn-small" onclick="app.exportBackup()">📤 Exportar</button>
+            <button class="btn btn-secondary btn-small" onclick="document.getElementById('importFileInput').click()">📥 Importar</button>
           </div>
-          <div class="backup-info" data-i18n="backup_info">Salve seus dados na nuvem</div>
+          <div class="backup-info">Cópia de segurança em JSON</div>
           <input type="file" id="importFileInput" accept=".json" onchange="app.importBackup(event)">
         </div>
         <div class="settings-section">
-          <div class="stat-label" data-i18n="settings">Configurações</div>
-          <div class="settings-row">
-            <span class="settings-label" data-i18n="open_time">Abertura</span>
-            <input type="time" id="settingOpenTime" class="settings-input" value="09:00" onchange="app.saveSettings()">
-          </div>
-          <div class="settings-row">
-            <span class="settings-label" data-i18n="close_time">Fechamento</span>
-            <input type="time" id="settingCloseTime" class="settings-input" value="20:00" onchange="app.saveSettings()">
-          </div>
+          <div class="stat-label">Configurações</div>
+          <div class="settings-row"><span class="settings-label">Abertura</span><input type="time" id="settingOpenTime" class="settings-input" value="09:00" onchange="app.saveSettings()"></div>
+          <div class="settings-row"><span class="settings-label">Fechamento</span><input type="time" id="settingCloseTime" class="settings-input" value="20:00" onchange="app.saveSettings()"></div>
         </div>
       </div>
-      <div class="section-header">
-        <div class="section-title" data-i18n="quick_actions">Ações Rápidas</div>
-      </div>
-      <button class="btn btn-primary mb-20" onclick="app.navigate('agenda')">📅 <span data-i18n="agenda">Agenda</span></button>
-      <button class="btn btn-secondary mb-20" onclick="app.navigate('clients')">👥 <span data-i18n="clients">Clientes</span></button>
-      <button class="btn btn-secondary mb-20" onclick="app.navigate('finance')">💰 <span data-i18n="finance">Finanças</span></button>
-      <button class="btn btn-secondary mb-20" onclick="app.navigate('vacilao')">⚠️ <span data-i18n="vacilao">Vacilão</span><span id="vacilaoBadge" class="nav-badge hidden">0</span></button>
-      <button class="btn btn-secondary mb-20" onclick="app.exportReport()">📊 <span data-i18n="export_report">Exportar Caixa</span></button>
+      <div class="section-header"><div class="section-title">Ações Rápidas</div></div>
+      <button class="btn btn-primary mb-20" onclick="app.navigate('agenda')">📅 Agenda</button>
+      <button class="btn btn-secondary mb-20" onclick="app.navigate('clients')">👥 Clientes</button>
+      <button class="btn btn-secondary mb-20" onclick="app.navigate('finance')">💰 Finanças</button>
+      <button class="btn btn-secondary mb-20" onclick="app.navigate('vacilao')">⚠️ Vacilão <span id="vacilaoBadge" class="nav-badge hidden">0</span></button>
+      <button class="btn btn-secondary mb-20" onclick="app.exportReport()">📊 Exportar Caixa</button>
     </div>
 
-    <!-- AGENDA -->
     <div id="viewAgenda" class="hidden">
-      <div class="section-header">
-        <div class="section-title" data-i18n="agenda">Agenda</div>
-      </div>
-      <div class="date-filter">
-        <input type="date" id="agendaDate" class="form-input">
-        <button onclick="app.filterAgenda()" data-i18n="filter">Filtrar</button>
-      </div>
-      <div class="card" id="appointmentsList">
-        <div class="empty-state" data-i18n="no_appointments">Nenhum agendamento</div>
-      </div>
+      <div class="section-header"><div class="section-title">Agenda</div></div>
+      <div class="date-filter"><input type="date" id="agendaDate" class="form-input"><button onclick="app.filterAgenda()">Filtrar</button></div>
+      <div class="card" id="appointmentsList"><div class="empty-state">Nenhum agendamento</div></div>
     </div>
 
-    <!-- CLIENTES -->
     <div id="viewClients" class="hidden">
-      <div class="section-header">
-        <div class="section-title" data-i18n="clients">Clientes</div>
-        <div style="font-size:12px;color:var(--gold)" id="mafiosoCount">0 Mafiosos</div>
-      </div>
+      <div class="section-header"><div class="section-title">Clientes</div><div style="font-size:12px;color:var(--gold)" id="mafiosoCount">0 Mafiosos</div></div>
       <input type="text" id="clientSearch" class="search-box" placeholder="🔍 Buscar..." oninput="app.searchClients()">
       <div class="client-filters">
-        <button class="filter-btn active" onclick="app.filterClients('all',this)" data-i18n="all">Todos</button>
+        <button class="filter-btn active" onclick="app.filterClients('all',this)">Todos</button>
         <button class="filter-btn mafioso" onclick="app.filterClients('mafioso',this)">🎩 Mafiosos</button>
         <button class="filter-btn" onclick="app.filterClients('frequent',this)">⭐ Frequente</button>
         <button class="filter-btn" onclick="app.filterClients('new',this)">🆕 Novos</button>
       </div>
       <select class="sort-select" onchange="app.sortClients(this.value)">
-        <option value="name" data-i18n="sort_name">Nome (A-Z)</option>
-        <option value="visits" data-i18n="sort_visits">Mais Visitas</option>
-        <option value="spent" data-i18n="sort_spent">Mais Gastou</option>
-        <option value="recent" data-i18n="sort_recent">Recentes</option>
+        <option value="name">Nome (A-Z)</option><option value="visits">Mais Visitas</option>
+        <option value="spent">Mais Gastou</option><option value="recent">Recentes</option>
       </select>
-      <div class="card" id="clientsList">
-        <div class="empty-state" data-i18n="no_clients">Nenhum cliente cadastrado</div>
-      </div>
+      <div class="card" id="clientsList"><div class="empty-state">Nenhum cliente cadastrado</div></div>
     </div>
 
-    <!-- FINANÇAS -->
     <div id="viewFinance" class="hidden">
-      <div class="section-header">
-        <div class="section-title" data-i18n="finance">Finanças</div>
-      </div>
+      <div class="section-header"><div class="section-title">Finanças</div></div>
       <div class="finance-selector">
-        <div class="finance-card">
-          <div class="finance-label" data-i18n="select_day">Selecionar Dia</div>
-          <input type="date" id="financeDaySelect" class="form-input" onchange="app.renderFinanceDay()">
-        </div>
-        <div class="finance-card">
-          <div class="finance-label" data-i18n="select_month">Selecionar Mês</div>
-          <input type="month" id="financeMonthSelect" class="form-input" onchange="app.renderFinanceMonth()">
-        </div>
+        <div class="finance-card"><div class="finance-label">Selecionar Dia</div><input type="date" id="financeDaySelect" class="form-input" onchange="app.renderFinanceDay()"></div>
+        <div class="finance-card"><div class="finance-label">Selecionar Mês</div><input type="month" id="financeMonthSelect" class="form-input" onchange="app.renderFinanceMonth()"></div>
       </div>
       <div class="card finance-card highlight">
-        <div class="finance-label" data-i18n="selected_day_revenue">Receita do Dia Selecionado</div>
+        <div class="finance-label">Receita do Dia Selecionado</div>
         <div class="finance-value success" id="financeDayRevenue">€0,00</div>
         <div class="finance-comparison" id="financeDayComparison"><span>📊</span><span id="financeDayComparisonText">-</span></div>
         <div class="service-breakdown" id="financeDayServices"></div>
       </div>
       <div class="card">
-        <div class="finance-label" data-i18n="selected_month_revenue">Receita do Mês Selecionado</div>
-        <div class="finance-value info" id="financeMonthRevenue">€0,00</div>
-        <div class="finance-label" style="margin-top:12px" data-i18n="month_days">Dias com Atendimento</div>
-        <div class="finance-value" id="financeMonthDays" style="font-size:18px">0</div>
-        <div class="finance-label" style="margin-top:12px" data-i18n="avg_daily">Média Diária</div>
-        <div class="finance-value warning" id="financeMonthAvg">€0,00</div>
+        <div class="finance-label">Receita do Mês</div><div class="finance-value info" id="financeMonthRevenue">€0,00</div>
+        <div class="finance-label" style="margin-top:12px">Dias com Atendimento</div><div class="finance-value" id="financeMonthDays" style="font-size:18px">0</div>
+        <div class="finance-label" style="margin-top:12px">Média Diária</div><div class="finance-value warning" id="financeMonthAvg">€0,00</div>
         <div class="daily-chart" id="financeMonthChart"></div>
         <div class="top-days" id="financeTopDays"></div>
       </div>
       <div class="card">
-        <div class="finance-label" data-i18n="previous_day">Dia Anterior</div>
-        <div class="finance-value" id="financePreviousDay">€0,00</div>
-        <div class="finance-label" style="margin-top:12px" data-i18n="previous_month">Mês Anterior</div>
-        <div class="finance-value" id="financePreviousMonth">€0,00</div>
+        <div class="finance-label">Dia Anterior</div><div class="finance-value" id="financePreviousDay">€0,00</div>
+        <div class="finance-label" style="margin-top:12px">Mês Anterior</div><div class="finance-value" id="financePreviousMonth">€0,00</div>
       </div>
-      <button class="btn btn-purple mb-20" onclick="app.exportFinanceReport()">📤 <span data-i18n="export_finance">Exportar Relatório Financeiro</span></button>
+      <button class="btn btn-purple mb-20" onclick="app.exportFinanceReport()">📤 Exportar Relatório Financeiro</button>
     </div>
 
-    <!-- VACILÃO -->
     <div id="viewVacilao" class="hidden">
-      <div class="section-header">
-        <div class="section-title">⚠️ <span data-i18n="vacilao">Vacilão</span></div>
-        <div style="font-size:12px;color:var(--warning)" id="vacilaoCount">0 clientes</div>
-      </div>
-      <div class="card" id="vacilaoList">
-        <div class="empty-state" data-i18n="no_vacilao">Nenhum cliente vacilou ainda</div>
-      </div>
+      <div class="section-header"><div class="section-title">⚠️ Vacilão</div><div style="font-size:12px;color:var(--warning)" id="vacilaoCount">0 clientes</div></div>
+      <div class="card" id="vacilaoList"><div class="empty-state">Nenhum cliente vacilou ainda</div></div>
     </div>
   </div>
 
@@ -592,965 +336,459 @@ height: 100px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--
   <div class="fab clients-fab hidden" id="fabClient" onclick="app.openModal('client')">👤</div>
 
   <div class="bottom-nav">
-    <div class="nav-item active" onclick="app.navigate('dashboard')" id="navDashboard"><div class="nav-icon">🏠</div><div data-i18n="dashboard">Início</div></div>
-    <div class="nav-item" onclick="app.navigate('agenda')" id="navAgenda"><div class="nav-icon">📅</div><div data-i18n="agenda">Agenda</div></div>
-    <div class="nav-item" onclick="app.navigate('clients')" id="navClients"><div class="nav-icon">👥</div><div data-i18n="clients">Clientes</div></div>
-    <div class="nav-item" onclick="app.navigate('finance')" id="navFinance"><div class="nav-icon">💰</div><div data-i18n="finance">Finanças</div></div>
-    <div class="nav-item" onclick="app.navigate('vacilao')" id="navVacilao"><div class="nav-icon">⚠️</div><div data-i18n="vacilao">Vacilão</div><span id="navVacilaoBadge" class="nav-badge hidden">0</span></div>
+    <div class="nav-item active" onclick="app.navigate('dashboard')" id="navDashboard"><div class="nav-icon">🏠</div><div>Início</div></div>
+    <div class="nav-item" onclick="app.navigate('agenda')" id="navAgenda"><div class="nav-icon">📅</div><div>Agenda</div></div>
+    <div class="nav-item" onclick="app.navigate('clients')" id="navClients"><div class="nav-icon">👥</div><div>Clientes</div></div>
+    <div class="nav-item" onclick="app.navigate('finance')" id="navFinance"><div class="nav-icon">💰</div><div>Finanças</div></div>
+    <div class="nav-item" onclick="app.navigate('vacilao')" id="navVacilao"><div class="nav-icon">⚠️</div><div>Vacilão</div><span id="navVacilaoBadge" class="nav-badge hidden">0</span></div>
   </div>
 </div>
 
-<!-- MODAL AGENDAMENTO -->
+<!-- MODAIS -->
 <div class="modal-overlay" id="modalAppointment">
   <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title" id="modalTitleAppointment">Novo Agendamento</div>
-      <button class="modal-close" onclick="app.closeModal('appointment')">×</button>
-    </div>
-    <!-- Banner de conflito de horário -->
-    <div class="conflict-banner" id="conflictBanner">
-      ⚠️ <strong>Atenção:</strong> <span id="conflictMsg"></span>
-    </div>
+    <div class="modal-header"><div class="modal-title" id="modalTitleAppointment">Novo Agendamento</div><button class="modal-close" onclick="app.closeModal('appointment')">×</button></div>
+    <div class="conflict-banner" id="conflictBanner">⚠️ <strong>Atenção:</strong> <span id="conflictMsg"></span></div>
     <input type="hidden" id="aptId">
-    <div class="form-group">
-      <label class="form-label" data-i18n="client_name">Nome do Cliente</label>
-      <input type="text" id="aptClient" class="form-input" placeholder="Ex: Carlos Ruiz" list="clientSuggestions">
-      <datalist id="clientSuggestions"></datalist>
-    </div>
+    <div class="form-group"><label class="form-label">Nome do Cliente</label><input type="text" id="aptClient" class="form-input" placeholder="Ex: Carlos Ruiz" list="clientSuggestions"><datalist id="clientSuggestions"></datalist></div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label" data-i18n="date">Data</label>
-        <input type="date" id="aptDate" class="form-input" onchange="app.checkConflict()">
-      </div>
-      <div class="form-group">
-        <label class="form-label" data-i18n="time">Horário</label>
-        <input type="time" id="aptTime" class="form-input" onchange="app.checkConflict()">
-      </div>
+      <div class="form-group"><label class="form-label">Data</label><input type="date" id="aptDate" class="form-input" onchange="app.checkConflict()"></div>
+      <div class="form-group"><label class="form-label">Horário</label><input type="time" id="aptTime" class="form-input" onchange="app.checkConflict()"></div>
     </div>
     <div class="form-group">
-      <label class="form-label" data-i18n="service">Serviço</label>
+      <label class="form-label">Serviço</label>
       <select id="aptService" class="form-input" onchange="app.autoFillPrice()">
-        <option value="Corte Clássico">Corte Clássico</option>
-        <option value="Corte Niño">Corte Niño</option>
-        <option value="Corte Moderno">Corte Moderno</option>
-        <option value="Corte & Barba">Corte & Barba</option>
-        <option value="Corte & Tinte">Corte & Tinte</option>
-        <option value="Corte & Dibujo">Corte & Dibujo</option>
-        <option value="Combo Corte">Combo Corte</option>
-        <option value="Combo Corte & Barba">Combo Corte & Barba</option>
-        <option value="Mechas">Mechas</option>
-        <option value="Platino">Platino</option>
-        <option value="Alisado">Alisado</option>
+        <option value="Corte Clássico">Corte Clássico</option><option value="Corte Niño">Corte Niño</option>
+        <option value="Corte Moderno">Corte Moderno</option><option value="Corte & Barba">Corte & Barba</option>
+        <option value="Corte & Tinte">Corte & Tinte</option><option value="Corte & Dibujo">Corte & Dibujo</option>
+        <option value="Combo Corte">Combo Corte</option><option value="Combo Corte & Barba">Combo Corte & Barba</option>
+        <option value="Mechas">Mechas</option><option value="Platino">Platino</option><option value="Alisado">Alisado</option>
       </select>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label" data-i18n="price">Preço (€)</label>
-        <input type="number" id="aptPrice" class="form-input" placeholder="25" step="0.50" min="0">
-      </div>
-      <div class="form-group">
-        <label class="form-label" data-i18n="tip">Gorjeta (€)</label>
-        <input type="number" id="aptTip" class="form-input" placeholder="0" step="0.50" min="0">
-      </div>
+      <div class="form-group"><label class="form-label">Preço (€)</label><input type="number" id="aptPrice" class="form-input" placeholder="25" step="0.50" min="0"></div>
+      <div class="form-group"><label class="form-label">Gorjeta (€)</label><input type="number" id="aptTip" class="form-input" placeholder="0" step="0.50" min="0"></div>
     </div>
-    <div class="form-group">
-      <label class="form-label" data-i18n="notes">Observações</label>
-      <textarea id="aptNotes" class="form-input" rows="3" placeholder="Ex: Cliente prefere corte mais curto"></textarea>
-    </div>
-    <button class="btn btn-primary" id="btnSaveAppointment" onclick="app.saveAppointment()">Salvar</button>
+    <div class="form-group"><label class="form-label">Observações</label><textarea id="aptNotes" class="form-input" rows="3" placeholder="Ex: Cliente prefere corte mais curto"></textarea></div>
+    <button class="btn btn-primary" onclick="app.saveAppointment()">Salvar</button>
   </div>
 </div>
 
-<!-- MODAL CLIENTE -->
 <div class="modal-overlay" id="modalClient">
   <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title" id="modalTitleClient">Novo Cliente</div>
-      <button class="modal-close" onclick="app.closeModal('client')">×</button>
-    </div>
+    <div class="modal-header"><div class="modal-title" id="modalTitleClient">Novo Cliente</div><button class="modal-close" onclick="app.closeModal('client')">×</button></div>
     <input type="hidden" id="clientId">
-    <div class="form-group">
-      <label class="form-label">Nome do Cliente</label>
-      <input type="text" id="clientName" class="form-input" placeholder="Ex: Carlos Ruiz">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Telefone</label>
-      <input type="tel" id="clientPhone" class="form-input" placeholder="+34 600 000 000">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Observações</label>
-      <textarea id="clientNotes" class="form-input" rows="3" placeholder="Ex: Prefere atendimento pela manhã..."></textarea>
-    </div>
+    <div class="form-group"><label class="form-label">Nome</label><input type="text" id="clientName" class="form-input" placeholder="Ex: Carlos Ruiz"></div>
+    <div class="form-group"><label class="form-label">Telefone</label><input type="tel" id="clientPhone" class="form-input" placeholder="+34 600 000 000"></div>
+    <div class="form-group"><label class="form-label">Observações</label><textarea id="clientNotes" class="form-input" rows="3" placeholder="Ex: Prefere manhã..."></textarea></div>
     <button class="btn btn-primary" onclick="app.saveClient()">Salvar</button>
   </div>
 </div>
 
-<!-- MODAL HISTÓRICO CLIENTE -->
 <div class="modal-overlay" id="modalClientHistory">
   <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title" id="clientHistoryName">Histórico</div>
-      <button class="modal-close" onclick="app.closeModal('clientHistory')">×</button>
-    </div>
+    <div class="modal-header"><div class="modal-title" id="clientHistoryName">Histórico</div><button class="modal-close" onclick="app.closeModal('clientHistory')">×</button></div>
     <div id="clientHistoryList"></div>
   </div>
 </div>
 
-<!-- MODAL CONFIRMAR IMPORTAÇÃO -->
 <div class="modal-overlay" id="modalConfirmImport">
   <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title" data-i18n="confirm_import">Confirmar Importação</div>
-      <button class="modal-close" onclick="app.closeModal('confirmImport')">×</button>
-    </div>
-    <p style="color:var(--text-sec);margin-bottom:20px;font-size:14px">⚠️ Isso irá substituir TODOS os dados atuais.</p>
-    <div class="backup-grid">
-      <button class="btn btn-secondary" onclick="app.closeModal('confirmImport')">Cancelar</button>
-      <button class="btn btn-danger" onclick="app.confirmImport()">Confirmar</button>
-    </div>
+    <div class="modal-header"><div class="modal-title">Confirmar Importação</div><button class="modal-close" onclick="app.closeModal('confirmImport')">×</button></div>
+    <p style="color:var(--text-sec);margin-bottom:20px;font-size:14px">⚠️ Isso irá substituir TODOS os dados atuais (local + Supabase).</p>
+    <div class="backup-grid"><button class="btn btn-secondary" onclick="app.closeModal('confirmImport')">Cancelar</button><button class="btn btn-danger" onclick="app.confirmImport()">Confirmar</button></div>
   </div>
 </div>
 
-<!-- MODAL CONFIRMAR CANCELAMENTO -->
 <div class="modal-overlay" id="modalConfirmCancel">
   <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title">Cancelar Agendamento</div>
-      <button class="modal-close" onclick="app.closeModal('confirmCancel')">×</button>
-    </div>
+    <div class="modal-header"><div class="modal-title">Cancelar Agendamento</div><button class="modal-close" onclick="app.closeModal('confirmCancel')">×</button></div>
     <p style="color:var(--text-sec);margin-bottom:20px;font-size:14px">Tem certeza que deseja cancelar este agendamento?</p>
-    <div class="backup-grid">
-      <button class="btn btn-secondary" onclick="app.closeModal('confirmCancel')">Não</button>
-      <button class="btn btn-danger" id="confirmCancelBtn">Sim, cancelar</button>
-    </div>
+    <div class="backup-grid"><button class="btn btn-secondary" onclick="app.closeModal('confirmCancel')">Não</button><button class="btn btn-danger" id="confirmCancelBtn">Sim, cancelar</button></div>
   </div>
 </div>
 
-<!-- MODAL CONFIRMAR CONFLITO DE HORÁRIO -->
 <div class="modal-overlay" id="modalConfirmConflict">
   <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title">⚠️ Horário Ocupado</div>
-      <button class="modal-close" onclick="app.closeModal('confirmConflict')">×</button>
-    </div>
+    <div class="modal-header"><div class="modal-title">⚠️ Horário Ocupado</div><button class="modal-close" onclick="app.closeModal('confirmConflict')">×</button></div>
     <p id="conflictModalMsg" style="color:var(--text-sec);margin-bottom:20px;font-size:14px"></p>
-    <div class="backup-grid">
-      <button class="btn btn-secondary" onclick="app.closeModal('confirmConflict')">Cancelar</button>
-      <button class="btn btn-warning" onclick="app.saveAppointmentForced()">Agendar mesmo assim</button>
-    </div>
+    <div class="backup-grid"><button class="btn btn-secondary" onclick="app.closeModal('confirmConflict')">Cancelar</button><button class="btn btn-warning" onclick="app.saveAppointmentForced()">Agendar mesmo assim</button></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
+<!-- SDK Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL = 'https://qzhhjpgwleotfbcapwvu.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6aGhqcGd3bGVvdGZiY2Fwd3Z1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMDAxMzQsImV4cCI6MjA5MTY3NjEzNH0.7baA8RocoxwbDNER5doxLTF8KkH6Dr3XqsOVmlktU0c';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 const DEFAULT_PRICES = {
-  'Corte Clássico': 15, 'Corte Niño': 12, 'Corte Moderno': 17,
-  'Corte & Barba': 22, 'Corte & Tinte': 35, 'Corte & Dibujo': 20,
-  'Combo Corte': 25, 'Combo Corte & Barba': 30,
-  'Mechas': 45, 'Platino': 60, 'Alisado': 50,
+  'Corte Clássico':15,'Corte Niño':12,'Corte Moderno':17,'Corte & Barba':22,
+  'Corte & Tinte':35,'Corte & Dibujo':20,'Combo Corte':25,'Combo Corte & Barba':30,
+  'Mechas':45,'Platino':60,'Alisado':50
 };
 
-function simpleHash(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(i);
-    hash |= 0;
-  }
-  return hash.toString();
-}
-const VALID_HASHES = [simpleHash('admin'), simpleHash('1234')];
+function simpleHash(str){let h=0;for(let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;}return h.toString();}
+const VALID_HASHES=[simpleHash('admin'),simpleHash('1234')];
 
-const app = {
-  data: {
-    appointments: [], clients: [], vacilao: [], lang: 'pt',
-    isLoggedIn: false,
-    selectedDate: new Date().toISOString().split('T')[0],
-    settings: { openTime: '09:00', closeTime: '20:00', slotDuration: 30 }
-  },
-  importData: null,
-  currentFilter: 'all',
-  currentSort: 'name',
-  _pendingCancel: null,
-  _conflictWarned: false, // flag: utilizador já confirmou o conflito
+const app={
+  data:{appointments:[],clients:[],vacilao:[],lang:'pt',isLoggedIn:false,selectedDate:new Date().toISOString().split('T')[0],settings:{openTime:'09:00',closeTime:'20:00',slotDuration:30}},
+  importData:null,currentFilter:'all',currentSort:'name',_pendingCancel:null,_pendingData:null,_conflictWarned:false,
 
-  translations: {
-    pt: {
-      welcome:"Bem-vindo, Boss", revenue_today:"Receita de Hoje", revenue_pending:"Prevista",
-      revenue_completed:"Concluída", revenue_month:"Receita Mês", tips_today:"Gorjetas Hoje",
-      tips_month:"Gorjetas Mês", available_slots:"Horários Disponíveis", timeline:"Linha do Tempo",
-      settings:"Configurações", open_time:"Abertura", close_time:"Fechamento",
-      appointments:"Atendimentos", completed:"Concluídos", agenda:"Agenda", clients:"Clientes",
-      finance:"Finanças", select_day:"Selecionar Dia", select_month:"Selecionar Mês",
-      selected_day_revenue:"Receita do Dia Selecionado", selected_month_revenue:"Receita do Mês Selecionado",
-      month_days:"Dias com Atendimento", avg_daily:"Média Diária", previous_day:"Dia Anterior",
-      previous_month:"Mês Anterior", export_finance:"Exportar Relatório Financeiro", vacilao:"Vacilão",
-      dashboard:"Início", quick_actions:"Ações Rápidas", export_report:"Exportar Caixa",
-      backup:"Backup", export:"Exportar", import:"Importar", backup_info:"Salve seus dados na nuvem",
-      confirm_import:"Confirmar Importação", import_warning:"⚠️ Isso irá substituir TODOS os dados atuais.",
-      cancel:"Cancelar", confirm:"Confirmar", new_appointment:"Novo Agendamento",
-      edit_appointment:"Editar Agendamento", new_client:"Novo Cliente", edit_client:"Editar Cliente",
-      client_name:"Nome do Cliente", client_phone:"Telefone", client_notes:"Observações",
-      date:"Data", time:"Horário", price:"Preço (€)", tip:"Gorjeta (€)", service:"Serviço",
-      notes:"Observações", save:"Salvar", filter:"Filtrar", all:"Todos",
-      sort_name:"Nome (A-Z)", sort_visits:"Mais Visitas", sort_spent:"Mais Gastou", sort_recent:"Recentes",
-      no_appointments:"Nenhum agendamento", no_clients:"Nenhum cliente cadastrado",
-      no_vacilao:"Nenhum cliente vacilou ainda", saved:"Salvo com sucesso!", deleted:"Removido!",
-      cancelled:"Cancelado!", late_cancelled:"Cancelamento em cima da hora!",
-      completed_msg:"Atendimento concluído!", error_password:"Senha incorreta",
-      search_placeholder:"🔍 Buscar por nome, telefone ou serviço...",
-      backup_exported:"Backup exportado!", backup_imported:"Backup importado!",
-      backup_invalid:"Arquivo de backup inválido!", backup_error:"Erro ao importar backup!",
-      mafioso:"Mafioso", frequent:"Frequente", new_client_badge:"Novo",
-      whatsapp_msg:"Olá {client}! Lembrando do seu agendamento na La Mafia Barbearia hoje às {time}. Até já! 🎩"
-    },
-    es: {
-      welcome:"Bienvenido, Jefe", revenue_today:"Ingresos de Hoy", revenue_pending:"Previsto",
-      revenue_completed:"Completado", revenue_month:"Ingresos Mes", tips_today:"Propinas Hoy",
-      tips_month:"Propinas Mes", available_slots:"Horarios Disponibles", timeline:"Línea de Tiempo",
-      settings:"Ajustes", open_time:"Apertura", close_time:"Cierre",
-      appointments:"Atenciones", completed:"Completados", agenda:"Agenda", clients:"Clientes",
-      finance:"Finanzas", select_day:"Seleccionar Día", select_month:"Seleccionar Mes",
-      selected_day_revenue:"Ingresos del Día", selected_month_revenue:"Ingresos del Mes",
-      month_days:"Días con Atención", avg_daily:"Promedio Diario", previous_day:"Día Anterior",
-      previous_month:"Mes Anterior", export_finance:"Exportar Informe", vacilao:"Vacilón",
-      dashboard:"Inicio", quick_actions:"Acciones Rápidas", export_report:"Exportar Caja",
-      backup:"Copia de Seguridad", export:"Exportar", import:"Importar",
-      backup_info:"Guarde sus datos en la nube", confirm_import:"Confirmar Importación",
-      import_warning:"⚠️ Esto reemplazará TODOS los datos actuales.",
-      cancel:"Cancelar", confirm:"Confirmar", new_appointment:"Nueva Cita",
-      edit_appointment:"Editar Cita", new_client:"Nuevo Cliente", edit_client:"Editar Cliente",
-      client_name:"Nombre del Cliente", client_phone:"Teléfono", client_notes:"Notas",
-      date:"Fecha", time:"Hora", price:"Precio (€)", tip:"Propina (€)", service:"Servicio",
-      notes:"Notas", save:"Guardar", filter:"Filtrar", all:"Todos",
-      sort_name:"Nombre (A-Z)", sort_visits:"Más Visitas", sort_spent:"Más Gastó", sort_recent:"Recientes",
-      no_appointments:"Sin citas", no_clients:"Sin clientes registrados",
-      no_vacilao:"Nadie ha fallado aún", saved:"¡Guardado con éxito!", deleted:"¡Eliminado!",
-      cancelled:"¡Cancelado!", late_cancelled:"¡Cancelación de última hora!",
-      completed_msg:"¡Atención completada!", error_password:"Contraseña incorrecta",
-      search_placeholder:"🔍 Buscar por nombre, teléfono o servicio...",
-      backup_exported:"¡Copia exportada!", backup_imported:"¡Copia importada!",
-      backup_invalid:"¡Archivo inválido!", backup_error:"¡Error al importar!",
-      mafioso:"Mafioso", frequent:"Frecuente", new_client_badge:"Nuevo",
-      whatsapp_msg:"¡Hola {client}! Recordando tu cita en La Mafia Barbearia hoy a las {time}. ¡Nos vemos! 🎩"
-    }
-  },
-
-  init() {
-    this.loadData();
-    this.checkAuth();
-    document.getElementById('agendaDate').value = this.data.selectedDate;
-    document.getElementById('financeDaySelect').value = this.data.selectedDate;
-    document.getElementById('financeMonthSelect').value = this.data.selectedDate.substring(0,7);
-    document.getElementById('settingOpenTime').value = this.data.settings.openTime;
-    document.getElementById('settingCloseTime').value = this.data.settings.closeTime;
-    this.checkInstallBanner();
-    this._migrateClientIds();
-  },
-
-  _migrateClientIds() {
-    let changed = false;
-    this.data.clients = this.data.clients.map(c => {
-      if (!c.id) { changed = true; return { ...c, id: Date.now().toString() + Math.random().toString(36).slice(2) }; }
-      return c;
-    });
-    if (changed) this.saveData();
-  },
-
-  checkAuth() {
-    if (localStorage.getItem('laMafiaAuth') === 'true') {
-      this.data.isLoggedIn = true;
+  async init(){
+    try{const l=localStorage.getItem('laMafiaLang');if(l){this.data.lang=l;document.getElementById('langLabel').textContent=l.toUpperCase();}
+    const s=localStorage.getItem('laMafiaSettings');if(s)this.data.settings=JSON.parse(s);}catch(e){}
+    document.getElementById('agendaDate').value=this.data.selectedDate;
+    document.getElementById('financeDaySelect').value=this.data.selectedDate;
+    document.getElementById('financeMonthSelect').value=this.data.selectedDate.substring(0,7);
+    document.getElementById('settingOpenTime').value=this.data.settings.openTime;
+    document.getElementById('settingCloseTime').value=this.data.settings.closeTime;
+    if(localStorage.getItem('laMafiaAuth')==='true'){
+      this.data.isLoggedIn=true;
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('mainApp').classList.remove('hidden');
-      this.renderAll();
+      await this.syncAll();
     }
   },
 
-  login() {
-    const password = document.getElementById('loginPassword').value;
-    if (VALID_HASHES.includes(simpleHash(password))) {
-      localStorage.setItem('laMafiaAuth', 'true');
-      this.data.isLoggedIn = true;
-      document.getElementById('loginScreen').classList.add('hidden');
-      document.getElementById('mainApp').classList.remove('hidden');
-      this.renderAll();
-    } else {
-      const el = document.getElementById('loginError');
-      el.textContent = this.t('error_password');
-      el.classList.remove('hidden');
-    }
+  setSyncStatus(status,text){
+    document.getElementById('syncDot').className='sync-dot '+status;
+    document.getElementById('syncText').textContent=text;
   },
 
-  logout() {
-    localStorage.removeItem('laMafiaAuth');
-    this.data.isLoggedIn = false;
-    document.getElementById('loginScreen').classList.remove('hidden');
-    document.getElementById('mainApp').classList.add('hidden');
-    document.getElementById('loginPassword').value = '';
-    document.getElementById('loginError').classList.add('hidden');
-  },
-
-  loadData() {
-    try {
-      const saved = localStorage.getItem('laMafiaData');
-      if (saved) {
-        const p = JSON.parse(saved);
-        this.data.appointments = p.appointments || [];
-        this.data.clients = p.clients || [];
-        this.data.vacilao = p.vacilao || [];
-        this.data.lang = p.lang || 'pt';
-        this.data.settings = p.settings || { openTime:'09:00', closeTime:'20:00', slotDuration:30 };
+  async syncAll(){
+    this.setSyncStatus('syncing','A sincronizar...');
+    try{
+      const[appts,clients,vacilao,settings]=await Promise.all([
+        db.from('appointments').select('*').order('date').order('time'),
+        db.from('clients').select('*').order('name'),
+        db.from('vacilao').select('*').order('cancelled_at',{ascending:false}),
+        db.from('settings').select('*').eq('id',1).single()
+      ]);
+      if(appts.error)throw appts.error;
+      if(clients.error)throw clients.error;
+      if(vacilao.error)throw vacilao.error;
+      this.data.appointments=(appts.data||[]).map(r=>({id:r.id,client:r.client,date:r.date,time:r.time,service:r.service,price:r.price,tip:r.tip,notes:r.notes,payment:r.payment,status:r.status,createdAt:r.created_at,updatedAt:r.updated_at}));
+      this.data.clients=(clients.data||[]).map(r=>({id:r.id,name:r.name,phone:r.phone||'',notes:r.notes||'',lastVisit:r.last_visit||null,createdAt:r.created_at,updatedAt:r.updated_at}));
+      this.data.vacilao=(vacilao.data||[]).map(r=>({id:r.id,client:r.client,date:r.date,time:r.time,service:r.service,price:r.price,tip:r.tip,notes:r.notes,cancelledAt:r.cancelled_at}));
+      if(settings.data){
+        this.data.settings.openTime=settings.data.open_time||'09:00';
+        this.data.settings.closeTime=settings.data.close_time||'20:00';
+        this.data.settings.slotDuration=settings.data.slot_duration||30;
+        this.data.lang=settings.data.lang||'pt';
+        document.getElementById('settingOpenTime').value=this.data.settings.openTime;
+        document.getElementById('settingCloseTime').value=this.data.settings.closeTime;
+        document.getElementById('langLabel').textContent=this.data.lang.toUpperCase();
       }
-    } catch(e) {
-      this.data.appointments = []; this.data.clients = []; this.data.vacilao = [];
+      this.setSyncStatus('ok','Sincronizado ✓');
+      this._saveLocal();
+      this.renderAll();
+    }catch(e){
+      console.error('Sync error:',e);
+      this.setSyncStatus('error','Sem ligação — dados locais');
+      try{const s=localStorage.getItem('laMafiaData');if(s){const p=JSON.parse(s);this.data.appointments=p.appointments||[];this.data.clients=p.clients||[];this.data.vacilao=p.vacilao||[];}}catch(e2){}
+      this.renderAll();
     }
   },
 
-  saveData() {
-    try {
-      localStorage.setItem('laMafiaData', JSON.stringify(this.data));
-      this.renderAll();
-    } catch(e) { this.showToast('Erro ao salvar!','error'); }
+  _saveLocal(){try{localStorage.setItem('laMafiaData',JSON.stringify({appointments:this.data.appointments,clients:this.data.clients,vacilao:this.data.vacilao}));}catch(e){}},
+
+  async login(){
+    const pw=document.getElementById('loginPassword').value;
+    if(VALID_HASHES.includes(simpleHash(pw))){
+      localStorage.setItem('laMafiaAuth','true');this.data.isLoggedIn=true;
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('mainApp').classList.remove('hidden');
+      await this.syncAll();
+    }else{const el=document.getElementById('loginError');el.textContent='Senha incorreta';el.classList.remove('hidden');}
   },
 
-  saveSettings() {
-    this.data.settings.openTime = document.getElementById('settingOpenTime').value;
-    this.data.settings.closeTime = document.getElementById('settingCloseTime').value;
-    this.saveData();
-    this.showToast('Configurações salvas!');
+  logout(){localStorage.removeItem('laMafiaAuth');this.data.isLoggedIn=false;document.getElementById('loginScreen').classList.remove('hidden');document.getElementById('mainApp').classList.add('hidden');document.getElementById('loginPassword').value='';document.getElementById('loginError').classList.add('hidden');},
+
+  toggleLanguage(){this.data.lang=this.data.lang==='pt'?'es':'pt';document.getElementById('langLabel').textContent=this.data.lang.toUpperCase();localStorage.setItem('laMafiaLang',this.data.lang);db.from('settings').update({lang:this.data.lang}).eq('id',1).then(()=>{});this.renderAll();},
+
+  async saveSettings(){
+    this.data.settings.openTime=document.getElementById('settingOpenTime').value;
+    this.data.settings.closeTime=document.getElementById('settingCloseTime').value;
+    localStorage.setItem('laMafiaSettings',JSON.stringify(this.data.settings));
+    const{error}=await db.from('settings').update({open_time:this.data.settings.openTime,close_time:this.data.settings.closeTime,slot_duration:this.data.settings.slotDuration}).eq('id',1);
+    if(error)this.showToast('Erro ao guardar configurações','error');
+    else this.showToast('Configurações salvas!','success');
+    this.renderAvailableSlots();
   },
 
-  navigate(view) {
-    ['Dashboard','Agenda','Clients','Finance','Vacilao'].forEach(v => {
-      document.getElementById(`view${v}`).classList.add('hidden');
-      document.getElementById(`nav${v}`).classList.remove('active');
-    });
+  navigate(view){
+    ['Dashboard','Agenda','Clients','Finance','Vacilao'].forEach(v=>{document.getElementById(`view${v}`).classList.add('hidden');document.getElementById(`nav${v}`).classList.remove('active');});
     document.getElementById(`view${view.charAt(0).toUpperCase()+view.slice(1)}`).classList.remove('hidden');
     document.getElementById(`nav${view.charAt(0).toUpperCase()+view.slice(1)}`).classList.add('active');
-    const fabA = document.getElementById('fabAppointment');
-    const fabC = document.getElementById('fabClient');
-    if (view === 'clients') { fabA.classList.add('hidden'); fabC.classList.remove('hidden'); }
-    else { fabA.classList.remove('hidden'); fabC.classList.add('hidden'); }
-    if (view === 'agenda') { this.data.selectedDate = document.getElementById('agendaDate').value || new Date().toISOString().split('T')[0]; this.renderAppointments(); }
-    else if (view === 'vacilao') this.renderVacilao();
-    else if (view === 'clients') this.renderClients();
-    else if (view === 'finance') this.renderFinance();
-    else if (view === 'dashboard') this.renderAvailableSlots();
+    const fA=document.getElementById('fabAppointment'),fC=document.getElementById('fabClient');
+    if(view==='clients'){fA.classList.add('hidden');fC.classList.remove('hidden');}else{fA.classList.remove('hidden');fC.classList.add('hidden');}
+    if(view==='agenda'){this.data.selectedDate=document.getElementById('agendaDate').value||this.data.selectedDate;this.renderAppointments();}
+    else if(view==='vacilao')this.renderVacilao();
+    else if(view==='clients')this.renderClients();
+    else if(view==='finance')this.renderFinance();
+    else if(view==='dashboard')this.renderAvailableSlots();
   },
 
-  toggleLanguage() {
-    this.data.lang = this.data.lang === 'pt' ? 'es' : 'pt';
-    document.getElementById('langLabel').textContent = this.data.lang.toUpperCase();
-    this.updateTexts(); this.saveData();
+  renderAll(){this.renderStats();this.renderAppointments();this.renderClients();this.renderVacilao();this.renderAvailableSlots();this.updateClientSuggestions();},
+
+  renderStats(){
+    const today=new Date().toISOString().split('T')[0];
+    const tA=this.data.appointments.filter(a=>a.date===today&&a.status!=='cancelled');
+    const pend=tA.filter(a=>a.status==='active'||!a.status),comp=tA.filter(a=>a.status==='completed');
+    const pR=pend.reduce((s,a)=>s+parseFloat(a.price||0),0),cR=comp.reduce((s,a)=>s+parseFloat(a.price||0),0);
+    const tT=tA.reduce((s,a)=>s+(parseFloat(a.tip)||0),0);
+    const tM=this.data.appointments.filter(a=>a.date.startsWith(today.substring(0,7))&&a.status!=='cancelled').reduce((s,a)=>s+(parseFloat(a.tip)||0),0);
+    const mR=this.data.appointments.filter(a=>a.date.startsWith(today.substring(0,7))&&a.status!=='cancelled').reduce((s,a)=>s+parseFloat(a.price||0),0);
+    document.getElementById('statCount').textContent=tA.length;document.getElementById('statCompleted').textContent=comp.length;
+    document.getElementById('statDayTotal').textContent=this.fc(pR+cR);document.getElementById('statPending').textContent=this.fc(pR);
+    document.getElementById('statCompletedRevenue').textContent=this.fc(cR);document.getElementById('statTipsToday').textContent=this.fc(tT);
+    document.getElementById('statTipsMonth').textContent=this.fc(tM);document.getElementById('statMonth').textContent=this.fc(mR);
+    const vc=this.data.vacilao.length;
+    ['vacilaoBadge','navVacilaoBadge'].forEach(id=>{const el=document.getElementById(id);if(vc>0){el.textContent=vc;el.classList.remove('hidden');}else el.classList.add('hidden');});
+    document.getElementById('vacilaoCount').textContent=`${vc} clientes`;
   },
 
-  t(key) { return this.translations[this.data.lang][key] || key; },
-
-  updateTexts() {
-    document.getElementById('welcomeText').textContent = this.t('welcome');
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      const key = el.getAttribute('data-i18n');
-      if (['INPUT','SELECT','TEXTAREA'].includes(el.tagName)) el.placeholder = this.t(key);
-      else el.textContent = this.t(key);
-    });
-    document.getElementById('clientSearch').placeholder = this.t('search_placeholder');
-  },
-
-  renderAll() {
-    this.updateTexts();
-    this.renderStats();
-    this.renderAppointments();
-    this.renderClients();
-    this.renderVacilao();
-    this.renderAvailableSlots();
-    this.updateClientSuggestions();
-  },
-
-  renderStats() {
-    const today = new Date().toISOString().split('T')[0];
-    const todayAppts = this.data.appointments.filter(a => a.date === today && a.status !== 'cancelled');
-    const pending = todayAppts.filter(a => a.status === 'active' || !a.status);
-    const completed = todayAppts.filter(a => a.status === 'completed');
-    const pendingRev = pending.reduce((s,a) => s+parseFloat(a.price||0),0);
-    const completedRev = completed.reduce((s,a) => s+parseFloat(a.price||0),0);
-    const tipsToday = todayAppts.reduce((s,a) => s+(parseFloat(a.tip)||0),0);
-    const tipsMonth = this.data.appointments
-      .filter(a => a.date.startsWith(today.substring(0,7)) && a.status !== 'cancelled')
-      .reduce((s,a) => s+(parseFloat(a.tip)||0),0);
-    const monthRev = this.data.appointments
-      .filter(a => a.date.startsWith(today.substring(0,7)) && a.status !== 'cancelled')
-      .reduce((s,a) => s+parseFloat(a.price||0),0);
-    document.getElementById('statCount').textContent = todayAppts.length;
-    document.getElementById('statCompleted').textContent = completed.length;
-    document.getElementById('statDayTotal').textContent = this.formatCurrency(pendingRev+completedRev);
-    document.getElementById('statPending').textContent = this.formatCurrency(pendingRev);
-    document.getElementById('statCompletedRevenue').textContent = this.formatCurrency(completedRev);
-    document.getElementById('statTipsToday').textContent = this.formatCurrency(tipsToday);
-    document.getElementById('statTipsMonth').textContent = this.formatCurrency(tipsMonth);
-    document.getElementById('statMonth').textContent = this.formatCurrency(monthRev);
-    const vc = this.data.vacilao.length;
-    if (vc > 0) {
-      ['vacilaoBadge','navVacilaoBadge'].forEach(id => { document.getElementById(id).textContent=vc; document.getElementById(id).classList.remove('hidden'); });
-    } else {
-      ['vacilaoBadge','navVacilaoBadge'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  renderAvailableSlots(){
+    const grid=document.getElementById('availableSlotsGrid'),tl=document.getElementById('timelineView');
+    const today=new Date().toISOString().split('T')[0],now=new Date(),cur=now.getHours()*60+now.getMinutes();
+    document.getElementById('slotsDateLabel').textContent=this.fd(today);
+    const{openTime,closeTime,slotDuration}=this.data.settings;
+    const booked=this.data.appointments.filter(a=>a.date===today&&a.status!=='cancelled').map(a=>a.time);
+    const[oh,om]=openTime.split(':').map(Number),[ch,cm]=closeTime.split(':').map(Number);
+    const st=oh*60+om,et=ch*60+cm,slots=[],tlItems=[];
+    for(let t=st;t<et;t+=slotDuration){
+      const h=Math.floor(t/60),m=t%60,ts=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+      const isB=booked.includes(ts),isC=t<=cur&&cur<t+slotDuration;
+      slots.push({time:ts,available:!isB,isCurrent:isC});
+      tlItems.push({time:ts,booked:isB,apt:this.data.appointments.find(a=>a.time===ts&&a.date===today&&a.status!=='cancelled')});
     }
-    document.getElementById('vacilaoCount').textContent = `${vc} clientes`;
+    grid.innerHTML=slots.map(s=>{let cls=s.available?'available':'booked';if(s.isCurrent&&s.available)cls='current-slot';return `<div class="slot-item ${cls}" ${s.available?`onclick="app.quickBook('${s.time}')"`:''}>${s.time}</div>`;}).join('');
+    tl.innerHTML=tlItems.map(i=>`<div class="timeline-item"><div class="timeline-time">${i.time}</div><div class="timeline-bar ${i.booked?(i.apt?.status==='completed'?'completed':'booked'):'available'}"></div><div class="timeline-label">${i.booked?(i.apt?.client||'Ocupado'):'Livre'}</div></div>`).join('');
   },
 
-  // ─── VERIFICAÇÃO DE CONFLITO ────────────────────────────────────────────────
-  // Retorna o agendamento em conflito (ou null se não houver)
-  _getConflict(date, time, excludeId) {
-    if (!date || !time) return null;
-    return this.data.appointments.find(a =>
-      a.date === date &&
-      a.time === time &&
-      a.status !== 'cancelled' &&
-      a.id !== excludeId
-    ) || null;
+  quickBook(time){this.openModal('appointment');document.getElementById('aptTime').value=time;document.getElementById('aptDate').value=new Date().toISOString().split('T')[0];this.checkConflict();},
+  autoFillPrice(){const s=document.getElementById('aptService').value,p=document.getElementById('aptPrice');if(!p.value&&DEFAULT_PRICES[s])p.value=DEFAULT_PRICES[s];},
+  _getConflict(date,time,excl){if(!date||!time)return null;return this.data.appointments.find(a=>a.date===date&&a.time===time&&a.status!=='cancelled'&&a.id!==excl)||null;},
+  checkConflict(){
+    const date=document.getElementById('aptDate').value,time=document.getElementById('aptTime').value,excl=document.getElementById('aptId').value;
+    const c=this._getConflict(date,time,excl),banner=document.getElementById('conflictBanner');
+    if(c){document.getElementById('conflictMsg').textContent=`Já existe um agendamento para ${c.client} às ${c.time} neste dia.`;banner.classList.add('show');this._conflictWarned=false;}
+    else{banner.classList.remove('show');this._conflictWarned=false;}
   },
 
-  // Chamado ao mudar data ou horário no modal — mostra banner de aviso
-  checkConflict() {
-    const date = document.getElementById('aptDate').value;
-    const time = document.getElementById('aptTime').value;
-    const excludeId = document.getElementById('aptId').value;
-    const conflict = this._getConflict(date, time, excludeId);
-    const banner = document.getElementById('conflictBanner');
-    const msg = document.getElementById('conflictMsg');
-    if (conflict) {
-      msg.textContent = `Já existe um agendamento para ${conflict.client} às ${conflict.time} neste dia.`;
-      banner.classList.add('show');
-      this._conflictWarned = false; // reset: precisa nova confirmação
-    } else {
-      banner.classList.remove('show');
-      this._conflictWarned = false;
-    }
+  renderAppointments(){
+    const list=document.getElementById('appointmentsList'),sel=document.getElementById('agendaDate').value||this.data.selectedDate;
+    this.data.selectedDate=sel;
+    const appts=this.data.appointments.filter(a=>{const d=a.date?a.date.split('T')[0]:'';return d===sel&&a.status!=='cancelled';}).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+    if(!appts.length){list.innerHTML='<div class="empty-state">Nenhum agendamento</div>';return;}
+    list.innerHTML=appts.map(apt=>{const done=apt.status==='completed';return `<div class="appointment ${done?'completed':''}"><span class="status-badge ${done?'status-completed':'status-pending'}">${done?'CONCLUÍDO':'PENDENTE'}</span><div class="appointment-header"><div class="apt-time">🕒 ${apt.time||''}</div><div class="apt-price">${this.fc(apt.price||0)}</div></div><div class="apt-info"><div class="apt-client">${apt.client||''}</div><div class="apt-service">${apt.service||''}</div><div class="apt-date">📅 ${this.fd(apt.date||'')}</div>${apt.tip&&parseFloat(apt.tip)>0?`<div class="apt-tip">💰 Gorjeta: ${this.fc(apt.tip)}</div>`:''}${apt.notes?`<div class="apt-notes">📝 ${apt.notes}</div>`:''}</div><div class="apt-actions">${!done?`<button class="apt-btn apt-btn-whatsapp" onclick="app.sendWhatsApp('${apt.client}','${apt.time}','${apt.service}','${apt.date}')">📱 WhatsApp</button><button class="apt-btn apt-btn-edit" onclick="app.editAppointment('${apt.id}')">✏️ Editar</button><button class="apt-btn apt-btn-complete" onclick="app.completeAppointment('${apt.id}')">✓ Concluir</button>`:''}<button class="apt-btn apt-btn-cancel" onclick="app.confirmCancelAppointment('${apt.id}',false)">❌ Cancelar</button><button class="apt-btn apt-btn-late" onclick="app.confirmCancelAppointment('${apt.id}',true)">⚠️ Em Cima da Hora</button></div></div>`;}).join('');
   },
 
-  // ─── SLOTS DISPONÍVEIS ──────────────────────────────────────────────────────
-  renderAvailableSlots() {
-    const grid = document.getElementById('availableSlotsGrid');
-    const timeline = document.getElementById('timelineView');
-    const today = new Date().toISOString().split('T')[0];
-    const now = new Date();
-    const currentMinutes = now.getHours()*60 + now.getMinutes();
-    document.getElementById('slotsDateLabel').textContent = this.formatDate(today);
-
-    const { openTime, closeTime, slotDuration } = this.data.settings;
-    // Todos os horários ocupados HOJE (incluindo dias futuros já agendados para hoje)
-    const bookedTimes = this.data.appointments
-      .filter(a => a.date === today && a.status !== 'cancelled')
-      .map(a => a.time);
-
-    const [oh,om] = openTime.split(':').map(Number);
-    const [ch,cm] = closeTime.split(':').map(Number);
-    const startTime = oh*60+om, endTime = ch*60+cm;
-    const slots = [], timelineItems = [];
-
-    for (let t = startTime; t < endTime; t += slotDuration) {
-      const h = Math.floor(t/60), m = t%60;
-      const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-      const isBooked = bookedTimes.includes(timeStr);
-      const isCurrent = t <= currentMinutes && currentMinutes < t+slotDuration;
-      slots.push({ time: timeStr, available: !isBooked, isCurrent });
-      timelineItems.push({
-        time: timeStr, booked: isBooked,
-        appointment: this.data.appointments.find(a => a.time===timeStr && a.date===today && a.status!=='cancelled')
-      });
-    }
-
-    grid.innerHTML = slots.map(s => {
-      let cls = s.available ? 'available' : 'booked';
-      if (s.isCurrent && s.available) cls = 'current-slot';
-      return `<div class="slot-item ${cls}" ${s.available ? `onclick="app.quickBook('${s.time}')"` : ''}>${s.time}</div>`;
-    }).join('');
-
-    timeline.innerHTML = timelineItems.map(item => `
-      <div class="timeline-item">
-        <div class="timeline-time">${item.time}</div>
-        <div class="timeline-bar ${item.booked ? (item.appointment?.status==='completed' ? 'completed' : 'booked') : 'available'}"></div>
-        <div class="timeline-label">${item.booked ? (item.appointment?.client||'Ocupado') : 'Livre'}</div>
-      </div>
-    `).join('');
+  renderClients(){
+    const list=document.getElementById('clientsList'),search=document.getElementById('clientSearch').value.toLowerCase();
+    let filtered=this.data.clients.filter(c=>{const stats=this.getClientStats(c.name);return this.checkCategoryMatch(stats,this.currentFilter)&&(c.name.toLowerCase().includes(search)||(c.phone&&c.phone.includes(search)));});
+    filtered.sort((a,b)=>{const sa=this.getClientStats(a.name),sb=this.getClientStats(b.name);if(this.currentSort==='name')return a.name.localeCompare(b.name);if(this.currentSort==='visits')return sb.visits-sa.visits;if(this.currentSort==='spent')return sb.totalSpent-sa.totalSpent;if(this.currentSort==='recent'){if(!sa.lastVisit)return 1;if(!sb.lastVisit)return -1;return new Date(sb.lastVisit)-new Date(sa.lastVisit);}return 0;});
+    document.getElementById('mafiosoCount').textContent=`${this.data.clients.filter(c=>this.getClientCategory(c.name)==='mafioso').length} Mafiosos`;
+    if(!filtered.length){list.innerHTML='<div class="empty-state">Nenhum cliente cadastrado</div>';return;}
+    list.innerHTML=filtered.map(c=>{const stats=this.getClientStats(c.name),cat=this.getClientCategory(c.name);return `<div class="card ${cat==='mafioso'?'mafioso':''}"><div class="vacilao-item" style="border:none;padding:0"><div class="vacilao-info" style="flex:1" onclick="app.showClientHistory('${c.name}')"><div class="vacilao-name">${c.name}${cat==='mafioso'?'<span class="mafioso-badge">🎩 Mafioso</span>':''}${cat==='frequent'?'<span class="frequent-badge">⭐ Frequente</span>':''}${cat==='new'?'<span class="new-badge">🆕 Novo</span>':''}</div><div class="client-stats"><div class="client-stat"><span class="client-stat-value">${stats.visits}</span><span class="client-stat-label">Visitas</span></div><div class="client-stat"><span class="client-stat-value">${this.fc(stats.totalSpent)}</span><span class="client-stat-label">Total</span></div><div class="client-stat"><span class="client-stat-value">${stats.lastVisit?this.fd(stats.lastVisit):'-'}</span><span class="client-stat-label">Última</span></div></div>${c.phone?`<div class="vacilao-date" style="margin-top:8px">📞 ${c.phone}</div>`:''}${c.notes?`<div class="vacilao-date" style="margin-top:4px;font-style:italic">📝 ${c.notes}</div>`:''}</div><div class="client-actions"><button class="client-action-btn client-action-btn-edit" onclick="app.editClientById('${c.id}')">✏️</button><button class="client-action-btn client-action-btn-delete" onclick="app.deleteClientById('${c.id}')">🗑</button></div></div></div>`;}).join('');
   },
 
-  quickBook(time) {
-    this.openModal('appointment');
-    document.getElementById('aptTime').value = time;
-    document.getElementById('aptDate').value = new Date().toISOString().split('T')[0];
-    this.checkConflict();
+  renderVacilao(){const list=document.getElementById('vacilaoList');if(!this.data.vacilao.length){list.innerHTML='<div class="empty-state">Nenhum cliente vacilou ainda</div>';return;}list.innerHTML=this.data.vacilao.map(v=>`<div class="vacilao-item"><div class="vacilao-info"><div class="vacilao-name">${v.client||''}</div><div class="vacilao-date">📅 ${this.fd(v.date||'')} • 🕒 ${v.time||''}</div><div class="vacilao-date">${v.service||''} • ${this.fc(v.price||0)}</div></div><span class="vacilao-badge">VACILOU</span></div>`).join('');},
+
+  renderFinance(){this.renderFinanceDay();this.renderFinanceMonth();},
+  renderFinanceDay(){
+    const sel=document.getElementById('financeDaySelect').value||new Date().toISOString().split('T')[0];
+    const appts=this.data.appointments.filter(a=>{const d=a.date?a.date.split('T')[0]:'';return d===sel&&a.status!=='cancelled';});
+    const rev=appts.reduce((s,a)=>s+parseFloat(a.price||0),0);
+    document.getElementById('financeDayRevenue').textContent=this.fc(rev);
+    const prev=new Date(sel);prev.setDate(prev.getDate()-1);const pStr=prev.toISOString().split('T')[0];
+    const pRev=this.data.appointments.filter(a=>{const d=a.date?a.date.split('T')[0]:'';return d===pStr&&a.status!=='cancelled';}).reduce((s,a)=>s+parseFloat(a.price||0),0);
+    const cmp=rev-pRev,cEl=document.getElementById('financeDayComparison'),cTxt=document.getElementById('financeDayComparisonText');
+    if(pRev>0){const pct=((cmp/pRev)*100).toFixed(1);cEl.className=`finance-comparison ${cmp>=0?'up':'down'}`;cTxt.textContent=`${cmp>=0?'↑':'↓'} ${Math.abs(pct)}% vs ontem (${this.fc(pRev)})`;document.getElementById('financePreviousDay').textContent=this.fc(pRev);}
+    else{cEl.className='finance-comparison';cTxt.textContent='Sem comparação';document.getElementById('financePreviousDay').textContent='€0,00';}
+    const sb={};appts.forEach(a=>{if(!sb[a.service])sb[a.service]={count:0,total:0};sb[a.service].count++;sb[a.service].total+=parseFloat(a.price||0);});
+    document.getElementById('financeDayServices').innerHTML=Object.entries(sb).map(([s,d])=>`<div class="service-item"><div><div class="service-name">${s}</div><div class="service-count">${d.count}x</div></div><div class="service-total">${this.fc(d.total)}</div></div>`).join('');
+  },
+  renderFinanceMonth(){
+    const sel=document.getElementById('financeMonthSelect').value||new Date().toISOString().substring(0,7);
+    const appts=this.data.appointments.filter(a=>{const d=a.date?a.date.split('T')[0]:'';return d.startsWith(sel)&&a.status!=='cancelled';});
+    const rev=appts.reduce((s,a)=>s+parseFloat(a.price||0),0);
+    document.getElementById('financeMonthRevenue').textContent=this.fc(rev);
+    const uD=[...new Set(appts.map(a=>a.date.split('T')[0]))];
+    document.getElementById('financeMonthDays').textContent=uD.length;document.getElementById('financeMonthAvg').textContent=this.fc(uD.length>0?rev/uD.length:0);
+    const pm=new Date(sel+'-01');pm.setMonth(pm.getMonth()-1);const pms=pm.toISOString().substring(0,7);
+    document.getElementById('financePreviousMonth').textContent=this.fc(this.data.appointments.filter(a=>{const d=a.date?a.date.split('T')[0]:'';return d.startsWith(pms)&&a.status!=='cancelled';}).reduce((s,a)=>s+parseFloat(a.price||0),0));
+    const cd=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().split('T')[0];const dr=this.data.appointments.filter(a=>{const ad=a.date?a.date.split('T')[0]:'';return ad===ds&&a.status!=='cancelled';}).reduce((s,a)=>s+parseFloat(a.price||0),0);cd.push({date:ds,revenue:dr,day:d.getDate()});}
+    const mx=Math.max(...cd.map(d=>d.revenue),1);
+    document.getElementById('financeMonthChart').innerHTML=cd.map(d=>{const h=(d.revenue/mx)*80;const it=d.date===new Date().toISOString().split('T')[0];return `<div class="chart-bar ${it?'active':''}" style="height:${h}px"><div class="chart-bar-label">${d.day}</div></div>`;}).join('');
+    const dr={};appts.forEach(a=>{const d=a.date.split('T')[0];if(!dr[d])dr[d]=0;dr[d]+=parseFloat(a.price||0);});
+    document.getElementById('financeTopDays').innerHTML='<div class="finance-label" style="margin-bottom:8px">🏆 Top 5 Dias</div>'+Object.entries(dr).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([d,r])=>`<div class="top-day-item"><div class="top-day-date">${this.fd(d)}</div><div class="top-day-value">${this.fc(r)}</div></div>`).join('');
   },
 
-  autoFillPrice() {
-    const service = document.getElementById('aptService').value;
-    const priceField = document.getElementById('aptPrice');
-    if (!priceField.value && DEFAULT_PRICES[service]) priceField.value = DEFAULT_PRICES[service];
-  },
+  getClientStats(name){const h=this.data.appointments.filter(a=>a.client===name&&a.status!=='cancelled');return{visits:h.length,totalSpent:h.reduce((s,a)=>s+parseFloat(a.price||0),0),lastVisit:h.length>0?h[h.length-1].date:null};},
+  getClientCategory(name){const s=this.getClientStats(name);if(s.visits>=5||s.totalSpent>=200)return'mafioso';if(s.visits>=3)return'frequent';return'new';},
+  checkCategoryMatch(stats,cat){if(cat==='all')return true;if(cat==='mafioso')return stats.visits>=5||stats.totalSpent>=200;if(cat==='frequent')return stats.visits>=3&&stats.visits<5&&stats.totalSpent<200;if(cat==='new')return stats.visits<3;return true;},
+  filterClients(cat,btn){this.currentFilter=cat;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');this.renderClients();},
+  sortClients(s){this.currentSort=s;this.renderClients();},
+  searchClients(){this.renderClients();},
+  updateClientSuggestions(){document.getElementById('clientSuggestions').innerHTML=this.data.clients.map(c=>`<option value="${c.name}">`).join('');},
+  sendWhatsApp(name,time,service,date){const msgs={pt:`Olá ${name}! Lembrando do seu agendamento na La Mafia Barbearia hoje às ${time}. Até já! 🎩`,es:`¡Hola ${name}! Recordando tu cita en La Mafia Barbearia hoy a las ${time}. ¡Nos vemos! 🎩`};const client=this.data.clients.find(c=>c.name===name);const phone=client?.phone?client.phone.replace(/\D/g,''):'';window.open(phone?`https://wa.me/${phone}?text=${encodeURIComponent(msgs[this.data.lang]||msgs.pt)}`:`https://wa.me/?text=${encodeURIComponent(msgs[this.data.lang]||msgs.pt)}`,'_blank');},
+  filterAgenda(){this.data.selectedDate=document.getElementById('agendaDate').value;this.renderAppointments();},
 
-  getClientStats(clientName) {
-    const history = this.data.appointments.filter(a => a.client===clientName && a.status!=='cancelled');
-    return {
-      visits: history.length,
-      totalSpent: history.reduce((s,a) => s+parseFloat(a.price||0),0),
-      lastVisit: history.length>0 ? history[history.length-1].date : null
-    };
-  },
-
-  getClientCategory(clientName) {
-    const s = this.getClientStats(clientName);
-    if (s.visits>=5 || s.totalSpent>=200) return 'mafioso';
-    if (s.visits>=3) return 'frequent';
-    return 'new';
-  },
-
-  sendWhatsApp(clientName, time, service, date) {
-    const msg = this.t('whatsapp_msg')
-      .replace('{client}',clientName).replace('{time}',time)
-      .replace('{service}',service).replace('{date}',this.formatDate(date));
-    const client = this.data.clients.find(c => c.name===clientName);
-    const phone = client?.phone ? client.phone.replace(/\D/g,'') : '';
-    window.open(phone ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-  },
-
-  renderAppointments() {
-    const list = document.getElementById('appointmentsList');
-    const selectedDate = document.getElementById('agendaDate').value || this.data.selectedDate;
-    this.data.selectedDate = selectedDate;
-    const appts = this.data.appointments
-      .filter(a => { const d = a.date?a.date.split('T')[0]:''; return d===selectedDate && a.status!=='cancelled'; })
-      .sort((a,b) => (a.time||'').localeCompare(b.time||''));
-    if (!appts.length) { list.innerHTML=`<div class="empty-state">${this.t('no_appointments')}</div>`; return; }
-    list.innerHTML = appts.map(apt => {
-      const done = apt.status==='completed';
-      return `
-        <div class="appointment ${done?'completed':''}">
-          <span class="status-badge ${done?'status-completed':'status-pending'}">${done?'CONCLUÍDO':'PENDENTE'}</span>
-          <div class="appointment-header">
-            <div class="apt-time">🕒 ${apt.time||''}</div>
-            <div class="apt-price">${this.formatCurrency(apt.price||0)}</div>
-          </div>
-          <div class="apt-info">
-            <div class="apt-client">${apt.client||''}</div>
-            <div class="apt-service">${apt.service||''}</div>
-            <div class="apt-date">📅 ${this.formatDate(apt.date||'')}</div>
-            ${apt.tip&&parseFloat(apt.tip)>0?`<div class="apt-tip">💰 Gorjeta: ${this.formatCurrency(apt.tip)}</div>`:''}
-            ${apt.notes?`<div class="apt-notes">📝 ${apt.notes}</div>`:''}
-          </div>
-          <div class="apt-actions">
-            ${!done?`
-              <button class="apt-btn apt-btn-whatsapp" onclick="app.sendWhatsApp('${apt.client}','${apt.time}','${apt.service}','${apt.date}')">📱 WhatsApp</button>
-              <button class="apt-btn apt-btn-edit" onclick="app.editAppointment('${apt.id}')">✏️ Editar</button>
-              <button class="apt-btn apt-btn-complete" onclick="app.completeAppointment('${apt.id}')">✓ Concluir</button>
-            `:''}
-            <button class="apt-btn apt-btn-cancel" onclick="app.confirmCancelAppointment('${apt.id}',false)">❌ Cancelar</button>
-            <button class="apt-btn apt-btn-late" onclick="app.confirmCancelAppointment('${apt.id}',true)">⚠️ Em Cima da Hora</button>
-          </div>
-        </div>`;
-    }).join('');
-  },
-
-  renderClients() {
-    const list = document.getElementById('clientsList');
-    const search = document.getElementById('clientSearch').value.toLowerCase();
-    let filtered = this.data.clients.filter(c => {
-      const stats = this.getClientStats(c.name);
-      return this.checkCategoryMatch(stats, this.currentFilter) &&
-        (c.name.toLowerCase().includes(search) || (c.phone&&c.phone.includes(search)));
-    });
-    filtered.sort((a,b) => {
-      const sa=this.getClientStats(a.name), sb=this.getClientStats(b.name);
-      if (this.currentSort==='name') return a.name.localeCompare(b.name);
-      if (this.currentSort==='visits') return sb.visits-sa.visits;
-      if (this.currentSort==='spent') return sb.totalSpent-sa.totalSpent;
-      if (this.currentSort==='recent') { if(!sa.lastVisit)return 1; if(!sb.lastVisit)return -1; return new Date(sb.lastVisit)-new Date(sa.lastVisit); }
-      return 0;
-    });
-    const mCount = this.data.clients.filter(c=>this.getClientCategory(c.name)==='mafioso').length;
-    document.getElementById('mafiosoCount').textContent = `${mCount} Mafiosos`;
-    if (!filtered.length) { list.innerHTML=`<div class="empty-state">${this.t('no_clients')}</div>`; return; }
-    list.innerHTML = filtered.map(c => {
-      const stats=this.getClientStats(c.name), cat=this.getClientCategory(c.name);
-      return `
-        <div class="card ${cat==='mafioso'?'mafioso':''}">
-          <div class="vacilao-item" style="border:none;padding:0">
-            <div class="vacilao-info" style="flex:1" onclick="app.showClientHistory('${c.name}')">
-              <div class="vacilao-name">
-                ${c.name}
-                ${cat==='mafioso'?`<span class="mafioso-badge">🎩 ${this.t('mafioso')}</span>`:''}
-                ${cat==='frequent'?`<span class="frequent-badge">⭐ ${this.t('frequent')}</span>`:''}
-                ${cat==='new'?`<span class="new-badge">🆕 ${this.t('new_client_badge')}</span>`:''}
-              </div>
-              <div class="client-stats">
-                <div class="client-stat"><span class="client-stat-value">${stats.visits}</span><span class="client-stat-label">Visitas</span></div>
-                <div class="client-stat"><span class="client-stat-value">${this.formatCurrency(stats.totalSpent)}</span><span class="client-stat-label">Total</span></div>
-                <div class="client-stat"><span class="client-stat-value">${stats.lastVisit?this.formatDate(stats.lastVisit):'-'}</span><span class="client-stat-label">Última</span></div>
-              </div>
-              ${c.phone?`<div class="vacilao-date" style="margin-top:8px">📞 ${c.phone}</div>`:''}
-              ${c.notes?`<div class="vacilao-date" style="margin-top:4px;font-style:italic">📝 ${c.notes}</div>`:''}
-            </div>
-            <div class="client-actions">
-              <button class="client-action-btn client-action-btn-edit" onclick="app.editClientById('${c.id}')">✏️ Editar</button>
-              <button class="client-action-btn client-action-btn-delete" onclick="app.deleteClientById('${c.id}')">🗑</button>
-            </div>
-          </div>
-        </div>`;
-    }).join('');
-  },
-
-  renderVacilao() {
-    const list = document.getElementById('vacilaoList');
-    if (!this.data.vacilao.length) { list.innerHTML=`<div class="empty-state">${this.t('no_vacilao')}</div>`; return; }
-    list.innerHTML = this.data.vacilao.map(v => `
-      <div class="vacilao-item">
-        <div class="vacilao-info">
-          <div class="vacilao-name">${v.client||''}</div>
-          <div class="vacilao-date">📅 ${this.formatDate(v.date||'')} • 🕒 ${v.time||''}</div>
-          <div class="vacilao-date">${v.service||''} • ${this.formatCurrency(v.price||0)}</div>
-        </div>
-        <span class="vacilao-badge">VACILOU</span>
-      </div>`).join('');
-  },
-
-  renderFinance() { this.renderFinanceDay(); this.renderFinanceMonth(); },
-
-  renderFinanceDay() {
-    const sel = document.getElementById('financeDaySelect').value || new Date().toISOString().split('T')[0];
-    const appts = this.data.appointments.filter(a => { const d=a.date?a.date.split('T')[0]:''; return d===sel&&a.status!=='cancelled'; });
-    const rev = appts.reduce((s,a)=>s+parseFloat(a.price||0),0);
-    document.getElementById('financeDayRevenue').textContent = this.formatCurrency(rev);
-    const prev = new Date(sel); prev.setDate(prev.getDate()-1);
-    const prevStr = prev.toISOString().split('T')[0];
-    const prevRev = this.data.appointments.filter(a=>{const d=a.date?a.date.split('T')[0]:'';return d===prevStr&&a.status!=='cancelled';}).reduce((s,a)=>s+parseFloat(a.price||0),0);
-    const cmp = rev-prevRev;
-    const cEl = document.getElementById('financeDayComparison'), cTxt = document.getElementById('financeDayComparisonText');
-    if (prevRev>0) {
-      const pct = ((cmp/prevRev)*100).toFixed(1);
-      cEl.className=`finance-comparison ${cmp>=0?'up':'down'}`;
-      cTxt.textContent=`${cmp>=0?'↑':'↓'} ${Math.abs(pct)}% vs ontem (${this.formatCurrency(prevRev)})`;
-      document.getElementById('financePreviousDay').textContent=this.formatCurrency(prevRev);
-    } else { cEl.className='finance-comparison'; cTxt.textContent='Sem comparação'; document.getElementById('financePreviousDay').textContent='€0,00'; }
-    const sb={};
-    appts.forEach(a=>{if(!sb[a.service])sb[a.service]={count:0,total:0};sb[a.service].count++;sb[a.service].total+=parseFloat(a.price||0);});
-    document.getElementById('financeDayServices').innerHTML=Object.entries(sb).map(([s,d])=>`
-      <div class="service-item"><div><div class="service-name">${s}</div><div class="service-count">${d.count}x</div></div><div class="service-total">${this.formatCurrency(d.total)}</div></div>`).join('');
-  },
-
-  renderFinanceMonth() {
-    const sel = document.getElementById('financeMonthSelect').value || new Date().toISOString().substring(0,7);
-    const appts = this.data.appointments.filter(a=>{const d=a.date?a.date.split('T')[0]:'';return d.startsWith(sel)&&a.status!=='cancelled';});
-    const rev = appts.reduce((s,a)=>s+parseFloat(a.price||0),0);
-    document.getElementById('financeMonthRevenue').textContent=this.formatCurrency(rev);
-    const uDays=[...new Set(appts.map(a=>a.date.split('T')[0]))];
-    document.getElementById('financeMonthDays').textContent=uDays.length;
-    document.getElementById('financeMonthAvg').textContent=this.formatCurrency(uDays.length>0?rev/uDays.length:0);
-    const pm=new Date(sel+'-01'); pm.setMonth(pm.getMonth()-1);
-    const pms=pm.toISOString().substring(0,7);
-    const pmRev=this.data.appointments.filter(a=>{const d=a.date?a.date.split('T')[0]:'';return d.startsWith(pms)&&a.status!=='cancelled';}).reduce((s,a)=>s+parseFloat(a.price||0),0);
-    document.getElementById('financePreviousMonth').textContent=this.formatCurrency(pmRev);
-    const chartData=[];
-    for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().split('T')[0];const dr=this.data.appointments.filter(a=>{const ad=a.date?a.date.split('T')[0]:'';return ad===ds&&a.status!=='cancelled';}).reduce((s,a)=>s+parseFloat(a.price||0),0);chartData.push({date:ds,revenue:dr,day:d.getDate()});}
-    const maxR=Math.max(...chartData.map(d=>d.revenue),1);
-    document.getElementById('financeMonthChart').innerHTML=chartData.map(d=>{const h=(d.revenue/maxR)*80;const it=d.date===new Date().toISOString().split('T')[0];return `<div class="chart-bar ${it?'active':''}" style="height:${h}px"><div class="chart-bar-label">${d.day}</div></div>`;}).join('');
-    const dr={};
-    appts.forEach(a=>{const d=a.date.split('T')[0];if(!dr[d])dr[d]=0;dr[d]+=parseFloat(a.price||0);});
-    const top=Object.entries(dr).sort((a,b)=>b[1]-a[1]).slice(0,5);
-    document.getElementById('financeTopDays').innerHTML=`<div class="finance-label" style="margin-bottom:8px">🏆 Top 5 Dias</div>`+top.map(([d,r])=>`<div class="top-day-item"><div class="top-day-date">${this.formatDate(d)}</div><div class="top-day-value">${this.formatCurrency(r)}</div></div>`).join('');
-  },
-
-  checkCategoryMatch(stats, cat) {
-    if (cat==='all') return true;
-    if (cat==='mafioso') return stats.visits>=5||stats.totalSpent>=200;
-    if (cat==='frequent') return stats.visits>=3&&stats.visits<5&&stats.totalSpent<200;
-    if (cat==='new') return stats.visits<3;
-    return true;
-  },
-
-  filterClients(cat, btn) {
-    this.currentFilter=cat;
-    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    this.renderClients();
-  },
-  sortClients(s) { this.currentSort=s; this.renderClients(); },
-  searchClients() { this.renderClients(); },
-  updateClientSuggestions() {
-    document.getElementById('clientSuggestions').innerHTML=this.data.clients.map(c=>`<option value="${c.name}">`).join('');
-  },
-
-  openModal(type, aptId=null, clientId=null) {
+  openModal(type,aptId=null,clientId=null){
     document.getElementById(`modal${type.charAt(0).toUpperCase()+type.slice(1)}`).classList.add('active');
-    if (type==='appointment') {
-      // Reset conflito
-      document.getElementById('conflictBanner').classList.remove('show');
-      this._conflictWarned = false;
-      if (aptId) {
-        const apt = this.data.appointments.find(a=>a.id===aptId);
-        if (apt) {
-          document.getElementById('modalTitleAppointment').textContent=this.t('edit_appointment');
-          document.getElementById('aptId').value=apt.id;
-          document.getElementById('aptClient').value=apt.client||'';
-          document.getElementById('aptDate').value=apt.date?apt.date.split('T')[0]:'';
-          document.getElementById('aptDate').removeAttribute('min');
-          document.getElementById('aptTime').value=apt.time||'';
-          document.getElementById('aptService').value=apt.service||'';
-          document.getElementById('aptPrice').value=apt.price||'';
-          document.getElementById('aptTip').value=apt.tip||'';
-          document.getElementById('aptNotes').value=apt.notes||'';
-        }
-      } else {
-        const today=new Date().toISOString().split('T')[0];
-        document.getElementById('modalTitleAppointment').textContent=this.t('new_appointment');
-        document.getElementById('aptId').value='';
-        document.getElementById('aptClient').value='';
-        document.getElementById('aptDate').value=today;
-        document.getElementById('aptDate').min=today;
-        document.getElementById('aptTime').value='';
-        document.getElementById('aptPrice').value='';
-        document.getElementById('aptTip').value='';
-        document.getElementById('aptNotes').value='';
+    if(type==='appointment'){
+      document.getElementById('conflictBanner').classList.remove('show');this._conflictWarned=false;
+      if(aptId){const apt=this.data.appointments.find(a=>a.id===aptId);if(apt){document.getElementById('modalTitleAppointment').textContent='Editar Agendamento';document.getElementById('aptId').value=apt.id;document.getElementById('aptClient').value=apt.client||'';document.getElementById('aptDate').value=apt.date?apt.date.split('T')[0]:'';document.getElementById('aptDate').removeAttribute('min');document.getElementById('aptTime').value=apt.time||'';document.getElementById('aptService').value=apt.service||'';document.getElementById('aptPrice').value=apt.price||'';document.getElementById('aptTip').value=apt.tip||'';document.getElementById('aptNotes').value=apt.notes||'';}}
+      else{const today=new Date().toISOString().split('T')[0];document.getElementById('modalTitleAppointment').textContent='Novo Agendamento';document.getElementById('aptId').value='';document.getElementById('aptClient').value='';document.getElementById('aptDate').value=today;document.getElementById('aptDate').min=today;document.getElementById('aptTime').value='';document.getElementById('aptPrice').value='';document.getElementById('aptTip').value='';document.getElementById('aptNotes').value='';}
+    }else if(type==='client'){
+      if(clientId!==null){const c=this.data.clients.find(c=>c.id===clientId);if(c){document.getElementById('modalTitleClient').textContent='Editar Cliente';document.getElementById('clientId').value=c.id;document.getElementById('clientName').value=c.name||'';document.getElementById('clientPhone').value=c.phone||'';document.getElementById('clientNotes').value=c.notes||'';}}
+      else{document.getElementById('modalTitleClient').textContent='Novo Cliente';document.getElementById('clientId').value='';document.getElementById('clientName').value='';document.getElementById('clientPhone').value='';document.getElementById('clientNotes').value='';}
+    }
+  },
+  closeModal(type){document.getElementById(`modal${type.charAt(0).toUpperCase()+type.slice(1)}`).classList.remove('active');},
+
+  async saveAppointment(){
+    const aptId=document.getElementById('aptId').value,client=document.getElementById('aptClient').value.trim(),date=document.getElementById('aptDate').value,time=document.getElementById('aptTime').value,price=document.getElementById('aptPrice').value,service=document.getElementById('aptService').value,tip=document.getElementById('aptTip').value||'0',notes=document.getElementById('aptNotes').value.trim();
+    if(!client||!date||!time||!price){this.showToast('Preencha todos os campos');return;}
+    if(parseFloat(tip)<0||parseFloat(price)<0){this.showToast('Valores não podem ser negativos');return;}
+    const conflict=this._getConflict(date,time,aptId);
+    if(conflict&&!this._conflictWarned){document.getElementById('conflictModalMsg').textContent=`Já existe um agendamento para "${conflict.client}" às ${conflict.time} no dia ${this.fd(date)}. Deseja agendar mesmo assim?`;this._pendingData={aptId,client,date,time,price,service,tip,notes};this.openModal('confirmConflict');return;}
+    await this._doSaveAppointment(aptId,client,date,time,price,service,tip,notes);
+  },
+
+  async saveAppointmentForced(){this.closeModal('confirmConflict');this._conflictWarned=true;if(this._pendingData){const{aptId,client,date,time,price,service,tip,notes}=this._pendingData;await this._doSaveAppointment(aptId,client,date,time,price,service,tip,notes);this._pendingData=null;}},
+
+  async _doSaveAppointment(aptId,client,date,time,price,service,tip,notes){
+    this.setSyncStatus('syncing','A guardar...');
+    try{
+      if(aptId){
+        const{error}=await db.from('appointments').update({client,date,time,price:parseFloat(price),service,tip:parseFloat(tip),notes,updated_at:new Date().toISOString()}).eq('id',aptId);
+        if(error)throw error;
+        const idx=this.data.appointments.findIndex(a=>a.id===aptId);
+        if(idx!==-1)this.data.appointments[idx]={...this.data.appointments[idx],client,date,time,price,service,tip,notes};
+      }else{
+        const newId=Date.now().toString();
+        const{error}=await db.from('appointments').insert({id:newId,client,date,time,price:parseFloat(price),service,tip:parseFloat(tip),notes,payment:'Dinheiro',status:'active'});
+        if(error)throw error;
+        this.data.appointments.push({id:newId,client,date,time,price,service,tip,notes,payment:'Dinheiro',status:'active',createdAt:new Date().toISOString()});
       }
-    } else if (type==='client') {
-      if (clientId!==null) {
-        const c=this.data.clients.find(c=>c.id===clientId);
-        if (c) {
-          document.getElementById('modalTitleClient').textContent=this.t('edit_client');
-          document.getElementById('clientId').value=c.id;
-          document.getElementById('clientName').value=c.name||'';
-          document.getElementById('clientPhone').value=c.phone||'';
-          document.getElementById('clientNotes').value=c.notes||'';
-        }
-      } else {
-        document.getElementById('modalTitleClient').textContent=this.t('new_client');
-        document.getElementById('clientId').value='';
-        document.getElementById('clientName').value='';
-        document.getElementById('clientPhone').value='';
-        document.getElementById('clientNotes').value='';
-      }
-    }
+      const existing=this.data.clients.find(c=>c.name.toLowerCase()===client.toLowerCase());
+      if(!existing){const newCId=Date.now().toString()+Math.random().toString(36).slice(2);await db.from('clients').insert({id:newCId,name:client,phone:'',notes:'',last_visit:date});this.data.clients.push({id:newCId,name:client,phone:'',notes:'',lastVisit:date,createdAt:new Date().toISOString()});}
+      else{await db.from('clients').update({last_visit:date}).eq('id',existing.id);existing.lastVisit=date;}
+      this.setSyncStatus('ok','Sincronizado ✓');this._conflictWarned=false;this._saveLocal();this.closeModal('appointment');this.showToast('Salvo com sucesso!','success');this.renderAll();
+    }catch(e){console.error(e);this.setSyncStatus('error','Erro ao guardar');this.showToast('Erro ao guardar. Verifique a ligação.','error');}
   },
 
-  closeModal(type) {
-    document.getElementById(`modal${type.charAt(0).toUpperCase()+type.slice(1)}`).classList.remove('active');
+  editAppointment(id){this.openModal('appointment',id);},
+
+  async completeAppointment(id){
+    this.setSyncStatus('syncing','A guardar...');
+    const{error}=await db.from('appointments').update({status:'completed',updated_at:new Date().toISOString()}).eq('id',id);
+    if(error){this.showToast('Erro ao concluir','error');return;}
+    const idx=this.data.appointments.findIndex(a=>a.id===id);if(idx!==-1)this.data.appointments[idx].status='completed';
+    this.setSyncStatus('ok','Sincronizado ✓');this._saveLocal();this.showToast('Atendimento concluído!','success');this.renderAll();
   },
 
-  // ─── GUARDAR AGENDAMENTO COM VERIFICAÇÃO DE CONFLITO ────────────────────────
-  saveAppointment() {
-    const aptId = document.getElementById('aptId').value;
-    const client = document.getElementById('aptClient').value.trim();
-    const date = document.getElementById('aptDate').value;
-    const time = document.getElementById('aptTime').value;
-    const price = document.getElementById('aptPrice').value;
-    const service = document.getElementById('aptService').value;
-    const tip = document.getElementById('aptTip').value||'0';
-    const notes = document.getElementById('aptNotes').value.trim();
-
-    if (!client||!date||!time||!price) { this.showToast('Preencha todos os campos'); return; }
-    if (parseFloat(tip)<0) { this.showToast('Gorjeta não pode ser negativa'); return; }
-    if (parseFloat(price)<0) { this.showToast('Preço não pode ser negativo'); return; }
-
-    // Verificar conflito
-    const conflict = this._getConflict(date, time, aptId);
-    if (conflict && !this._conflictWarned) {
-      // Mostra modal de confirmação de conflito
-      document.getElementById('conflictModalMsg').textContent =
-        `Já existe um agendamento para "${conflict.client}" às ${conflict.time} no dia ${this.formatDate(date)}. Deseja agendar mesmo assim?`;
-      // Guarda os dados para usar no save forçado
-      this._pendingData = { aptId, client, date, time, price, service, tip, notes };
-      this.openModal('confirmConflict');
-      return;
-    }
-
-    this._doSaveAppointment(aptId, client, date, time, price, service, tip, notes);
-  },
-
-  // Chamado pelo botão "Agendar mesmo assim" no modal de conflito
-  saveAppointmentForced() {
-    this.closeModal('confirmConflict');
-    this._conflictWarned = true;
-    if (this._pendingData) {
-      const { aptId, client, date, time, price, service, tip, notes } = this._pendingData;
-      this._doSaveAppointment(aptId, client, date, time, price, service, tip, notes);
-      this._pendingData = null;
-    }
-  },
-
-  _doSaveAppointment(aptId, client, date, time, price, service, tip, notes) {
-    if (aptId) {
-      const idx = this.data.appointments.findIndex(a=>a.id===aptId);
-      if (idx!==-1) {
-        this.data.appointments[idx] = { ...this.data.appointments[idx], client, date, time, price, service, tip, notes, updatedAt: new Date().toISOString() };
-      }
-    } else {
-      this.data.appointments.push({
-        id: Date.now().toString(), date, time, price, service, tip, client, notes,
-        payment: 'Dinheiro', status: 'active', createdAt: new Date().toISOString()
-      });
-    }
-    const existing = this.data.clients.find(c=>c.name.toLowerCase()===client.toLowerCase());
-    if (!existing) {
-      this.data.clients.push({ id: Date.now().toString()+Math.random().toString(36).slice(2), name: client, phone:'', notes:'', createdAt: new Date().toISOString() });
-    } else { existing.lastVisit = date; }
-    this._conflictWarned = false;
-    this.saveData();
-    this.closeModal('appointment');
-    this.showToast(this.t('saved'));
-  },
-
-  editAppointment(aptId) { this.openModal('appointment', aptId); },
-
-  completeAppointment(aptId) {
-    const idx = this.data.appointments.findIndex(a=>a.id===aptId);
-    if (idx!==-1) {
-      this.data.appointments[idx].status='completed';
-      this.data.appointments[idx].completedAt=new Date().toISOString();
-      this.saveData(); this.showToast(this.t('completed_msg'));
-    }
-  },
-
-  confirmCancelAppointment(aptId, isLate) {
-    this._pendingCancel = { aptId, isLate };
-    document.getElementById('confirmCancelBtn').onclick = () => {
-      this.closeModal('confirmCancel');
-      this._executeCancelAppointment(this._pendingCancel.aptId, this._pendingCancel.isLate);
-      this._pendingCancel = null;
-    };
+  confirmCancelAppointment(aptId,isLate){
+    this._pendingCancel={aptId,isLate};
+    document.getElementById('confirmCancelBtn').onclick=()=>{this.closeModal('confirmCancel');this._executeCancelAppointment(this._pendingCancel.aptId,this._pendingCancel.isLate);this._pendingCancel=null;};
     this.openModal('confirmCancel');
   },
 
-  _executeCancelAppointment(aptId, isLate) {
-    const idx = this.data.appointments.findIndex(a=>a.id===aptId);
-    if (idx===-1) return;
-    const apt = this.data.appointments[idx];
-    if (isLate) { this.data.vacilao.push({...apt, cancelledAt: new Date().toISOString()}); this.showToast(this.t('late_cancelled')); }
-    else this.showToast(this.t('cancelled'));
-    this.data.appointments.splice(idx,1);
-    this.saveData();
+  async _executeCancelAppointment(aptId,isLate){
+    const idx=this.data.appointments.findIndex(a=>a.id===aptId);if(idx===-1)return;
+    const apt=this.data.appointments[idx];
+    this.setSyncStatus('syncing','A guardar...');
+    try{
+      if(isLate){await db.from('vacilao').insert({client:apt.client,date:apt.date,time:apt.time,service:apt.service,price:parseFloat(apt.price||0),tip:parseFloat(apt.tip||0),notes:apt.notes||''});this.data.vacilao.unshift({...apt,cancelledAt:new Date().toISOString()});this.showToast('Cancelamento em cima da hora!');}
+      else this.showToast('Cancelado!');
+      await db.from('appointments').delete().eq('id',aptId);
+      this.data.appointments.splice(idx,1);
+      this.setSyncStatus('ok','Sincronizado ✓');this._saveLocal();this.renderAll();
+    }catch(e){this.setSyncStatus('error','Erro');this.showToast('Erro ao cancelar','error');}
   },
 
-  saveClient() {
-    const clientId = document.getElementById('clientId').value;
-    const name = document.getElementById('clientName').value.trim();
-    const phone = document.getElementById('clientPhone').value.trim();
-    const notes = document.getElementById('clientNotes').value.trim();
-    if (!name) { this.showToast('Nome é obrigatório'); return; }
-    if (clientId!=='') {
-      const idx=this.data.clients.findIndex(c=>c.id===clientId);
-      if (idx!==-1) this.data.clients[idx]={...this.data.clients[idx],name,phone,notes,updatedAt:new Date().toISOString()};
-      this.showToast('Cliente atualizado!');
-    } else {
-      if (this.data.clients.find(c=>c.name.toLowerCase()===name.toLowerCase())) { this.showToast('Cliente já cadastrado!','error'); return; }
-      this.data.clients.push({ id:Date.now().toString()+Math.random().toString(36).slice(2), name, phone, notes, createdAt:new Date().toISOString() });
-      this.showToast('Cliente cadastrado!');
-    }
-    this.saveData(); this.closeModal('client');
+  async saveClient(){
+    const clientId=document.getElementById('clientId').value,name=document.getElementById('clientName').value.trim(),phone=document.getElementById('clientPhone').value.trim(),notes=document.getElementById('clientNotes').value.trim();
+    if(!name){this.showToast('Nome é obrigatório');return;}
+    this.setSyncStatus('syncing','A guardar...');
+    try{
+      if(clientId!==''){const{error}=await db.from('clients').update({name,phone,notes,updated_at:new Date().toISOString()}).eq('id',clientId);if(error)throw error;const idx=this.data.clients.findIndex(c=>c.id===clientId);if(idx!==-1)this.data.clients[idx]={...this.data.clients[idx],name,phone,notes};this.showToast('Cliente atualizado!','success');}
+      else{if(this.data.clients.find(c=>c.name.toLowerCase()===name.toLowerCase())){this.showToast('Cliente já cadastrado!','error');return;}const newId=Date.now().toString()+Math.random().toString(36).slice(2);const{error}=await db.from('clients').insert({id:newId,name,phone,notes});if(error)throw error;this.data.clients.push({id:newId,name,phone,notes,createdAt:new Date().toISOString()});this.showToast('Cliente cadastrado!','success');}
+      this.setSyncStatus('ok','Sincronizado ✓');this._saveLocal();this.closeModal('client');this.renderAll();
+    }catch(e){this.setSyncStatus('error','Erro');this.showToast('Erro ao guardar cliente','error');}
   },
 
-  editClientById(id) { this.openModal('client', null, id); },
+  editClientById(id){this.openModal('client',null,id);},
 
-  deleteClientById(id) {
-    if (!confirm('Tem certeza que deseja excluir este cliente?')) return;
+  async deleteClientById(id){
+    if(!confirm('Tem certeza que deseja excluir este cliente?'))return;
+    this.setSyncStatus('syncing','A eliminar...');
+    const{error}=await db.from('clients').delete().eq('id',id);
+    if(error){this.showToast('Erro ao eliminar','error');return;}
     this.data.clients=this.data.clients.filter(c=>c.id!==id);
-    this.saveData(); this.showToast(this.t('deleted'));
+    this.setSyncStatus('ok','Sincronizado ✓');this._saveLocal();this.showToast('Removido!');this.renderAll();
   },
 
-  showClientHistory(clientName) {
-    const history=this.data.appointments.filter(a=>a.client===clientName).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,10);
-    const stats=this.getClientStats(clientName), cat=this.getClientCategory(clientName);
-    document.getElementById('clientHistoryName').textContent=clientName;
-    document.getElementById('clientHistoryList').innerHTML=`
-      <div class="card" style="margin-bottom:15px">
-        <div class="client-stats" style="justify-content:space-around">
-          <div class="client-stat"><span class="client-stat-value" style="font-size:18px">${stats.visits}</span><span class="client-stat-label">Visitas</span></div>
-          <div class="client-stat"><span class="client-stat-value" style="font-size:18px;color:var(--gold)">${this.formatCurrency(stats.totalSpent)}</span><span class="client-stat-label">Total Gasto</span></div>
-          <div class="client-stat"><span class="client-stat-value" style="font-size:18px">${cat==='mafioso'?'🎩':cat==='frequent'?'⭐':'🆕'}</span><span class="client-stat-label">Categoria</span></div>
-        </div>
-      </div>
-    `+(history.length===0?`<div class="empty-state">Sem histórico</div>`:history.map(h=>`
-      <div class="history-item">
-        <span>${this.formatDate(h.date||'')} - ${h.time||''}</span>
-        <span>${h.service||''} - ${this.formatCurrency(h.price||0)}${h.tip&&parseFloat(h.tip)>0?` + ${this.formatCurrency(h.tip)}`:''}</span>
-      </div>`).join(''));
+  showClientHistory(name){
+    const history=this.data.appointments.filter(a=>a.client===name).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,10);
+    const stats=this.getClientStats(name),cat=this.getClientCategory(name);
+    document.getElementById('clientHistoryName').textContent=name;
+    document.getElementById('clientHistoryList').innerHTML=`<div class="card" style="margin-bottom:15px"><div class="client-stats" style="justify-content:space-around"><div class="client-stat"><span class="client-stat-value" style="font-size:18px">${stats.visits}</span><span class="client-stat-label">Visitas</span></div><div class="client-stat"><span class="client-stat-value" style="font-size:18px;color:var(--gold)">${this.fc(stats.totalSpent)}</span><span class="client-stat-label">Total Gasto</span></div><div class="client-stat"><span class="client-stat-value" style="font-size:18px">${cat==='mafioso'?'🎩':cat==='frequent'?'⭐':'🆕'}</span><span class="client-stat-label">Categoria</span></div></div></div>`+(history.length===0?'<div class="empty-state">Sem histórico</div>':history.map(h=>`<div class="history-item"><span>${this.fd(h.date||'')} - ${h.time||''}</span><span>${h.service||''} - ${this.fc(h.price||0)}${h.tip&&parseFloat(h.tip)>0?` + ${this.fc(h.tip)}`:''}</span></div>`).join(''));
     document.getElementById('modalClientHistory').classList.add('active');
   },
 
-  filterAgenda() { this.data.selectedDate=document.getElementById('agendaDate').value; this.renderAppointments(); },
-
-  exportBackup() {
-    const blob=new Blob([JSON.stringify({version:'1.0',exportDate:new Date().toISOString(),data:this.data},null,2)],{type:'application/json'});
-    const url=URL.createObjectURL(blob), a=document.createElement('a');
-    a.href=url; a.download=`la-mafia-backup-${new Date().toISOString().split('T')[0].replace(/-/g,'')}.json`;
-    a.click(); URL.revokeObjectURL(url); this.showToast(this.t('backup_exported'),'success');
+  exportBackup(){
+    const blob=new Blob([JSON.stringify({version:'2.0',exportDate:new Date().toISOString(),data:{appointments:this.data.appointments,clients:this.data.clients,vacilao:this.data.vacilao,settings:this.data.settings}},null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`la-mafia-backup-${new Date().toISOString().split('T')[0].replace(/-/g,'')}.json`;a.click();URL.revokeObjectURL(url);this.showToast('Backup exportado!','success');
   },
 
-  importBackup(event) {
-    const file=event.target.files[0]; if(!file)return;
+  importBackup(event){
+    const file=event.target.files[0];if(!file)return;
     const reader=new FileReader();
-    reader.onload=e=>{
-      try {
-        const bd=JSON.parse(e.target.result);
-        if(!bd.data||!bd.data.appointments)throw new Error('invalid');
-        this.importData=bd.data; this.openModal('confirmImport');
-      } catch { this.showToast(this.t('backup_invalid'),'error'); }
-    };
-    reader.onerror=()=>this.showToast(this.t('backup_error'),'error');
-    reader.readAsText(file); event.target.value='';
+    reader.onload=e=>{try{const bd=JSON.parse(e.target.result);if(!bd.data||!bd.data.appointments)throw new Error('invalid');this.importData=bd.data;this.openModal('confirmImport');}catch{this.showToast('Arquivo de backup inválido!','error');}};
+    reader.onerror=()=>this.showToast('Erro ao importar!','error');reader.readAsText(file);event.target.value='';
   },
 
-  confirmImport() {
-    if (this.importData) {
-      this.data={...this.data,...this.importData};
-      this._migrateClientIds();
-      this.saveData(); this.importData=null;
-      this.closeModal('confirmImport'); this.showToast(this.t('backup_imported'),'success');
-    }
+  async confirmImport(){
+    if(!this.importData)return;
+    this.setSyncStatus('syncing','A importar...');
+    try{
+      await db.from('appointments').delete().neq('id','__none__');
+      await db.from('clients').delete().neq('id','__none__');
+      await db.from('vacilao').delete().neq('id',0);
+      if(this.importData.appointments?.length)await db.from('appointments').insert(this.importData.appointments.map(a=>({id:a.id,client:a.client,date:a.date,time:a.time,service:a.service,price:parseFloat(a.price||0),tip:parseFloat(a.tip||0),notes:a.notes||'',payment:a.payment||'Dinheiro',status:a.status||'active'})));
+      if(this.importData.clients?.length)await db.from('clients').insert(this.importData.clients.map(c=>({id:c.id||Date.now().toString()+Math.random().toString(36).slice(2),name:c.name,phone:c.phone||'',notes:c.notes||'',last_visit:c.lastVisit||null})));
+      await this.syncAll();this.importData=null;this.closeModal('confirmImport');this.showToast('Backup importado com sucesso!','success');
+    }catch(e){this.setSyncStatus('error','Erro');this.showToast('Erro ao importar','error');}
   },
 
-  exportReport() {
-    const today=new Date().toISOString().split('T')[0];
-    const appts=this.data.appointments.filter(a=>a.date===today&&a.status!=='cancelled');
-    const total=appts.reduce((s,a)=>s+parseFloat(a.price||0),0);
-    const tips=appts.reduce((s,a)=>s+(parseFloat(a.tip)||0),0);
-    let r=`LA MAFIA BARBEARIA - Fechamento ${this.formatDate(today)}\n=== RESUMO ===\nServiços: ${this.formatCurrency(total)}\nGorjetas: ${this.formatCurrency(tips)}\nTOTAL: ${this.formatCurrency(total+tips)}\n\n=== ATENDIMENTOS ===\n`;
+  exportReport(){
+    const today=new Date().toISOString().split('T')[0],appts=this.data.appointments.filter(a=>a.date===today&&a.status!=='cancelled');
+    const total=appts.reduce((s,a)=>s+parseFloat(a.price||0),0),tips=appts.reduce((s,a)=>s+(parseFloat(a.tip)||0),0);
+    let r=`LA MAFIA BARBEARIA - Fechamento ${this.fd(today)}\n=== RESUMO ===\nServiços: ${this.fc(total)}\nGorjetas: ${this.fc(tips)}\nTOTAL: ${this.fc(total+tips)}\n\n=== ATENDIMENTOS ===\n`;
     appts.forEach(a=>{r+=`${a.time} - ${a.client} - ${a.service} - €${a.price}`;if(a.tip&&parseFloat(a.tip)>0)r+=` + €${a.tip} (gorjeta)`;r+='\n';});
-    const blob=new Blob([r],{type:'text/plain'}), url=URL.createObjectURL(blob), a=document.createElement('a');
-    a.href=url; a.download=`fechamento-${today}.txt`; a.click(); this.showToast('Relatório exportado!');
+    const blob=new Blob([r],{type:'text/plain'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`fechamento-${today}.txt`;a.click();this.showToast('Relatório exportado!');
   },
 
-  exportFinanceReport() {
+  exportFinanceReport(){
     const sel=document.getElementById('financeMonthSelect').value||new Date().toISOString().substring(0,7);
     const appts=this.data.appointments.filter(a=>{const d=a.date?a.date.split('T')[0]:'';return d.startsWith(sel)&&a.status!=='cancelled';});
-    const rev=appts.reduce((s,a)=>s+parseFloat(a.price||0),0), tips=appts.reduce((s,a)=>s+(parseFloat(a.tip)||0),0);
-    const sb={};
-    appts.forEach(a=>{if(!sb[a.service])sb[a.service]={count:0,total:0};sb[a.service].count++;sb[a.service].total+=parseFloat(a.price||0);});
-    let r=`LA MAFIA BARBEARIA - Relatório Financeiro ${sel}\n\n=== RESUMO DO MÊS ===\nTotal Serviços: ${this.formatCurrency(rev)}\nTotal Gorjetas: ${this.formatCurrency(tips)}\nTOTAL GERAL: ${this.formatCurrency(rev+tips)}\nAtendimentos: ${appts.length}\n\n=== POR SERVIÇO ===\n`;
-    Object.entries(sb).forEach(([s,d])=>{r+=`${s}: ${d.count}x = ${this.formatCurrency(d.total)}\n`;});
-    const blob=new Blob([r],{type:'text/plain'}), url=URL.createObjectURL(blob), a=document.createElement('a');
-    a.href=url; a.download=`financeiro-${sel}.txt`; a.click(); this.showToast('Relatório financeiro exportado!');
+    const rev=appts.reduce((s,a)=>s+parseFloat(a.price||0),0),tips=appts.reduce((s,a)=>s+(parseFloat(a.tip)||0),0);
+    const sb={};appts.forEach(a=>{if(!sb[a.service])sb[a.service]={count:0,total:0};sb[a.service].count++;sb[a.service].total+=parseFloat(a.price||0);});
+    let r=`LA MAFIA BARBEARIA - Relatório Financeiro ${sel}\n\n=== RESUMO ===\nServiços: ${this.fc(rev)}\nGorjetas: ${this.fc(tips)}\nTOTAL: ${this.fc(rev+tips)}\nAtendimentos: ${appts.length}\n\n=== POR SERVIÇO ===\n`;
+    Object.entries(sb).forEach(([s,d])=>{r+=`${s}: ${d.count}x = ${this.fc(d.total)}\n`;});
+    const blob=new Blob([r],{type:'text/plain'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`financeiro-${sel}.txt`;a.click();this.showToast('Relatório exportado!');
   },
 
-  formatCurrency(v) {
-    return new Intl.NumberFormat(this.data.lang==='pt'?'pt-PT':'es-ES',{style:'currency',currency:'EUR'}).format(v);
-  },
-
-  formatDate(ds) {
-    if (!ds) return '-';
-    return new Date(ds+'T00:00:00').toLocaleDateString(this.data.lang==='pt'?'pt-PT':'es-ES',{day:'numeric',month:'short',year:'numeric'});
-  },
-
-  checkInstallBanner() {
-    const isStandalone=window.matchMedia('(display-mode: standalone)').matches;
-    const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
-    if(!isStandalone&&isIOS&&!localStorage.getItem('laMafiaInstallDismissed'))
-      setTimeout(()=>document.getElementById('installBanner').classList.add('show'),3000);
-  },
-
-  showToast(msg, type='info') {
-    const t=document.getElementById('toast');
-    t.textContent=msg; t.className='toast show';
-    if(type==='error')t.classList.add('error');
-    if(type==='success')t.classList.add('success');
-    setTimeout(()=>t.classList.remove('show'),2500);
-  }
+  fc(v){return new Intl.NumberFormat(this.data.lang==='pt'?'pt-PT':'es-ES',{style:'currency',currency:'EUR'}).format(v);},
+  fd(ds){if(!ds)return'-';return new Date(ds+'T00:00:00').toLocaleDateString(this.data.lang==='pt'?'pt-PT':'es-ES',{day:'numeric',month:'short',year:'numeric'});},
+  showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show';if(type==='error')t.classList.add('error');if(type==='success')t.classList.add('success');setTimeout(()=>t.classList.remove('show'),2500);}
 };
 
 app.init();
