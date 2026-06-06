@@ -680,14 +680,14 @@ const app={
         const idx=this.data.appointments.findIndex(a=>a.id===aptId);
         if(idx!==-1)this.data.appointments[idx]={...this.data.appointments[idx],client,date,time,price,service,tip,notes};
       }else{
-        const newId=Date.now().toString();
+const newId=crypto.randomUUID();
         const{error}=await db.from('appointments').insert({id:newId,client,date,time,price:parseFloat(price),service,tip:parseFloat(tip),notes,payment:'Dinheiro',status:'active'});
         if(error)throw error;
         this.data.appointments.push({id:newId,client,date,time,price,service,tip,notes,payment:'Dinheiro',status:'active',createdAt:new Date().toISOString()});
       }
       const existing=this.data.clients.find(c=>c.name.toLowerCase()===client.toLowerCase());
       if(!existing){const newCId=Date.now().toString()+Math.random().toString(36).slice(2);await db.from('clients').insert({id:newCId,name:client,phone:'',notes:'',last_visit:date});this.data.clients.push({id:newCId,name:client,phone:'',notes:'',lastVisit:date,createdAt:new Date().toISOString()});}
-      else{await db.from('clients').update({last_visit:date}).eq('id',existing.id);existing.lastVisit=date;}
+const newCId=crypto.randomUUID();
       this.setSyncStatus('ok','Sincronizado ✓');this._conflictWarned=false;this._saveLocal();this.closeModal('appointment');this.showToast('Salvo com sucesso!','success');this.renderAll();
     }catch(e){console.error(e);this.setSyncStatus('error','Erro ao guardar');this.showToast('Erro ao guardar. Verifique a ligação.','error');}
   },
@@ -735,7 +735,9 @@ const app={
   editClientById(id){this.openModal('client',null,id);},
 
   async deleteClientById(id){
-    if(!confirm('Tem certeza que deseja excluir este cliente?'))return;
+    const newId=crypto.randomUUID();
+
+
     this.setSyncStatus('syncing','A eliminar...');
     const{error}=await db.from('clients').delete().eq('id',id);
     if(error){this.showToast('Erro ao eliminar','error');return;}
