@@ -490,8 +490,7 @@ const app={
     }catch(e){
       console.error('Sync error:',e);
       this.setSyncStatus('error','Sem ligação — dados locais');
-      try{const s=localStorage.getItem('laMafiaData');if(s){const p=JSON.parse(s);this.data.appointments=p.appointments||[];this.data.clients=p.clients||[];this.data.vacilao=p.vacilao||[];}}catch(e2){}
-      this.renderAll();
+try{const s=localStorage.getItem('laMafiaData');if(s){const p=JSON.parse(s);if(!this.data.appointments?.length)this.data.appointments=p.appointments||[];if(!this.data.clients?.length)this.data.clients=p.clients||[];if(!this.data.vacilao?.length)this.data.vacilao=p.vacilao||[];}}catch(e2){}      this.renderAll();
     }
   },
 
