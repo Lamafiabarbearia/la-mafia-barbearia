@@ -467,7 +467,7 @@ const app={
         db.from('appointments').select('*').order('date').order('time'),
         db.from('clients').select('*').order('name'),
         db.from('vacilao').select('*').order('cancelled_at',{ascending:false}),
-        db.from('settings').select('*').eq('id',1).single()
+        db.from('settings').select('*').eq('id',1).maybeSingle()
       ]);
       if(appts.error)throw appts.error;
       if(clients.error)throw clients.error;
